@@ -1,0 +1,127 @@
+---
+const siteTitle = "Theme: Ski trip – La Familia";
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{siteTitle}</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --text: #1f2933;
+        --muted: #5b6570;
+        --border: #d7dce1;
+        --surface: #ffffff;
+        --accent: #2f5d7c;
+        --background: #f6f7f9;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+        color: var(--text);
+        background: var(--background);
+      }
+
+      main {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 64px 24px 104px;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+      }
+
+      h1,
+      h2 {
+        margin: 0 0 12px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+
+      h1 {
+        font-size: 2.4rem;
+        line-height: 1.2;
+      }
+
+      h2 {
+        font-size: 1.1rem;
+        letter-spacing: -0.01em;
+        color: var(--text);
+      }
+
+      p {
+        margin: 0 0 16px;
+        line-height: 1.6;
+        color: var(--text);
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 18px;
+        line-height: 1.6;
+      }
+
+      .section {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 28px 32px;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 1.02rem;
+        max-width: 720px;
+      }
+
+      .note {
+        color: var(--muted);
+        font-size: 0.98rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="section">
+        <h1>Theme: Ski trip</h1>
+        <p class="subtitle">
+          Draft planning context for winter travel focused on ski access, quiet lodging, and
+          manageable transit.
+        </p>
+        <p class="note">Status: draft. Scope and constraints will be finalized later.</p>
+      </section>
+
+      <section class="section">
+        <h2>Draft constraints</h2>
+        <ul>
+          <li>Winter travel window to be confirmed, likely aligned with school breaks.</li>
+          <li>Reliable snow coverage and lift operations are mandatory.</li>
+          <li>Travel time should remain reasonable to preserve on-slope days.</li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2>Logistics placeholder</h2>
+        <ul>
+          <li>Assess rental gear availability and storage requirements.</li>
+          <li>Prioritize lodging with short transit to lifts and low noise at night.</li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2>Open questions</h2>
+        <ul>
+          <li>Determine preferred resort size and crowd tolerance.</li>
+          <li>Confirm whether a single-base plan is required or if a two-base split is acceptable.</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
