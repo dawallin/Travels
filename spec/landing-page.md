@@ -14,7 +14,7 @@
 - Baseline preferences must appear as a single, neutral card separated from theme cards by a thin,
   neutral divider.
 - Theme cards appear beneath the divider and are visually grouped together.
-- Tag-like metadata must not appear in Planning Framework cards, except for the banner label.
+- Metadata markers must not appear in Planning Framework cards, except for the notch label.
 
 ## Tone and voice
 - Content must read as a professional planning workspace.
@@ -28,20 +28,23 @@
 - Visual hierarchy is achieved through typography and spacing, not decorative elements.
 - No emojis, no decorative icons, no gradients, no travel clichés.
 - No calls to action or promotional hero sections.
-- All planning cards use a vertical left-side banner with a fixed-width column; banners must never
-  overlap card content.
-- Banner text is mandatory and limited to ~10 characters; truncate with ellipsis if needed to keep
-  the layout stable.
-- Baseline cards use a neutral banner; themes define a subtle banner color and short label; trips
-  inherit the banner label/color from their referenced theme.
+- All planning cards use a vertical notch attached to the left edge. Notches are narrow bands that
+  appear to pass through the card, with the card background visible on both sides of the notch.
+- Notches are not layout columns and must never overlap card content; reserve padding for the
+  notch area.
+- Notch text is mandatory, vertical, and limited to ≤10 characters; truncate with ellipsis if
+  needed to keep the layout stable.
+- Baseline cards use a neutral notch; themes define a subtle notch color and short label; trips
+  inherit the notch label/color from their referenced theme(s).
+- Trips may show up to two notches side-by-side when referencing two themes.
 - Theme colors are semantic identifiers, not decorative accents, and should read softly on light
   backgrounds.
 - Avoid additional explanatory text on the landing page when layout already conveys structure.
 
 ## Metadata placement
-- Structured metadata (tags, attributes, status) belongs on trip cards/pages, not on the landing page.
+- Structured metadata (attributes, status) belongs on trip cards/pages, not on the landing page.
   - Exception: Planning Framework cards may include a plain-text status label.
-  - Banner labels are allowed on theme and tagged trip cards to convey theme affiliation.
+  - Notch labels are allowed on theme and theme-referenced trip cards to convey affiliation.
 
 ## Internal link rules
 - All internal navigation links must be relative (no leading slash).

@@ -5,16 +5,50 @@ import { theme as skiTheme } from "./preferences/themes/ski-trip.astro";
 
 const siteTitle = "La Familia – Travel Planning";
 const planningThemes = [summer25Theme, rainforestTheme, skiTheme];
-const baliTheme = summer25Theme;
-const truncateBanner = (label) => (label.length > 10 ? `${label.slice(0, 9)}…` : label);
-const baselineBanner = {
+const themesById = Object.fromEntries(planningThemes.map((theme) => [theme.id, theme]));
+const truncateNotch = (label) => (label.length > 10 ? `${label.slice(0, 9)}…` : label);
+const notchMetrics = {
+  width: 12,
+  gap: 4,
+  padding: 6,
+};
+const notchArea = (count) =>
+  count > 0
+    ? notchMetrics.padding * 2 + count * notchMetrics.width + (count - 1) * notchMetrics.gap
+    : 0;
+const baselineNotch = {
   label: "Baseline",
   color: "#e4e7eb",
 };
-const tripBanner = {
-  label: "Trip",
-  color: "#e4e7eb",
-};
+const trips = [
+  {
+    destination: "Bali",
+    href: "trips/bali/",
+    themeIds: ["summer25"],
+    status: "Status: active research • Focus: routing + lodging scenarios",
+  },
+  {
+    destination: "Portugal",
+    href: "trips/portugal/",
+    themeIds: [],
+    status: "Status: placeholder • Focus: regional options under review",
+  },
+  {
+    destination: "Japan",
+    href: "trips/japan/",
+    themeIds: [],
+    status: "Status: placeholder • Focus: season timing and transit costs",
+  },
+];
+const getTripNotches = (themeIds) =>
+  themeIds
+    .map((id) => themesById[id])
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((theme) => ({
+      label: theme.notchLabel,
+      color: theme.notchColor,
+    }));
 ---
 <!doctype html>
 <html lang="en">
@@ -31,6 +65,9 @@ const tripBanner = {
         --surface: #ffffff;
         --accent: #2f5d7c;
         --background: #f6f7f9;
+        --notch-width: 12px;
+        --notch-gap: 4px;
+        --notch-padding: 6px;
       }
 
       * {
@@ -113,16 +150,14 @@ const tripBanner = {
       }
 
       .idea-card {
-        display: grid;
-        grid-template-columns: 88px 1fr;
-        gap: 16px;
         border: 1px solid var(--border);
         border-radius: 10px;
         text-decoration: none;
         color: inherit;
         background: #fbfbfc;
         position: relative;
-        overflow: hidden;
+        padding: 20px 20px 20px calc(20px + var(--notch-area, 0px));
+        display: block;
       }
 
       .idea-card:hover,
@@ -145,28 +180,38 @@ const tripBanner = {
         border-radius: 999px;
       }
 
-      .idea-banner {
-        background: var(--banner-color, #e6ebef);
+      .notch-stack {
+        position: absolute;
+        inset: 0 auto 0 0;
+        display: flex;
+        align-items: stretch;
+        gap: var(--notch-gap);
+        padding: 8px var(--notch-padding);
+        width: var(--notch-area);
+        pointer-events: none;
+      }
+
+      .notch {
+        background: var(--notch-color, #e6ebef);
         color: var(--text);
-        font-size: 0.72rem;
+        font-size: 0.62rem;
         font-weight: 600;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
-        padding: 12px 8px;
-        border-right: 1px solid var(--border);
+        width: var(--notch-width);
+        border-radius: 8px;
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
       }
 
       .idea-card-content {
         display: grid;
         gap: 8px;
-        padding: 20px 20px 20px 4px;
       }
 
       .idea-title {
@@ -235,9 +280,13 @@ const tripBanner = {
             <a
               class="idea-card baseline-card"
               href="preferences/baseline/"
-              style={`--banner-color: ${baselineBanner.color}`}
+              style={`--notch-area: ${notchArea(1)}px`}
             >
-              <span class="idea-banner">{truncateBanner(baselineBanner.label)}</span>
+              <span class="notch-stack">
+                <span class="notch" style={`--notch-color: ${baselineNotch.color}`}>
+                  {truncateNotch(baselineNotch.label)}
+                </span>
+              </span>
               <div class="idea-card-content">
                 <span class="idea-title">Travel preferences – baseline</span>
                 <span class="idea-meta">
@@ -253,9 +302,13 @@ const tripBanner = {
               <a
                 class="idea-card"
                 href={`preferences/themes/${theme.slug}/`}
-                style={`--banner-color: ${theme.bannerColor}`}
+                style={`--notch-area: ${notchArea(1)}px`}
               >
-                <span class="idea-banner">{truncateBanner(theme.bannerLabel)}</span>
+                <span class="notch-stack">
+                  <span class="notch" style={`--notch-color: ${theme.notchColor}`}>
+                    {truncateNotch(theme.notchLabel)}
+                  </span>
+                </span>
                 <div class="idea-card-content">
                   <span class="idea-title">Theme: {theme.displayName}</span>
                   <span class="idea-meta">{theme.summary}</span>
@@ -270,35 +323,30 @@ const tripBanner = {
       <section class="section">
         <h2>Travel ideas</h2>
         <div class="travel-ideas">
-          <a
-            class="idea-card"
-            href="trips/bali/"
-            style={`--banner-color: ${baliTheme.bannerColor}`}
-          >
-            <span class="idea-banner">{truncateBanner(baliTheme.bannerLabel)}</span>
-            <div class="idea-card-content">
-              <span class="idea-title">Bali</span>
-              <span class="idea-meta">
-                Status: active research • Focus: routing + lodging scenarios
-              </span>
-            </div>
-          </a>
-          <a class="idea-card" href="trips/portugal/" style={`--banner-color: ${tripBanner.color}`}>
-            <span class="idea-banner">{truncateBanner(tripBanner.label)}</span>
-            <div class="idea-card-content">
-              <span class="idea-title">Portugal</span>
-              <span class="idea-meta">
-                Status: placeholder • Focus: regional options under review
-              </span>
-            </div>
-          </a>
-          <a class="idea-card" href="trips/japan/" style={`--banner-color: ${tripBanner.color}`}>
-            <span class="idea-banner">{truncateBanner(tripBanner.label)}</span>
-            <div class="idea-card-content">
-              <span class="idea-title">Japan</span>
-              <span class="idea-meta">Status: placeholder • Focus: season timing and transit costs</span>
-            </div>
-          </a>
+          {trips.map((trip) => {
+            const notches = getTripNotches(trip.themeIds);
+            return (
+              <a
+                class="idea-card"
+                href={trip.href}
+                style={`--notch-area: ${notchArea(notches.length)}px`}
+              >
+                {notches.length > 0 && (
+                  <span class="notch-stack">
+                    {notches.map((notch) => (
+                      <span class="notch" style={`--notch-color: ${notch.color}`}>
+                        {truncateNotch(notch.label)}
+                      </span>
+                    ))}
+                  </span>
+                )}
+                <div class="idea-card-content">
+                  <span class="idea-title">{trip.destination}</span>
+                  <span class="idea-meta">{trip.status}</span>
+                </div>
+              </a>
+            );
+          })}
         </div>
       </section>
     </main>
