@@ -1,5 +1,11 @@
 ---
+import { theme as summer25Theme } from "./preferences/themes/summer-2025.astro";
+import { theme as rainforestTheme } from "./preferences/themes/summer-rainforest-snorkeling.astro";
+import { theme as skiTheme } from "./preferences/themes/ski-trip.astro";
+
 const siteTitle = "La Familia – Travel Planning";
+const planningThemes = [summer25Theme, rainforestTheme, skiTheme];
+const baliTheme = summer25Theme;
 ---
 <!doctype html>
 <html lang="en">
@@ -106,11 +112,42 @@ const siteTitle = "La Familia – Travel Planning";
         text-decoration: none;
         color: inherit;
         background: #fbfbfc;
+        position: relative;
+        overflow: hidden;
       }
 
       .idea-card:hover,
       .idea-card:focus {
         border-color: var(--accent);
+      }
+
+      .baseline-card {
+        background: #f5f6f8;
+      }
+
+      .frameworks {
+        display: grid;
+        gap: 20px;
+      }
+
+      .frameworks-divider {
+        height: 1px;
+        background: var(--border);
+        border-radius: 999px;
+      }
+
+      .theme-ribbon {
+        position: absolute;
+        top: 12px;
+        left: -44px;
+        transform: rotate(-45deg);
+        background: var(--ribbon-color, #e6ebef);
+        color: var(--text);
+        font-size: 0.7rem;
+        letter-spacing: 0.02em;
+        padding: 3px 56px;
+        text-align: center;
+        font-weight: 500;
       }
 
       .idea-title {
@@ -168,37 +205,45 @@ const siteTitle = "La Familia – Travel Planning";
         <p>
           Baseline preferences and theme-specific criteria live in the
           <a href="preferences/baseline/">baseline reference</a> and the
-          <a href="preferences/themes/summer-rainforest-snorkeling/">active themes</a>.
+          <a href="preferences/themes/summer-2025/">active themes</a>.
         </p>
       </section>
 
       <section class="section">
         <h2>Planning frameworks</h2>
-        <div class="travel-ideas">
-          <a class="idea-card" href="preferences/baseline/">
-            <span class="idea-title">Travel preferences – baseline</span>
-            <span class="idea-meta">
-              General criteria and constraints used to evaluate travel ideas.
-            </span>
-            <span class="idea-meta">Reference</span>
-          </a>
-          <a class="idea-card" href="preferences/themes/summer-rainforest-snorkeling/">
-            <span class="idea-title">Theme: Summer rainforest + snorkeling</span>
-            <span class="idea-meta">Context-specific criteria for that theme.</span>
-            <span class="idea-meta">Active</span>
-          </a>
-          <a class="idea-card" href="preferences/themes/ski-trip/">
-            <span class="idea-title">Theme: Ski trip</span>
-            <span class="idea-meta">Context-specific planning context for winter travel.</span>
-            <span class="idea-meta">Draft</span>
-          </a>
+        <div class="frameworks">
+          <div class="travel-ideas">
+            <a class="idea-card baseline-card" href="preferences/baseline/">
+              <span class="idea-title">Travel preferences – baseline</span>
+              <span class="idea-meta">
+                General criteria and constraints used to evaluate travel ideas.
+              </span>
+              <span class="idea-meta">Reference</span>
+            </a>
+          </div>
+          <div class="frameworks-divider" aria-hidden="true"></div>
+          <div class="travel-ideas">
+            {planningThemes.map((theme) => (
+              <a
+                class="idea-card"
+                href={`preferences/themes/${theme.slug}/`}
+                style={`--ribbon-color: ${theme.color}`}
+              >
+                <span class="theme-ribbon">{theme.displayName}</span>
+                <span class="idea-title">Theme: {theme.displayName}</span>
+                <span class="idea-meta">{theme.summary}</span>
+                <span class="idea-meta">{theme.status}</span>
+              </a>
+            ))}
+          </div>
         </div>
       </section>
 
       <section class="section">
         <h2>Travel ideas</h2>
         <div class="travel-ideas">
-          <a class="idea-card" href="trips/bali/">
+          <a class="idea-card" href="trips/bali/" style={`--ribbon-color: ${baliTheme.color}`}>
+            <span class="theme-ribbon">{baliTheme.displayName}</span>
             <span class="idea-title">Bali</span>
             <span class="idea-meta">Status: active research • Focus: routing + lodging scenarios</span>
           </a>

@@ -12,7 +12,12 @@
     - Baseline preferences (global, consistent across trips).
     - Theme preferences (context-specific planning frames).
   - Themes represent planning contexts, not destinations.
+  - Themes define a display name and one semantic color; the color is sourced from the theme
+    preference page and reused anywhere the theme is referenced.
+  - Trips may reference a single theme (for now) and must reuse the theme's display name and ribbon
+    color when tagged on overview surfaces.
   - Trips are explored within one or more themes conceptually, but no filtering is implemented yet.
   - Rationale: keeps the landing page lightweight and generic, allows preferences to evolve without restructuring the site, and supports sharing with travel advisors as a standalone reference.
   - Content principles: "Who we are" remains on the landing page due to its brevity and contextual role; preferences are written as requirements-like criteria, not narrative; time-bound criteria live only on theme pages.
   - Linking rule: the landing page links to baseline and theme preferences via simple text links (no CTA), and all internal links remain relative.
+- Spec files are a living reference and must be kept in sync with UI, IA, and data-model decisions.

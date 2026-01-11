@@ -11,7 +11,10 @@
 - Identity / Context copy is written as flowing prose, even when describing scope, mode, or audience.
 - Planning Framework cards must use the same card styling as Travel Ideas.
 - Planning Framework cards may include a plain-text status label (Reference/Active/Draft).
-- Tag-like metadata must not appear in Planning Framework cards.
+- Baseline preferences must appear as a single, neutral card separated from theme cards by a thin,
+  neutral divider.
+- Theme cards appear beneath the divider and are visually grouped together.
+- Tag-like metadata must not appear in Planning Framework cards, except for the theme ribbon.
 
 ## Tone and voice
 - Content must read as a professional planning workspace.
@@ -25,10 +28,15 @@
 - Visual hierarchy is achieved through typography and spacing, not decorative elements.
 - No emojis, no decorative icons, no gradients, no travel clichés.
 - No calls to action or promotional hero sections.
+- Theme ribbons are subtle, diagonal corner treatments with pale, low-saturation backgrounds.
+- Theme colors are semantic identifiers, not decorative accents, and should read softly on light
+  backgrounds.
+- Avoid additional explanatory text on the landing page when layout already conveys structure.
 
 ## Metadata placement
 - Structured metadata (tags, attributes, status) belongs on trip cards/pages, not on the landing page.
   - Exception: Planning Framework cards may include a plain-text status label.
+  - Theme ribbons are allowed on theme and tagged trip cards to convey theme affiliation.
 
 ## Internal link rules
 - All internal navigation links must be relative (no leading slash).
