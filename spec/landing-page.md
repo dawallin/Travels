@@ -1,12 +1,12 @@
 # Landing page specification
 
 ## Information architecture
-- The landing page must include five sections in this order:
+- The landing page must include four sections in this order:
   1. Identity / Context (title + subtitle).
   2. Who We Are (family composition and shared planning intent).
-  3. Preferences (three blocks: What we like, What we avoid, What we look for).
-  4. How We Travel (planning process, iteration, incomplete notes allowed).
-  5. Travel Ideas (card-based list linking to trips/{destination}).
+  3. How We Use This Site (planning process, iteration, comparison).
+  4. Travel Ideas (card-based list linking to trips/{destination}).
+- Detailed preference content is intentionally excluded from the landing page.
 - Identity / Context copy is written as flowing prose, even when describing scope, mode, or audience.
 
 ## Tone and voice
@@ -28,3 +28,4 @@
 ## Internal link rules
 - All internal navigation links must be relative (no leading slash).
 - Use the pattern trips/{destination}/ for travel idea cards.
+- Include a simple text link to the Travel preferences page with no CTA language.
