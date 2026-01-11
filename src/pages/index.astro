@@ -91,30 +91,6 @@ const siteTitle = "La Familia – Travel Planning";
         max-width: 720px;
       }
 
-      .preferences-grid {
-        display: grid;
-        gap: 24px;
-      }
-
-      .preference-block {
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 22px;
-        background: #f9fafb;
-      }
-
-      .preference-block h3 {
-        font-size: 1rem;
-        color: var(--accent);
-        margin-bottom: 10px;
-      }
-
-      .preference-block ul {
-        margin: 0;
-        padding-left: 18px;
-        color: var(--text);
-        line-height: 1.6;
-      }
 
       .travel-ideas {
         display: grid;
@@ -148,10 +124,6 @@ const siteTitle = "La Familia – Travel Planning";
       }
 
       @media (min-width: 768px) {
-        .preferences-grid {
-          grid-template-columns: repeat(3, 1fr);
-        }
-
         .travel-ideas {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
@@ -183,37 +155,7 @@ const siteTitle = "La Familia – Travel Planning";
       </section>
 
       <section class="section">
-        <h2>Preferences</h2>
-        <div class="preferences-grid">
-          <div class="preference-block">
-            <h3>What we like</h3>
-            <ul>
-              <li>Clear logistics and reliable transit connections.</li>
-              <li>Balanced mix of structured activities and downtime.</li>
-              <li>Destinations with cultural depth and walkable areas.</li>
-            </ul>
-          </div>
-          <div class="preference-block">
-            <h3>What we avoid</h3>
-            <ul>
-              <li>Overly packed itineraries or constant relocation.</li>
-              <li>High-friction transfers or unclear local transport.</li>
-              <li>Noise-heavy areas that limit rest and focus.</li>
-            </ul>
-          </div>
-          <div class="preference-block">
-            <h3>What we look for</h3>
-            <ul>
-              <li>Comfortable base locations with flexible day options.</li>
-              <li>Weather and seasonality that match activity goals.</li>
-              <li>Costs that align with a mid-range family budget.</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <h2>How we travel</h2>
+        <h2>How we use this site</h2>
         <p>
           Planning is a staged process. Ideas are collected, compared, and refined over multiple
           rounds. Not every option becomes a trip, and incomplete notes are expected while research
@@ -222,6 +164,10 @@ const siteTitle = "La Familia – Travel Planning";
         <p>
           Each idea is treated as a working file with assumptions, alternatives, and open questions
           until a final decision is made.
+        </p>
+        <p>
+          Travel preferences and constraints are documented separately in the
+          <a href="travel-preferences/">Travel preferences</a> reference.
         </p>
       </section>
 

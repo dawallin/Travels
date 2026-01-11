@@ -1,0 +1,151 @@
+---
+const siteTitle = "Travel preferences – La Familia";
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{siteTitle}</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --text: #1f2933;
+        --muted: #5b6570;
+        --border: #d7dce1;
+        --surface: #ffffff;
+        --accent: #2f5d7c;
+        --background: #f6f7f9;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+        color: var(--text);
+        background: var(--background);
+      }
+
+      main {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 64px 24px 104px;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+      }
+
+      h1,
+      h2 {
+        margin: 0 0 12px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+
+      h1 {
+        font-size: 2.4rem;
+        line-height: 1.2;
+      }
+
+      h2 {
+        font-size: 1.1rem;
+        letter-spacing: -0.01em;
+        color: var(--text);
+      }
+
+      p {
+        margin: 0 0 16px;
+        line-height: 1.6;
+        color: var(--text);
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 18px;
+        line-height: 1.6;
+      }
+
+      .section {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 28px 32px;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 1.02rem;
+        max-width: 720px;
+      }
+
+      .tagline {
+        color: var(--muted);
+        font-size: 0.98rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="section">
+        <h1>Travel preferences</h1>
+        <p class="subtitle">
+          This page records the criteria used to evaluate destinations, routing, and trip setups.
+          It is written as a requirements reference for internal planning and advisor review.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>What we like</h2>
+        <ul>
+          <li>Clear logistics with dependable transit and walkable areas.</li>
+          <li>Balanced itineraries that leave time for rest and flexible days.</li>
+          <li>Destinations with cultural depth, local food access, and calm evenings.</li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2>What we avoid</h2>
+        <ul>
+          <li>Frequent hotel changes or multi-leg transfers that add fatigue.</li>
+          <li>Overly dense schedules that remove downtime or recovery space.</li>
+          <li>Environments with persistent noise that limit sleep and focus.</li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2>What we look for</h2>
+        <ul>
+          <li>Comfortable base locations that support short day trips.</li>
+          <li>Weather and seasonality that align with the activities planned.</li>
+          <li>Costs that fit a mid-range family budget with predictable expenses.</li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2>Constraints and considerations</h2>
+        <ul>
+          <li>Safety and health access are non-negotiable for each destination.</li>
+          <li>Transit reliability, visa needs, and travel time must stay manageable.</li>
+          <li>Accommodations need enough shared space for quiet breaks.</li>
+          <li>Environmental conditions should support walking and outdoor time.</li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2>Time-specific considerations</h2>
+        <p class="tagline">
+          These are current planning examples, not permanent criteria, and will change as our
+          schedules shift.
+        </p>
+        <ul>
+          <li>Typical availability windows are in June or July.</li>
+          <li>Near-term research favors warm or tropical climates.</li>
+          <li>Long-haul travel is reviewed when school breaks allow extra recovery time.</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
