@@ -32,10 +32,10 @@ const siteTitle = "La Familia – Travel Planning";
       main {
         max-width: 960px;
         margin: 0 auto;
-        padding: 56px 24px 96px;
+        padding: 64px 24px 104px;
         display: flex;
         flex-direction: column;
-        gap: 40px;
+        gap: 48px;
       }
 
       h1,
@@ -47,19 +47,18 @@ const siteTitle = "La Familia – Travel Planning";
       }
 
       h1 {
-        font-size: 2.2rem;
+        font-size: 2.6rem;
+        line-height: 1.15;
       }
 
       h2 {
-        font-size: 1.4rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        font-size: 0.85rem;
-        color: var(--muted);
+        font-size: 1.2rem;
+        letter-spacing: -0.01em;
+        color: var(--text);
       }
 
       p {
-        margin: 0 0 16px;
+        margin: 0 0 18px;
         line-height: 1.6;
         color: var(--text);
       }
@@ -68,42 +67,40 @@ const siteTitle = "La Familia – Travel Planning";
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: 12px;
-        padding: 28px 32px;
+        padding: 32px 36px;
       }
 
       .section-header {
-        margin-bottom: 20px;
+        margin-bottom: 16px;
       }
 
       .subtitle {
         color: var(--muted);
-        font-size: 1rem;
+        font-size: 1.05rem;
         max-width: 640px;
       }
 
       .identity {
         display: grid;
-        gap: 18px;
+        gap: 20px;
       }
 
-      .meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 18px;
+      .context {
         color: var(--muted);
-        font-size: 0.95rem;
+        font-size: 0.98rem;
+        max-width: 720px;
       }
 
       .preferences-grid {
         display: grid;
-        gap: 20px;
+        gap: 24px;
       }
 
       .preference-block {
         border: 1px solid var(--border);
         border-radius: 10px;
-        padding: 20px;
-        background: #fbfbfc;
+        padding: 22px;
+        background: #f9fafb;
       }
 
       .preference-block h3 {
@@ -171,11 +168,10 @@ const siteTitle = "La Familia – Travel Planning";
             commitments are made.
           </p>
         </div>
-        <div class="meta">
-          <span>Scope: private planning archive</span>
-          <span>Mode: iterative comparison</span>
-          <span>Audience: family + travel advisors</span>
-        </div>
+        <p class="context">
+          This private planning archive supports iterative comparison for our family and trusted
+          travel advisors, consolidating notes and options as decisions are refined.
+        </p>
       </section>
 
       <section class="section">
