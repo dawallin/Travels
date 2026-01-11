@@ -12,9 +12,10 @@
     - Baseline preferences (global, consistent across trips).
     - Theme preferences (context-specific planning frames).
   - Themes represent planning contexts, not destinations.
-  - Themes define a display name and one semantic color; the color is sourced from the theme
-    preference page and reused anywhere the theme is referenced.
-  - Trips may reference a single theme (for now) and must reuse the theme's display name and ribbon
+  - Themes define a display name, a short banner label (≤ ~10 characters), and one semantic banner
+    color; the banner label/color are sourced from the theme preference page and reused anywhere the
+    theme is referenced.
+  - Trips may reference a single theme (for now) and must reuse the theme's banner label and banner
     color when tagged on overview surfaces.
   - Trips are explored within one or more themes conceptually, but no filtering is implemented yet.
   - Rationale: keeps the landing page lightweight and generic, allows preferences to evolve without restructuring the site, and supports sharing with travel advisors as a standalone reference.
