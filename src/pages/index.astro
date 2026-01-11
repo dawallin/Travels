@@ -6,6 +6,15 @@ import { theme as skiTheme } from "./preferences/themes/ski-trip.astro";
 const siteTitle = "La Familia – Travel Planning";
 const planningThemes = [summer25Theme, rainforestTheme, skiTheme];
 const baliTheme = summer25Theme;
+const truncateBanner = (label) => (label.length > 10 ? `${label.slice(0, 9)}…` : label);
+const baselineBanner = {
+  label: "Baseline",
+  color: "#e4e7eb",
+};
+const tripBanner = {
+  label: "Trip",
+  color: "#e4e7eb",
+};
 ---
 <!doctype html>
 <html lang="en">
@@ -105,8 +114,8 @@ const baliTheme = summer25Theme;
 
       .idea-card {
         display: grid;
-        gap: 8px;
-        padding: 20px;
+        grid-template-columns: 88px 1fr;
+        gap: 16px;
         border: 1px solid var(--border);
         border-radius: 10px;
         text-decoration: none;
@@ -136,18 +145,28 @@ const baliTheme = summer25Theme;
         border-radius: 999px;
       }
 
-      .theme-ribbon {
-        position: absolute;
-        top: 12px;
-        left: -44px;
-        transform: rotate(-45deg);
-        background: var(--ribbon-color, #e6ebef);
+      .idea-banner {
+        background: var(--banner-color, #e6ebef);
         color: var(--text);
-        font-size: 0.7rem;
-        letter-spacing: 0.02em;
-        padding: 3px 56px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         text-align: center;
-        font-weight: 500;
+        padding: 12px 8px;
+        border-right: 1px solid var(--border);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .idea-card-content {
+        display: grid;
+        gap: 8px;
+        padding: 20px 20px 20px 4px;
       }
 
       .idea-title {
@@ -213,12 +232,19 @@ const baliTheme = summer25Theme;
         <h2>Planning frameworks</h2>
         <div class="frameworks">
           <div class="travel-ideas">
-            <a class="idea-card baseline-card" href="preferences/baseline/">
-              <span class="idea-title">Travel preferences – baseline</span>
-              <span class="idea-meta">
-                General criteria and constraints used to evaluate travel ideas.
-              </span>
-              <span class="idea-meta">Reference</span>
+            <a
+              class="idea-card baseline-card"
+              href="preferences/baseline/"
+              style={`--banner-color: ${baselineBanner.color}`}
+            >
+              <span class="idea-banner">{truncateBanner(baselineBanner.label)}</span>
+              <div class="idea-card-content">
+                <span class="idea-title">Travel preferences – baseline</span>
+                <span class="idea-meta">
+                  General criteria and constraints used to evaluate travel ideas.
+                </span>
+                <span class="idea-meta">Reference</span>
+              </div>
             </a>
           </div>
           <div class="frameworks-divider" aria-hidden="true"></div>
@@ -227,12 +253,14 @@ const baliTheme = summer25Theme;
               <a
                 class="idea-card"
                 href={`preferences/themes/${theme.slug}/`}
-                style={`--ribbon-color: ${theme.color}`}
+                style={`--banner-color: ${theme.bannerColor}`}
               >
-                <span class="theme-ribbon">{theme.displayName}</span>
-                <span class="idea-title">Theme: {theme.displayName}</span>
-                <span class="idea-meta">{theme.summary}</span>
-                <span class="idea-meta">{theme.status}</span>
+                <span class="idea-banner">{truncateBanner(theme.bannerLabel)}</span>
+                <div class="idea-card-content">
+                  <span class="idea-title">Theme: {theme.displayName}</span>
+                  <span class="idea-meta">{theme.summary}</span>
+                  <span class="idea-meta">{theme.status}</span>
+                </div>
               </a>
             ))}
           </div>
@@ -242,18 +270,34 @@ const baliTheme = summer25Theme;
       <section class="section">
         <h2>Travel ideas</h2>
         <div class="travel-ideas">
-          <a class="idea-card" href="trips/bali/" style={`--ribbon-color: ${baliTheme.color}`}>
-            <span class="theme-ribbon">{baliTheme.displayName}</span>
-            <span class="idea-title">Bali</span>
-            <span class="idea-meta">Status: active research • Focus: routing + lodging scenarios</span>
+          <a
+            class="idea-card"
+            href="trips/bali/"
+            style={`--banner-color: ${baliTheme.bannerColor}`}
+          >
+            <span class="idea-banner">{truncateBanner(baliTheme.bannerLabel)}</span>
+            <div class="idea-card-content">
+              <span class="idea-title">Bali</span>
+              <span class="idea-meta">
+                Status: active research • Focus: routing + lodging scenarios
+              </span>
+            </div>
           </a>
-          <a class="idea-card" href="trips/portugal/">
-            <span class="idea-title">Portugal</span>
-            <span class="idea-meta">Status: placeholder • Focus: regional options under review</span>
+          <a class="idea-card" href="trips/portugal/" style={`--banner-color: ${tripBanner.color}`}>
+            <span class="idea-banner">{truncateBanner(tripBanner.label)}</span>
+            <div class="idea-card-content">
+              <span class="idea-title">Portugal</span>
+              <span class="idea-meta">
+                Status: placeholder • Focus: regional options under review
+              </span>
+            </div>
           </a>
-          <a class="idea-card" href="trips/japan/">
-            <span class="idea-title">Japan</span>
-            <span class="idea-meta">Status: placeholder • Focus: season timing and transit costs</span>
+          <a class="idea-card" href="trips/japan/" style={`--banner-color: ${tripBanner.color}`}>
+            <span class="idea-banner">{truncateBanner(tripBanner.label)}</span>
+            <div class="idea-card-content">
+              <span class="idea-title">Japan</span>
+              <span class="idea-meta">Status: placeholder • Focus: season timing and transit costs</span>
+            </div>
           </a>
         </div>
       </section>
