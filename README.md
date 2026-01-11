@@ -1,58 +1,24 @@
 # Travels
 
-A simple repository for tracking or demonstrating travel-related features. This README is a minimal starting point — replace or expand the sections below with project-specific details.
+Travels är en helt statisk reseplanerare för att samla, jämföra och dela resmål. Allt innehåll ligger i statiska filer och publiceras via GitHub Pages.
 
-## About
-Brief description of the project and its goals. Explain what the repository contains and what problem it solves.
+## Struktur
 
-## Getting started
+- `index.html` – landningssida med resmål.
+- `assets/` – gemensam CSS och JavaScript.
+- `trips/<resmål>/` – separata resmål med datafiler (t.ex. `places.json`).
+- `specs/` – krav och valda tekniska beslut.
 
-### Prerequisites
-List any required tools or software (examples below — update for your project):
-- Git
-- Node.js and npm (for JavaScript projects)
-- Python 3 and pip (for Python projects)
-- A database (if applicable)
+## Lokalt
 
-### Installation
-Clone the repository:
+Öppna `index.html` direkt i webbläsaren eller använd en enkel statisk server:
+
 ```bash
-git clone https://github.com/dawallin/Travels.git
-cd Travels
+python -m http.server 8000
 ```
 
-Then follow your project's setup steps. Common examples:
-- JavaScript / Node:
-  ```bash
-  npm install
-  npm run build
-  npm start
-  ```
-- Python:
-  ```bash
-  python -m venv venv
-  source venv/bin/activate   # on Windows: venv\Scripts\activate
-  pip install -r requirements.txt
-  ```
+Besök sedan `http://localhost:8000`.
 
-## Usage
-Explain how to run the app, examples of common commands, or how to use the project. Include configuration or environment variables if needed.
+## Publicering
 
-## Contributing
-Guidelines for contributing:
-- Fork the repo
-- Create a feature branch: `git checkout -b feature-name`
-- Commit your changes and open a pull request
-- Keep changes small and focused; include tests when appropriate
-
-Add any coding standards, testing requirements, or review process notes here.
-
-## License
-State the project's license (e.g., MIT, Apache-2.0) or add a LICENSE file to the repo.
-
-## Contact
-Project maintainer: dawallin  
-For questions or feature requests, open an issue on this repository.
-
----
-This README is intentionally minimal — tell me what language or framework this project uses (or link me to key files) and I will update the installation and usage instructions with precise commands and examples.
+GitHub Actions publicerar automatiskt till GitHub Pages vid push till `master`.

@@ -1,0 +1,21 @@
+{
+  "destination": "Bali",
+  "currency": "IDR",
+  "places": [
+    {
+      "name": "Ubud",
+      "type": "kultur",
+      "notes": "Bas för risfält, tempel och yoga."
+    },
+    {
+      "name": "Seminyak",
+      "type": "strand",
+      "notes": "Bra restauranger och solnedgångar."
+    },
+    {
+      "name": "Nusa Penida",
+      "type": "utflykt",
+      "notes": "Dagsresa för snorkling och utsikt."
+    }
+  ]
+}
