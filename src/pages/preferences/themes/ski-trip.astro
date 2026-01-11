@@ -1,5 +1,14 @@
 ---
-const siteTitle = "Theme: Ski trip – La Familia";
+export const theme = {
+  id: "ski-trip",
+  displayName: "Ski trip",
+  status: "Draft",
+  color: "#e8edf5",
+  slug: "ski-trip",
+  summary: "Context-specific planning context for winter travel.",
+};
+
+const siteTitle = `Theme: ${theme.displayName} – La Familia`;
 ---
 <!doctype html>
 <html lang="en">
@@ -90,7 +99,7 @@ const siteTitle = "Theme: Ski trip – La Familia";
   <body>
     <main>
       <section class="section">
-        <h1>Theme: Ski trip</h1>
+        <h1>Theme: {theme.displayName}</h1>
         <p class="subtitle">
           Draft planning context for winter travel focused on ski access, quiet lodging, and
           manageable transit.
