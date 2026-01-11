@@ -1,13 +1,17 @@
 # Landing page specification
 
 ## Information architecture
-- The landing page must include four sections in this order:
+- The landing page must include five sections in this order:
   1. Identity / Context (title + subtitle).
   2. Who We Are (family composition and shared planning intent).
   3. How We Use This Site (planning process, iteration, comparison).
-  4. Travel Ideas (card-based list linking to trips/{destination}).
+  4. Planning Frameworks (card-based list linking to baseline + theme preferences).
+  5. Travel Ideas (card-based list linking to trips/{destination}).
 - Detailed preference content is intentionally excluded from the landing page.
 - Identity / Context copy is written as flowing prose, even when describing scope, mode, or audience.
+- Planning Framework cards must use the same card styling as Travel Ideas.
+- Planning Framework cards may include a plain-text status label (Reference/Active/Draft).
+- Tag-like metadata must not appear in Planning Framework cards.
 
 ## Tone and voice
 - Content must read as a professional planning workspace.
@@ -24,8 +28,9 @@
 
 ## Metadata placement
 - Structured metadata (tags, attributes, status) belongs on trip cards/pages, not on the landing page.
+  - Exception: Planning Framework cards may include a plain-text status label.
 
 ## Internal link rules
 - All internal navigation links must be relative (no leading slash).
 - Use the pattern trips/{destination}/ for travel idea cards.
-- Include a simple text link to the Travel preferences page with no CTA language.
+- Include a simple text link to the baseline preferences page with no CTA language.

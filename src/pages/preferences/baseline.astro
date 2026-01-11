@@ -1,0 +1,150 @@
+---
+const siteTitle = "Baseline preferences – La Familia";
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{siteTitle}</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --text: #1f2933;
+        --muted: #5b6570;
+        --border: #d7dce1;
+        --surface: #ffffff;
+        --accent: #2f5d7c;
+        --background: #f6f7f9;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+        color: var(--text);
+        background: var(--background);
+      }
+
+      main {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 64px 24px 104px;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+      }
+
+      h1,
+      h2 {
+        margin: 0 0 12px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+
+      h1 {
+        font-size: 2.4rem;
+        line-height: 1.2;
+      }
+
+      h2 {
+        font-size: 1.1rem;
+        letter-spacing: -0.01em;
+        color: var(--text);
+      }
+
+      p {
+        margin: 0 0 16px;
+        line-height: 1.6;
+        color: var(--text);
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 18px;
+        line-height: 1.6;
+      }
+
+      .section {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 28px 32px;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 1.02rem;
+        max-width: 720px;
+      }
+
+      .note {
+        color: var(--muted);
+        font-size: 0.98rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="section">
+        <h1>Baseline travel preferences</h1>
+        <p class="subtitle">
+          This reference captures the general criteria we use to assess destinations, routing, and
+          trip structure. It is stable across themes unless explicitly overridden by a theme page.
+        </p>
+        <p class="note">
+          These preferences reflect how we travel as a family and are intended to stay consistent
+          across multiple trip ideas.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>What we like</h2>
+        <ul>
+          <li>Walkable areas with clear logistics and dependable local transit.</li>
+          <li>Balanced itineraries that preserve recovery time and unplanned evenings.</li>
+          <li>Cultural depth, local food access, and calm nights over high-energy scenes.</li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2>What we avoid</h2>
+        <ul>
+          <li>Frequent hotel changes or multi-leg transfers that add fatigue.</li>
+          <li>Overly dense schedules that remove downtime or increase rushing.</li>
+          <li>Noise-heavy environments that affect sleep or focus.</li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2>What we look for</h2>
+        <ul>
+          <li>A stable base with options for short day trips.</li>
+          <li>Weather and seasonality that align with planned activities.</li>
+          <li>Costs that fit a mid-range family budget with predictable expenses.</li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2>Logistics style</h2>
+        <ul>
+          <li>Prefer direct flights or single-stop routing with reasonable layovers.</li>
+          <li>Prioritize ground transport that is legible, safe, and low-friction.</li>
+          <li>Accommodations should include shared space for quiet breaks.</li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2>Safety and calm vibe</h2>
+        <ul>
+          <li>Health access and safety fundamentals are non-negotiable.</li>
+          <li>We favor locations that feel calm, predictable, and suitable for rest.</li>
+          <li>Evening pacing should support early nights and low-noise environments.</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
