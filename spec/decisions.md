@@ -10,7 +10,15 @@
   - The landing page is an overview and orientation surface only.
   - Preferences are first-class planning objects with two levels:
     - Baseline preferences (global, consistent across trips).
+      - Baseline is the authoritative, non-specific reference for how trips are evaluated and
+        structured, including planning philosophy, logistics approach, family context, and risk/
+        comfort boundaries.
+      - Baseline is intentionally timeless and not tied to season, destination, or theme.
+      - Baseline uses a neutral notch for visual consistency only, not to imply thematic
+        categorization.
+      - Baseline meaning and presentation must stay in sync with spec updates.
     - Theme preferences (context-specific planning frames).
+      - Themes define time-bound or context-specific constraints separately from baseline.
   - Themes represent planning contexts, not destinations.
   - Notches are vertical bands attached to the left edge of cards, with the card background visible
     on both sides to create a wrap-through effect.

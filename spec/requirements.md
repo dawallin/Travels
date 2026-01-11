@@ -5,3 +5,5 @@
 - Each destination can have its own page and structure.
 - The site must be easy to understand and modify without deep framework knowledge.
 - Preferences are first-class planning objects, with baseline and theme-specific pages.
+- Baseline preferences are the global, non-specific reference for how trips are evaluated and
+  structured, and remain timeless across seasons, destinations, and themes.
