@@ -45,5 +45,9 @@
   - Rationale: keeps the landing page lightweight and generic, allows preferences to evolve without restructuring the site, and supports sharing with travel advisors as a standalone reference.
   - Content principles: "Who we are" remains on the landing page due to its brevity and contextual role; preferences are written as requirements-like criteria, not narrative; time-bound criteria live only on theme pages.
   - Linking rule: the landing page links to baseline and theme preferences via simple text links (no CTA), and all internal links remain relative.
+  - Preference pages are reference surfaces and must not be navigation dead ends.
+    - Each preference page includes a minimal back-link to the planning overview.
+    - The back-link stays intentionally simple and non-promotional, keeping navigation subordinate to content.
+    - No global navigation or breadcrumb system is introduced at this stage.
 - Spec files are a living reference and must be kept in sync with UI, IA, and data-model decisions.
 - Theme scope or meaning changes require a spec update in the same commit.
