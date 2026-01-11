@@ -12,11 +12,17 @@
     - Baseline preferences (global, consistent across trips).
     - Theme preferences (context-specific planning frames).
   - Themes represent planning contexts, not destinations.
-  - Themes define a display name, a short banner label (≤ ~10 characters), and one semantic banner
-    color; the banner label/color are sourced from the theme preference page and reused anywhere the
+  - Notches are vertical bands attached to the left edge of cards, with the card background visible
+    on both sides to create a wrap-through effect.
+    - Notches are identical in style across baseline, theme, and trip cards.
+    - Notch text is always vertical and limited to ≤10 characters.
+    - Notches are attached elements, not layout columns, and must not overlap content.
+    - Trips render one notch per referenced theme, up to two, side-by-side.
+  - Themes define a display name, a short notch label (≤10 characters), and one semantic notch
+    color; the notch label/color are sourced from the theme preference page and reused anywhere the
     theme is referenced.
-  - Trips may reference a single theme (for now) and must reuse the theme's banner label and banner
-    color when tagged on overview surfaces.
+  - Trips may reference up to two themes and must reuse each theme's notch label and notch color
+    when referenced on overview surfaces.
   - Trips are explored within one or more themes conceptually, but no filtering is implemented yet.
   - Rationale: keeps the landing page lightweight and generic, allows preferences to evolve without restructuring the site, and supports sharing with travel advisors as a standalone reference.
   - Content principles: "Who we are" remains on the landing page due to its brevity and contextual role; preferences are written as requirements-like criteria, not narrative; time-bound criteria live only on theme pages.
