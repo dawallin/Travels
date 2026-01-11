@@ -19,6 +19,16 @@
       - Baseline meaning and presentation must stay in sync with spec updates.
     - Theme preferences (context-specific planning frames).
       - Themes define time-bound or context-specific constraints separately from baseline.
+      - Themes are planning contexts, not destinations.
+      - Themes derive from baseline preferences and must not repeat baseline philosophy.
+      - Themes only define constraints specific to time, environment, and focus.
+      - Seasonal and weather constraints live in themes, never in baseline.
+      - Summer-2025 is the reference example of a narrowly scoped theme:
+        - Fixed mid-June to mid-July window.
+        - Deliberate rainforest + snorkeling filter.
+        - Acceptance of a reduced option set as a positive constraint.
+      - Themes own their notch text and notch color.
+      - Trips may reference themes but do not redefine them.
   - Themes represent planning contexts, not destinations.
   - Notches are vertical bands attached to the left edge of cards, with the card background visible
     on both sides to create a wrap-through effect.
@@ -36,3 +46,4 @@
   - Content principles: "Who we are" remains on the landing page due to its brevity and contextual role; preferences are written as requirements-like criteria, not narrative; time-bound criteria live only on theme pages.
   - Linking rule: the landing page links to baseline and theme preferences via simple text links (no CTA), and all internal links remain relative.
 - Spec files are a living reference and must be kept in sync with UI, IA, and data-model decisions.
+- Theme scope or meaning changes require a spec update in the same commit.
