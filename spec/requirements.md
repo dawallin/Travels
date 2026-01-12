@@ -42,6 +42,8 @@ All overview and place cards use a single generic Card component with shared sur
 - `description` provides the short summary copy.
 - The content column must be fluid (use a flexible track like a 1fr grid column or a flex item that
   can grow with `min-width: 0`) and must not be constrained by max-width/prose rules.
+- The internal layout uses a flexible content column (1fr/flex: 1) with optional leading visuals
+  and an auto-sized chip; text must stretch to the full available card width.
 - Optional leading visual (image or stripe) may appear on the left.
 - Primary semantic marker is optional and may be either:
   - Notch with text + color, or
@@ -94,6 +96,7 @@ Place rendering uses the Card component with the badge marker and optional statu
 - Avoid restrictive max-widths on the place text area; use layout rules that give the text column
   a fluid track (for example, a grid column with a flexible fraction or a flex item that can grow
   while respecting min-width: 0 behavior).
+- Place cards always include a short description summary and clamp it to 1–2 lines.
 
 ## Place hierarchy (tree)
 

@@ -17,6 +17,7 @@ const hasNotches = Array.isArray(notches) && notches.length > 0;
 const hasBadge = Boolean(badge);
 const hasLeading = Astro.slots.has("leading");
 const hasDescriptionSlot = Astro.slots.has("description");
+const hasChip = Boolean(chip);
 
 const notchMetrics = {
   width: 12,
@@ -30,13 +31,13 @@ const notchArea = hasNotches
   : 0;
 const markerArea = hasNotches ? notchArea : hasBadge ? badgeArea : 0;
 const leadingArea = hasLeading ? leadingWidth : 0;
-const leadingGap = hasLeading ? 16 : 0;
+const innerGap = hasLeading || hasChip ? 16 : 0;
 ---
 
 <a
   class={`card ${className}`}
   href={href}
-  style={`--card-marker-area: ${markerArea}px; --card-leading-width: ${leadingArea}px; --card-leading-gap: ${leadingGap}px;`}
+  style={`--card-marker-area: ${markerArea}px; --card-leading-width: ${leadingArea}px; --card-inner-gap: ${innerGap}px;`}
 >
   {hasNotches && (
     <span class="card-notches" aria-hidden="true">
@@ -73,6 +74,6 @@ const leadingGap = hasLeading ? 16 : 0;
         <span class="card-description">{description}</span>
       )}
     </div>
+    {chip && <span class={`card-chip card-chip--${chip.tone}`}>{chip.label}</span>}
   </div>
-  {chip && <span class={`card-chip card-chip--${chip.tone}`}>{chip.label}</span>}
 </a>
