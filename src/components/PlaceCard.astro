@@ -1,0 +1,21 @@
+---
+const { place, notch, href, notchArea } = Astro.props;
+
+const Tag = href ? "a" : "div";
+const cardClass = href ? "idea-card" : "idea-card idea-card--static";
+const cardAttributes = href ? { href } : { "aria-disabled": "true" };
+const formatType = (type) => type.charAt(0).toUpperCase() + type.slice(1);
+---
+
+<Tag class={cardClass} style={`--notch-area: ${notchArea}px`} {...cardAttributes}>
+  <span class="notch-stack">
+    <span class="notch" style={`--notch-color: ${notch.color}`}>
+      {notch.label}
+    </span>
+  </span>
+  <div class="idea-card-content">
+    <span class="idea-title">{place.title}</span>
+    <span class="idea-meta">{place.description}</span>
+  </div>
+  <span class="type-badge">{formatType(place.type)}</span>
+</Tag>

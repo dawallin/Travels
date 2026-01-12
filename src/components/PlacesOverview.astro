@@ -1,4 +1,6 @@
 ---
+import PlaceCard from "./PlaceCard.astro";
+
 const tripId = "bali";
 const placeModules = import.meta.glob("../data/places/bali/*.ts", { eager: true });
 const contentModules = import.meta.glob("../pages/trips/bali/places/*.md", { eager: true });
@@ -34,58 +36,46 @@ const childrenByParent = new Map();
 const ungroupedPlaces = [];
 
 sortedPlaces.forEach((place) => {
-  if (place.type === "destination" && place.parentDestinationId === tripId) {
-    return;
+  const isDestination = place.type === "destination" && place.parentDestinationId === tripId;
+  if (!isDestination) {
+    const isChild = place.type !== "destination" && destinationIds.has(place.parentDestinationId);
+    if (isChild) {
+      const group = childrenByParent.get(place.parentDestinationId) ?? [];
+      group.push(place);
+      childrenByParent.set(place.parentDestinationId, group);
+    } else {
+      ungroupedPlaces.push(place);
+    }
   }
-
-  const isChild = place.type !== "destination" && destinationIds.has(place.parentDestinationId);
-  if (isChild) {
-    const group = childrenByParent.get(place.parentDestinationId) ?? [];
-    group.push(place);
-    childrenByParent.set(place.parentDestinationId, group);
-    return;
-  }
-
-  ungroupedPlaces.push(place);
 });
 
 const getContentHref = (placeId) => (contentIds.has(placeId) ? `places/${placeId}/` : null);
-const formatType = (type) => type.charAt(0).toUpperCase() + type.slice(1);
-
-const renderPlaceCard = (place) => {
-  const notch = statusNotches[place.status] ?? statusNotches.possible;
-  const href = getContentHref(place.id);
-  const Tag = href ? "a" : "div";
-  const cardClass = href ? "idea-card" : "idea-card idea-card--static";
-  const cardAttributes = href ? { href } : { "aria-disabled": "true" };
-
-  return (
-    <Tag class={cardClass} style={`--notch-area: ${notchArea(1)}px`} {...cardAttributes}>
-      <span class="notch-stack">
-        <span class="notch" style={`--notch-color: ${notch.color}`}>
-          {notch.label}
-        </span>
-      </span>
-      <div class="idea-card-content">
-        <span class="idea-title">{place.title}</span>
-        <span class="idea-meta">{place.description}</span>
-      </div>
-      <span class="type-badge">{formatType(place.type)}</span>
-    </Tag>
-  );
-};
+const getPlaceCardProps = (place) => ({
+  place,
+  notch: statusNotches[place.status] ?? statusNotches.possible,
+  href: getContentHref(place.id),
+  notchArea: notchArea(1),
+});
 ---
 <section class="places-overview">
   {destinationPlaces.map((destination) => {
+    const destinationCardProps = getPlaceCardProps(destination);
     const destinationChildren = childrenByParent.get(destination.id) ?? [];
     return (
       <div class="destination-group">
-        <div class="destination-card">{renderPlaceCard(destination)}</div>
+        <div class="destination-card">
+          <PlaceCard {...destinationCardProps} />
+        </div>
         {destinationChildren.length > 0 && (
           <div class="child-list">
-            {destinationChildren.map((place) => (
-              <div class="child-card">{renderPlaceCard(place)}</div>
-            ))}
+            {destinationChildren.map((place) => {
+              const childCardProps = getPlaceCardProps(place);
+              return (
+                <div class="child-card">
+                  <PlaceCard {...childCardProps} />
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
@@ -96,9 +86,14 @@ const renderPlaceCard = (place) => {
     <div class="ungrouped">
       <h3>Ungrouped</h3>
       <div class="child-list">
-        {ungroupedPlaces.map((place) => (
-          <div class="child-card">{renderPlaceCard(place)}</div>
-        ))}
+        {ungroupedPlaces.map((place) => {
+          const cardProps = getPlaceCardProps(place);
+          return (
+            <div class="child-card">
+              <PlaceCard {...cardProps} />
+            </div>
+          );
+        })}
       </div>
     </div>
   )}
