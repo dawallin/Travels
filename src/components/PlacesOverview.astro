@@ -20,12 +20,6 @@ const notchArea = (count) =>
     ? notchMetrics.padding * 2 + count * notchMetrics.width + (count - 1) * notchMetrics.gap
     : 0;
 
-const statusNotches = {
-  included: { label: "Included", color: "#3f8f5f" },
-  possible: { label: "Possible", color: "#f2b531" },
-  avoid: { label: "Avoid", color: "#c57a7a" },
-};
-
 const sortedPlaces = [...places].sort((a, b) => a.title.localeCompare(b.title));
 const destinationPlaces = sortedPlaces.filter(
   (place) => place.type === "destination" && place.parentDestinationId === tripId
@@ -52,7 +46,6 @@ sortedPlaces.forEach((place) => {
 const getContentHref = (placeId) => (contentIds.has(placeId) ? `places/${placeId}/` : null);
 const getPlaceCardProps = (place) => ({
   place,
-  notch: statusNotches[place.status] ?? statusNotches.possible,
   href: getContentHref(place.id),
   notchArea: notchArea(1),
 });
@@ -131,7 +124,7 @@ const getPlaceCardProps = (place) => ({
     color: inherit;
     background: #fbfbfc;
     position: relative;
-    padding: 20px 24px 32px calc(20px + var(--notch-area, 0px));
+    padding: 20px 20px 20px calc(20px + var(--notch-area, 0px));
     display: block;
   }
 
@@ -193,17 +186,26 @@ const getPlaceCardProps = (place) => ({
     font-size: 0.9rem;
   }
 
-  .type-badge {
+  .status-tag {
     position: absolute;
     bottom: 12px;
     right: 16px;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     padding: 4px 8px;
     border-radius: 999px;
-    background: #eef1f4;
-    color: #4b5563;
+    font-weight: 600;
+  }
+
+  .status-tag--possible {
+    background: rgba(242, 181, 49, 0.18);
+    color: #b77700;
+  }
+
+  .status-tag--avoid {
+    background: rgba(197, 122, 122, 0.2);
+    color: #8d4545;
   }
 
   @media (max-width: 640px) {
