@@ -1,21 +1,34 @@
 ---
-const { place, notch, href, notchArea } = Astro.props;
+const { place, href, notchArea } = Astro.props;
 
 const Tag = href ? "a" : "div";
 const cardClass = href ? "idea-card" : "idea-card idea-card--static";
 const cardAttributes = href ? { href } : { "aria-disabled": "true" };
-const formatType = (type) => type.charAt(0).toUpperCase() + type.slice(1);
+const formatType = (type) => (type ? type.charAt(0).toUpperCase() + type.slice(1) : "Place");
+const statusColors = {
+  included: "#3f8f5f",
+  possible: "#f2b531",
+  avoid: "#c57a7a",
+};
+const statusLabels = {
+  possible: "Possible",
+  avoid: "Avoid",
+};
+const statusColor = statusColors[place.status] ?? statusColors.included;
+const statusLabel = statusLabels[place.status];
 ---
 
 <Tag class={cardClass} style={`--notch-area: ${notchArea}px`} {...cardAttributes}>
   <span class="notch-stack">
-    <span class="notch" style={`--notch-color: ${notch.color}`}>
-      {notch.label}
+    <span class="notch" style={`--notch-color: ${statusColor}`}>
+      {formatType(place.type)}
     </span>
   </span>
   <div class="idea-card-content">
     <span class="idea-title">{place.title}</span>
     <span class="idea-meta">{place.description}</span>
   </div>
-  <span class="type-badge">{formatType(place.type)}</span>
+  {statusLabel && (
+    <span class={`status-tag status-tag--${place.status}`}>{statusLabel}</span>
+  )}
 </Tag>
