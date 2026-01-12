@@ -17,7 +17,7 @@ Each place is stored as canonical data, optionally paired with a content page.
 - `id`: unique identifier used in URLs and parent relationships.
 - `title`: display name for the place.
 - `type`: controlled, short string (e.g. `destination`, `hotel`, `attraction`).
-- `status`: `included`, `possible`, or `avoid`.
+- `status`: `included`, `possible`, or `avoid` (fixed enum).
 - `parentDestinationId`: the destination that groups this place (or the trip root for top-level
   destinations).
 - `description`: short neutral summary used in cards and as starter content.
@@ -28,12 +28,13 @@ Each place is stored as canonical data, optionally paired with a content page.
 
 - Data files are canonical and required for the place to exist.
 - Markdown content pages are optional.
-- Cards are clickable only when a content page exists.
+- Places always render as full cards; linkability only depends on whether a content page exists.
+- Never render places as inline text links.
 
 ## PlaceCard UI component
 
 Place rendering uses a shared card system with TripCard, with place data bound to the same
-visual language.
+visual language and interaction affordances.
 
 **Structure**
 
@@ -42,6 +43,7 @@ visual language.
 - A notch is mandatory and matches the TripCard notch shape, position, and typography.
 - No theme tag is shown on place cards.
 - No separate type tag is shown; the type lives in the notch.
+- The notch is the primary semantic signal: color conveys status, text conveys type.
 
 **Notch**
 
@@ -83,6 +85,6 @@ visual language.
 ## Page headers
 
 - Baseline preferences, trip pages, and place pages share the same PageHeader box.
-- The back link and page title appear within the same header container.
+- The back link and page title appear within the same header container with identical styling.
 - Trip pages use the trip title in the header.
 - Place pages use `place.title` as the H1 and must always render it correctly.
