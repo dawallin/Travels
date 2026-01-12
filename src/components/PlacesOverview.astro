@@ -78,6 +78,7 @@ const getPlaceCardProps = (place) => ({
 
 <style>
   .places-overview {
+    --place-indent: 32px;
     display: grid;
     gap: 28px;
   }
@@ -91,7 +92,7 @@ const getPlaceCardProps = (place) => ({
   .child-list {
     display: grid;
     gap: 14px;
-    padding-left: 18px;
+    padding-left: var(--place-indent);
   }
 
   .ungrouped h3 {
@@ -103,7 +104,7 @@ const getPlaceCardProps = (place) => ({
 
   @media (max-width: 640px) {
     .child-list {
-      padding-left: 12px;
+      padding-left: 20px;
     }
   }
 </style>
