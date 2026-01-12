@@ -20,10 +20,9 @@
 }
 
 .card-inner {
-  display: grid;
-  grid-template-columns: var(--card-leading-width, 0px) minmax(0, 1fr);
-  gap: var(--card-leading-gap, 0px);
+  display: flex;
   align-items: center;
+  gap: var(--card-inner-gap, 0px);
   width: 100%;
 }
 
@@ -32,25 +31,30 @@
   align-items: center;
   justify-content: center;
   width: var(--card-leading-width, auto);
+  flex: 0 0 var(--card-leading-width, 0px);
 }
 
 .card-content {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex: 1 1 auto;
   min-width: 0;
-  width: 100%;
 }
 
 .card-title {
   font-size: 1.05rem;
   font-weight: 600;
+  display: block;
+  width: 100%;
 }
 
 .card-description {
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.5;
+  display: block;
+  width: 100%;
 }
 
 .card-description > * {
@@ -108,9 +112,8 @@
 }
 
 .card-chip {
-  position: absolute;
-  bottom: 12px;
-  right: 16px;
+  align-self: end;
+  margin-left: auto;
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -153,9 +156,4 @@
 .card.place-card .card-badge svg {
   width: 22px;
   height: 22px;
-}
-
-.card.place-card .card-chip {
-  bottom: 10px;
-  right: 14px;
 }
