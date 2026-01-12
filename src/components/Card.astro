@@ -8,6 +8,7 @@ const {
   notches = [],
   badge,
   chip,
+  badgeArea = 48,
   leadingWidth = 72,
   class: className = "",
 } = Astro.props;
@@ -27,7 +28,6 @@ const notchArea = hasNotches
     notches.length * notchMetrics.width +
     (notches.length - 1) * notchMetrics.gap
   : 0;
-const badgeArea = 48;
 const markerArea = hasNotches ? notchArea : hasBadge ? badgeArea : 0;
 const leadingArea = hasLeading ? leadingWidth : 0;
 const leadingGap = hasLeading ? 16 : 0;

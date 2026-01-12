@@ -68,6 +68,7 @@ Place rendering uses the Card component with the badge marker and optional statu
   - `included` → green
   - `possible` → yellow
   - `avoid` → red
+- Badge sizing treats the icon badge as a primary visual marker; it should read clearly at a glance.
 - Badge icon is driven by `place.type`.
   - `destination` → map pin icon
   - `hotel` → bed icon
@@ -89,6 +90,8 @@ Place rendering uses the Card component with the badge marker and optional statu
 - Parent and child places render as full PlaceCards.
 - Tree structure is represented by indentation only.
 - Card layout remains identical across levels.
+- Indentation uses a fixed horizontal offset per depth level and is applied to the card row/container,
+  not by shrinking the internal card content.
 - Rendering must not fall back to text lists or simple links.
 
 ## PlacesOverview widget
@@ -99,6 +102,7 @@ Place rendering uses the Card component with the badge marker and optional statu
 - Status chip appears only for `possible` and `avoid`.
 - Hierarchy is represented via indentation, not list rows or link-only entries.
 - Places without a valid parent destination appear under an Ungrouped section.
+- Place card descriptions are visually clamped to 1–2 lines to keep cards scan-friendly.
 
 ## Page headers
 

@@ -5,7 +5,10 @@
   color: inherit;
   background: #fbfbfc;
   position: relative;
-  padding: 20px 20px 20px calc(20px + var(--card-marker-area, 0px));
+  --card-padding-x: 20px;
+  --card-padding-y: 20px;
+  padding: var(--card-padding-y) var(--card-padding-x) var(--card-padding-y)
+    calc(var(--card-padding-x) + var(--card-marker-area, 0px));
   display: block;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -81,7 +84,7 @@
 
 .card-badge {
   position: absolute;
-  left: calc(20px + (var(--card-marker-area) / 2));
+  left: calc(var(--card-padding-x) + (var(--card-marker-area) / 2));
   top: 50%;
   transform: translate(-50%, -50%);
   width: var(--card-badge-size, 36px);
@@ -120,4 +123,35 @@
 .card-chip--avoid {
   background: rgba(197, 122, 122, 0.2);
   color: #8d4545;
+}
+
+.card.place-card {
+  --card-padding-x: 14px;
+  --card-padding-y: 14px;
+  --card-badge-size: 44px;
+}
+
+.card.place-card .card-inner {
+  align-items: flex-start;
+}
+
+.card.place-card .card-content {
+  gap: 6px;
+}
+
+.card.place-card .card-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.card.place-card .card-badge svg {
+  width: 22px;
+  height: 22px;
+}
+
+.card.place-card .card-chip {
+  bottom: 10px;
+  right: 14px;
 }

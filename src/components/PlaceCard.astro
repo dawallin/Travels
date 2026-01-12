@@ -41,6 +41,8 @@ const chip = statusLabel ? { label: statusLabel, tone: place.status } : null;
   title={place.title}
   description={place.description}
   href={href}
+  class="place-card"
   badge={{ color: statusColor, icon: badgeIcon, label: badgeLabel }}
   chip={chip}
+  badgeArea={56}
 />
