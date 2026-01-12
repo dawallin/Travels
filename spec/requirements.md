@@ -85,6 +85,14 @@ Place rendering uses the Card component with the badge marker and optional statu
   - `possible` → "Possible"
   - `avoid` → "Avoid"
 
+**Fluid text column**
+
+- Place card title/description must expand to fill the available card width, especially on wide
+  screens and landscape layouts.
+- Avoid restrictive max-widths on the place text area; use layout rules that give the text column
+  a fluid track (for example, a grid column with a flexible fraction or a flex item that can grow
+  while respecting min-width: 0 behavior).
+
 ## Place hierarchy (tree)
 
 - Parent and child places render as full PlaceCards.

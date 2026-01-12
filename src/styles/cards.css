@@ -21,7 +21,7 @@
 
 .card-inner {
   display: grid;
-  grid-template-columns: var(--card-leading-width, 0px) 1fr;
+  grid-template-columns: var(--card-leading-width, 0px) minmax(0, 1fr);
   gap: var(--card-leading-gap, 0px);
   align-items: center;
 }
@@ -36,6 +36,7 @@
 .card-content {
   display: grid;
   gap: 8px;
+  min-width: 0;
 }
 
 .card-title {

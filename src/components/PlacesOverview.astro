@@ -81,18 +81,26 @@ const getPlaceCardProps = (place) => ({
     --place-indent: 32px;
     display: grid;
     gap: 28px;
+    width: 100%;
   }
 
   .destination-group,
   .ungrouped {
     display: grid;
     gap: 16px;
+    width: 100%;
   }
 
   .child-list {
     display: grid;
     gap: 14px;
     padding-left: var(--place-indent);
+    width: 100%;
+  }
+
+  .destination-card,
+  .child-card {
+    width: 100%;
   }
 
   .ungrouped h3 {
