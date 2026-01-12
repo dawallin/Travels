@@ -2,6 +2,7 @@
 import { theme as summer25Theme } from "./preferences/themes/summer-2025.astro";
 import { theme as rainforestTheme } from "./preferences/themes/summer-rainforest-snorkeling.astro";
 import { theme as skiTheme } from "./preferences/themes/ski-trip.astro";
+import "../styles/idea-cards.css";
 
 const siteTitle = "La Familia – Travel Planning";
 const planningThemes = [summer25Theme, rainforestTheme, skiTheme];
@@ -149,22 +150,6 @@ const getTripNotches = (themeIds) =>
         gap: 18px;
       }
 
-      .idea-card {
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        text-decoration: none;
-        color: inherit;
-        background: #fbfbfc;
-        position: relative;
-        padding: 20px 20px 20px calc(20px + var(--notch-area, 0px));
-        display: block;
-      }
-
-      .idea-card:hover,
-      .idea-card:focus {
-        border-color: var(--accent);
-      }
-
       .baseline-card {
         background: #f5f6f8;
       }
@@ -178,50 +163,6 @@ const getTripNotches = (themeIds) =>
         height: 1px;
         background: var(--border);
         border-radius: 999px;
-      }
-
-      .notch-stack {
-        position: absolute;
-        inset: 0 auto 0 0;
-        display: flex;
-        align-items: stretch;
-        gap: var(--notch-gap);
-        padding: 8px var(--notch-padding);
-        width: var(--notch-area);
-        pointer-events: none;
-      }
-
-      .notch {
-        background: var(--notch-color, #e6ebef);
-        color: var(--text);
-        font-size: 0.62rem;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        width: var(--notch-width);
-        border-radius: 8px;
-        writing-mode: vertical-rl;
-        text-orientation: mixed;
-        white-space: nowrap;
-      }
-
-      .idea-card-content {
-        display: grid;
-        gap: 8px;
-      }
-
-      .idea-title {
-        font-size: 1.05rem;
-        font-weight: 600;
-      }
-
-      .idea-meta {
-        color: var(--muted);
-        font-size: 0.9rem;
       }
 
       @media (min-width: 768px) {
