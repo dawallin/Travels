@@ -1,0 +1,79 @@
+---
+const { title, backHref = "../../" } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} • Travels</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --text: #1f2933;
+        --muted: #5b6570;
+        --border: #d7dce1;
+        --surface: #ffffff;
+        --background: #f6f7f9;
+        --accent: #2f5d7c;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+        color: var(--text);
+        background: var(--background);
+      }
+
+      main {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 64px 24px 104px;
+        display: grid;
+        gap: 20px;
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 2.2rem;
+        letter-spacing: -0.02em;
+      }
+
+      p {
+        margin: 0 0 16px;
+        line-height: 1.6;
+        color: var(--text);
+      }
+
+      .back-link {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.95rem;
+      }
+
+      .content {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 28px 32px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <a class="back-link" href={backHref}>Back to Bali overview</a>
+      <section class="content">
+        <h1>{title}</h1>
+        <slot />
+      </section>
+    </main>
+  </body>
+</html>
