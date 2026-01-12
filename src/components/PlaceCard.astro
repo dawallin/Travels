@@ -1,10 +1,14 @@
 ---
-const { place, href, notchArea } = Astro.props;
+const { place, href } = Astro.props;
 
 const Tag = href ? "a" : "div";
 const cardClass = href ? "idea-card" : "idea-card idea-card--static";
 const cardAttributes = href ? { href } : { "aria-disabled": "true" };
-const formatType = (type) => (type ? type.charAt(0).toUpperCase() + type.slice(1) : "Place");
+const truncateNotch = (label) => (label.length > 10 ? `${label.slice(0, 9)}…` : label);
+const notchMetrics = {
+  width: 12,
+  padding: 6,
+};
 const statusColors = {
   included: "#3f8f5f",
   possible: "#f2b531",
@@ -16,12 +20,15 @@ const statusLabels = {
 };
 const statusColor = statusColors[place.status] ?? statusColors.included;
 const statusLabel = statusLabels[place.status];
+const notchArea = notchMetrics.padding * 2 + notchMetrics.width;
+const typeLabel = place.type ?? "Place";
+const notchLabel = truncateNotch(typeLabel);
 ---
 
 <Tag class={cardClass} style={`--notch-area: ${notchArea}px`} {...cardAttributes}>
   <span class="notch-stack">
     <span class="notch" style={`--notch-color: ${statusColor}`}>
-      {formatType(place.type)}
+      {notchLabel}
     </span>
   </span>
   <div class="idea-card-content">

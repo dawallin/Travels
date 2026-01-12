@@ -1,4 +1,6 @@
 ---
+import PageHeader from "../components/PageHeader.astro";
+
 const { title, backHref = "../../" } = Astro.props;
 ---
 <!doctype html>
@@ -76,10 +78,7 @@ const { title, backHref = "../../" } = Astro.props;
   </head>
   <body>
     <main>
-      <section class="section">
-        <a class="back-link" href={backHref}>← Back to Bali overview</a>
-        <h1>{title}</h1>
-      </section>
+      <PageHeader title={title} backHref={backHref} backLabel="← Back to Bali overview" />
       <section class="section">
         <slot />
       </section>

@@ -10,16 +10,6 @@ const contentIds = new Set(
   Object.keys(contentModules).map((path) => path.split("/").pop()?.replace(".md", ""))
 );
 
-const notchMetrics = {
-  width: 12,
-  gap: 4,
-  padding: 6,
-};
-const notchArea = (count) =>
-  count > 0
-    ? notchMetrics.padding * 2 + count * notchMetrics.width + (count - 1) * notchMetrics.gap
-    : 0;
-
 const sortedPlaces = [...places].sort((a, b) => a.title.localeCompare(b.title));
 const destinationPlaces = sortedPlaces.filter(
   (place) => place.type === "destination" && place.parentDestinationId === tripId
@@ -47,7 +37,6 @@ const getContentHref = (placeId) => (contentIds.has(placeId) ? `places/${placeId
 const getPlaceCardProps = (place) => ({
   place,
   href: getContentHref(place.id),
-  notchArea: notchArea(1),
 });
 ---
 <section class="places-overview">
