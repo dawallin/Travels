@@ -1,0 +1,120 @@
+---
+import "leaflet/dist/leaflet.css";
+
+const {
+  markers = [],
+  label = "Map overview",
+  mapId = "bali-map",
+  singleMarkerZoom = 11,
+} = Astro.props;
+
+const mapTilerKey = import.meta.env.PUBLIC_MAPTILER_KEY;
+const normalizedMarkers = Array.isArray(markers) ? markers : [];
+
+const validMarkers = normalizedMarkers
+  .map((marker) => ({
+    title: marker.title ?? marker.name ?? "",
+    lat: Number(marker.lat ?? marker.latitude),
+    lon: Number(marker.lon ?? marker.lng ?? marker.longitude),
+  }))
+  .filter(
+    (marker) =>
+      Number.isFinite(marker.lat) &&
+      Number.isFinite(marker.lon) &&
+      Math.abs(marker.lat) <= 90 &&
+      Math.abs(marker.lon) <= 180
+  );
+
+if (!mapTilerKey) {
+  console.warn("[MapWidget] Missing PUBLIC_MAPTILER_KEY; map hidden.");
+}
+
+const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
+---
+
+{shouldRenderMap && (
+  <section class="map-widget" aria-label={label}>
+    <h3 class="map-title">{label}</h3>
+    <div id={mapId} class="map-canvas" aria-label={`${label} map`} role="region"></div>
+    <script
+      type="module"
+      define:vars={{
+        mapId,
+        markers: validMarkers,
+        mapTilerKey,
+        singleMarkerZoom,
+      }}
+    >
+      import L from "leaflet";
+      import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
+      import iconUrl from "leaflet/dist/images/marker-icon.png";
+      import shadowUrl from "leaflet/dist/images/marker-shadow.png";
+
+      const mapElement = document.getElementById(mapId);
+
+      if (mapElement) {
+        L.Icon.Default.mergeOptions({
+          iconRetinaUrl,
+          iconUrl,
+          shadowUrl,
+        });
+
+        const map = L.map(mapElement, {
+          scrollWheelZoom: false,
+        });
+
+        const tileLayer = L.tileLayer(
+          `https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${mapTilerKey}`,
+          {
+            attribution:
+              '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+          }
+        );
+
+        tileLayer.addTo(map);
+
+        const bounds = L.latLngBounds([]);
+
+        markers.forEach((marker) => {
+          const position = [marker.lat, marker.lon];
+          L.marker(position, { title: marker.title }).addTo(map);
+          bounds.extend(position);
+        });
+
+        if (markers.length === 1) {
+          map.setView([markers[0].lat, markers[0].lon], singleMarkerZoom);
+        } else if (markers.length > 1) {
+          map.fitBounds(bounds, { padding: [24, 24] });
+        }
+      }
+    </script>
+  </section>
+)}
+
+<style>
+  .map-widget {
+    display: grid;
+    gap: 12px;
+  }
+
+  .map-title {
+    margin: 0;
+    font-size: 1.05rem;
+    letter-spacing: 0.01em;
+    color: var(--text);
+  }
+
+  .map-canvas {
+    width: 100%;
+    height: 320px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  @media (max-width: 640px) {
+    .map-canvas {
+      height: 280px;
+    }
+  }
+</style>

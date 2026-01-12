@@ -1,8 +1,16 @@
 ---
 import PageHeader from "../../../components/PageHeader.astro";
 import PlacesOverview from "../../../components/PlacesOverview.astro";
+import MapWidget from "../../../components/MapWidget.astro";
 
 const destination = "Bali";
+const placeModules = import.meta.glob("../../../data/places/bali/*.ts", { eager: true });
+const places = Object.values(placeModules).map((module) => module.default ?? module.place ?? module);
+const mapMarkers = places.map((place) => ({
+  title: place.title,
+  latitude: place.latitude,
+  longitude: place.longitude,
+}));
 ---
 <!doctype html>
 <html lang="en">
@@ -112,6 +120,7 @@ const destination = "Bali";
           Destinations are grouped with their immediate hotels and attractions. Status badges
           highlight how each place is currently tracked.
         </p>
+        <MapWidget label="Bali map" markers={mapMarkers} />
         <PlacesOverview />
       </section>
     </main>
