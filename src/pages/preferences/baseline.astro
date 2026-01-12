@@ -1,4 +1,6 @@
 ---
+import PageHeader from "../../components/PageHeader.astro";
+
 const siteTitle = "Baseline preferences – La Familia";
 ---
 <!doctype html>
@@ -102,9 +104,7 @@ const siteTitle = "Baseline preferences – La Familia";
   </head>
   <body>
     <main>
-      <section class="section">
-        <a class="back-link" href="../../">← Back to overview</a>
-        <h1>Baseline travel preferences</h1>
+      <PageHeader title="Baseline travel preferences" backHref="../../" backLabel="← Back to overview">
         <p>
           This travel archive exists to support thoughtful, long-term planning rather than
           inspiration or presentation. It reflects how we evaluate, structure and secure our trips
@@ -174,7 +174,7 @@ const siteTitle = "Baseline preferences – La Familia";
           This baseline is intentionally non-specific. Seasonal priorities, thematic focus and
           concrete constraints are defined separately.
         </p>
-      </section>
+      </PageHeader>
     </main>
   </body>
 </html>
