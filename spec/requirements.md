@@ -40,6 +40,8 @@ All overview and place cards use a single generic Card component with shared sur
 - Entire card is clickable (the link wraps the card).
 - `title` is the primary text.
 - `description` provides the short summary copy.
+- The content column must be fluid (use a flexible track like a 1fr grid column or a flex item that
+  can grow with `min-width: 0`) and must not be constrained by max-width/prose rules.
 - Optional leading visual (image or stripe) may appear on the left.
 - Primary semantic marker is optional and may be either:
   - Notch with text + color, or
