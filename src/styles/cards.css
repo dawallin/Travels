@@ -1,0 +1,123 @@
+.card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  background: #fbfbfc;
+  position: relative;
+  padding: 20px 20px 20px calc(20px + var(--card-marker-area, 0px));
+  display: block;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover,
+.card:focus {
+  border-color: var(--accent);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+}
+
+.card-inner {
+  display: grid;
+  grid-template-columns: var(--card-leading-width, 0px) 1fr;
+  gap: var(--card-leading-gap, 0px);
+  align-items: center;
+}
+
+.card-leading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--card-leading-width, auto);
+}
+
+.card-content {
+  display: grid;
+  gap: 8px;
+}
+
+.card-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.card-description {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.card-description > * {
+  display: block;
+}
+
+.card-notches {
+  position: absolute;
+  inset: 0 auto 0 0;
+  display: flex;
+  align-items: stretch;
+  gap: var(--notch-gap);
+  padding: 8px var(--notch-padding);
+  width: var(--card-marker-area);
+  pointer-events: none;
+}
+
+.card-notch {
+  background: var(--card-notch-color, #e6ebef);
+  color: var(--text);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: var(--notch-width);
+  border-radius: 8px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  white-space: nowrap;
+}
+
+.card-badge {
+  position: absolute;
+  left: calc(20px + (var(--card-marker-area) / 2));
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: var(--card-badge-size, 36px);
+  height: var(--card-badge-size, 36px);
+  border-radius: 999px;
+  background: var(--card-badge-color, #d0d6dd);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.card-badge svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.card-chip {
+  position: absolute;
+  bottom: 12px;
+  right: 16px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.card-chip--possible {
+  background: rgba(242, 181, 49, 0.18);
+  color: #b77700;
+}
+
+.card-chip--avoid {
+  background: rgba(197, 122, 122, 0.2);
+  color: #8d4545;
+}

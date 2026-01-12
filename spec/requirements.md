@@ -28,43 +28,61 @@ Each place is stored as canonical data, optionally paired with a content page.
 
 - Data files are canonical and required for the place to exist.
 - Markdown content pages are optional.
-- Places always render as full cards; linkability only depends on whether a content page exists.
+- Places always render as full cards and always link to their place detail path.
 - Never render places as inline text links.
 
-## PlaceCard UI component
+## Card UI component
 
-Place rendering uses a shared card system with TripCard, with place data bound to the same
-visual language and interaction affordances.
+All overview and place cards use a single generic Card component with shared surface styling.
 
 **Structure**
 
-- Entire card is clickable when a content page exists.
-- `place.title` is the primary title.
-- A notch is mandatory and matches the TripCard notch shape, position, and typography.
-- No theme tag is shown on place cards.
-- No separate type tag is shown; the type lives in the notch.
-- The notch is the primary semantic signal: color conveys status, text conveys type.
+- Entire card is clickable (the link wraps the card).
+- `title` is the primary text.
+- `description` provides the short summary copy.
+- Optional leading visual (image or stripe) may appear on the left.
+- Primary semantic marker is optional and may be either:
+  - Notch with text + color, or
+  - Circular icon badge with color + icon.
+- Never render both notch and badge on the same card.
+- Secondary chip is optional and sits at the bottom-right corner.
 
-**Notch**
+**Notch marker**
 
-- Notch text is always `place.type`, with fallback text `Place` if missing.
 - Notch text is short and constrained to a single line.
-- Notch color is driven by `place.status`.
+- Notch color is caller-defined (themes, trips, etc.).
+- Notch typography, shape, and position are shared across the site.
+
+**Secondary chip**
+
+- Render as a small, subdued chip/tag.
+- Position is secondary to title/primary marker (e.g. lower-right corner).
+
+## Place card affordances
+
+Place rendering uses the Card component with the badge marker and optional status chip.
+
+**Badge marker**
+
+- Badge color is driven by `place.status`.
   - `included` → green
   - `possible` → yellow
   - `avoid` → red
-- No iconography inside the notch.
+- Badge icon is driven by `place.type`.
+  - `destination` → map pin icon
+  - `hotel` → bed icon
+  - `attraction` → building/landmark icon
+- No type text is shown on the card.
+- The badge includes accessible text (aria-label/title) for the type.
 
-**Status tag**
+**Status chip**
 
 - Display only for `possible` and `avoid`.
 - Never display for `included`.
-- Render as a small, subdued chip/tag.
 - Match the status color.
 - Text:
   - `possible` → "Possible"
   - `avoid` → "Avoid"
-- Position is secondary to title/notch (e.g. lower-right corner).
 
 ## Place hierarchy (tree)
 
@@ -76,9 +94,9 @@ visual language and interaction affordances.
 ## PlacesOverview widget
 
 - Renders a PlaceCard tree for the trip.
-- Uses the same card styling and notch shape as the landing page cards.
-- Notch represents status color plus type text.
-- Status tag appears only for `possible` and `avoid`.
+- Uses the shared Card surface styling.
+- Badge represents status color plus type icon.
+- Status chip appears only for `possible` and `avoid`.
 - Hierarchy is represented via indentation, not list rows or link-only entries.
 - Places without a valid parent destination appear under an Ungrouped section.
 

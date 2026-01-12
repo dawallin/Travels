@@ -1,0 +1,78 @@
+---
+import "../styles/cards.css";
+
+const {
+  title,
+  description,
+  href,
+  notches = [],
+  badge,
+  chip,
+  leadingWidth = 72,
+  class: className = "",
+} = Astro.props;
+
+const hasNotches = Array.isArray(notches) && notches.length > 0;
+const hasBadge = Boolean(badge);
+const hasLeading = Astro.slots.has("leading");
+const hasDescriptionSlot = Astro.slots.has("description");
+
+const notchMetrics = {
+  width: 12,
+  gap: 4,
+  padding: 6,
+};
+const notchArea = hasNotches
+  ? notchMetrics.padding * 2 +
+    notches.length * notchMetrics.width +
+    (notches.length - 1) * notchMetrics.gap
+  : 0;
+const badgeArea = 48;
+const markerArea = hasNotches ? notchArea : hasBadge ? badgeArea : 0;
+const leadingArea = hasLeading ? leadingWidth : 0;
+const leadingGap = hasLeading ? 16 : 0;
+---
+
+<a
+  class={`card ${className}`}
+  href={href}
+  style={`--card-marker-area: ${markerArea}px; --card-leading-width: ${leadingArea}px; --card-leading-gap: ${leadingGap}px;`}
+>
+  {hasNotches && (
+    <span class="card-notches" aria-hidden="true">
+      {notches.map((notch) => (
+        <span class="card-notch" style={`--card-notch-color: ${notch.color}`}>
+          {notch.label}
+        </span>
+      ))}
+    </span>
+  )}
+  {hasBadge && (
+    <span
+      class="card-badge"
+      style={`--card-badge-color: ${badge.color}`}
+      aria-label={badge.label}
+      title={badge.label}
+    >
+      <span class="card-badge-icon" set:html={badge.icon} />
+    </span>
+  )}
+  <div class="card-inner">
+    {hasLeading && (
+      <div class="card-leading">
+        <slot name="leading" />
+      </div>
+    )}
+    <div class="card-content">
+      <span class="card-title">{title}</span>
+      {hasDescriptionSlot ? (
+        <div class="card-description">
+          <slot name="description" />
+        </div>
+      ) : (
+        <span class="card-description">{description}</span>
+      )}
+    </div>
+  </div>
+  {chip && <span class={`card-chip card-chip--${chip.tone}`}>{chip.label}</span>}
+</a>

@@ -3,12 +3,7 @@ import PlaceCard from "./PlaceCard.astro";
 
 const tripId = "bali";
 const placeModules = import.meta.glob("../data/places/bali/*.ts", { eager: true });
-const contentModules = import.meta.glob("../pages/trips/bali/places/*.md", { eager: true });
-
 const places = Object.values(placeModules).map((module) => module.default ?? module.place ?? module);
-const contentIds = new Set(
-  Object.keys(contentModules).map((path) => path.split("/").pop()?.replace(".md", ""))
-);
 
 const sortedPlaces = [...places].sort((a, b) => a.title.localeCompare(b.title));
 const destinationPlaces = sortedPlaces.filter(
@@ -33,7 +28,7 @@ sortedPlaces.forEach((place) => {
   }
 });
 
-const getContentHref = (placeId) => (contentIds.has(placeId) ? `places/${placeId}/` : null);
+const getContentHref = (placeId) => `places/${placeId}/`;
 const getPlaceCardProps = (place) => ({
   place,
   href: getContentHref(place.id),
