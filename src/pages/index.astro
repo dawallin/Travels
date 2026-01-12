@@ -2,21 +2,12 @@
 import { theme as summer25Theme } from "./preferences/themes/summer-2025.astro";
 import { theme as rainforestTheme } from "./preferences/themes/summer-rainforest-snorkeling.astro";
 import { theme as skiTheme } from "./preferences/themes/ski-trip.astro";
-import "../styles/idea-cards.css";
+import Card from "../components/Card.astro";
 
 const siteTitle = "La Familia – Travel Planning";
 const planningThemes = [summer25Theme, rainforestTheme, skiTheme];
 const themesById = Object.fromEntries(planningThemes.map((theme) => [theme.id, theme]));
 const truncateNotch = (label) => (label.length > 10 ? `${label.slice(0, 9)}…` : label);
-const notchMetrics = {
-  width: 12,
-  gap: 4,
-  padding: 6,
-};
-const notchArea = (count) =>
-  count > 0
-    ? notchMetrics.padding * 2 + count * notchMetrics.width + (count - 1) * notchMetrics.gap
-    : 0;
 const baselineNotch = {
   label: "Baseline",
   color: "#e4e7eb",
@@ -218,44 +209,31 @@ const getTripNotches = (themeIds) =>
         <h2>Planning frameworks</h2>
         <div class="frameworks">
           <div class="travel-ideas">
-            <a
-              class="idea-card baseline-card"
+            <Card
+              class="baseline-card"
+              title="Travel preferences – baseline"
               href="preferences/baseline/"
-              style={`--notch-area: ${notchArea(1)}px`}
+              notches={[{ label: truncateNotch(baselineNotch.label), color: baselineNotch.color }]}
             >
-              <span class="notch-stack">
-                <span class="notch" style={`--notch-color: ${baselineNotch.color}`}>
-                  {truncateNotch(baselineNotch.label)}
-                </span>
-              </span>
-              <div class="idea-card-content">
-                <span class="idea-title">Travel preferences – baseline</span>
-                <span class="idea-meta">
-                  General criteria and constraints used to evaluate travel ideas.
-                </span>
-                <span class="idea-meta">Reference</span>
+              <div slot="description">
+                <span>General criteria and constraints used to evaluate travel ideas.</span>
+                <span>Reference</span>
               </div>
-            </a>
+            </Card>
           </div>
           <div class="frameworks-divider" aria-hidden="true"></div>
           <div class="travel-ideas">
             {planningThemes.map((theme) => (
-              <a
-                class="idea-card"
+              <Card
+                title={`Theme: ${theme.displayName}`}
                 href={`preferences/themes/${theme.slug}/`}
-                style={`--notch-area: ${notchArea(1)}px`}
+                notches={[{ label: truncateNotch(theme.notchLabel), color: theme.notchColor }]}
               >
-                <span class="notch-stack">
-                  <span class="notch" style={`--notch-color: ${theme.notchColor}`}>
-                    {truncateNotch(theme.notchLabel)}
-                  </span>
-                </span>
-                <div class="idea-card-content">
-                  <span class="idea-title">Theme: {theme.displayName}</span>
-                  <span class="idea-meta">{theme.summary}</span>
-                  <span class="idea-meta">{theme.status}</span>
+                <div slot="description">
+                  <span>{theme.summary}</span>
+                  <span>{theme.status}</span>
                 </div>
-              </a>
+              </Card>
             ))}
           </div>
         </div>
@@ -267,25 +245,15 @@ const getTripNotches = (themeIds) =>
           {trips.map((trip) => {
             const notches = getTripNotches(trip.themeIds);
             return (
-              <a
-                class="idea-card"
+              <Card
+                title={trip.destination}
+                description={trip.status}
                 href={trip.href}
-                style={`--notch-area: ${notchArea(notches.length)}px`}
-              >
-                {notches.length > 0 && (
-                  <span class="notch-stack">
-                    {notches.map((notch) => (
-                      <span class="notch" style={`--notch-color: ${notch.color}`}>
-                        {truncateNotch(notch.label)}
-                      </span>
-                    ))}
-                  </span>
-                )}
-                <div class="idea-card-content">
-                  <span class="idea-title">{trip.destination}</span>
-                  <span class="idea-meta">{trip.status}</span>
-                </div>
-              </a>
+                notches={notches.map((notch) => ({
+                  label: truncateNotch(notch.label),
+                  color: notch.color,
+                }))}
+              />
             );
           })}
         </div>
