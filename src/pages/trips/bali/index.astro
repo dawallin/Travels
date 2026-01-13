@@ -2,7 +2,7 @@
 import PageHeader from "../../../components/PageHeader.astro";
 import PlacesOverview from "../../../components/PlacesOverview.astro";
 import MapWidget from "../../../components/MapWidget.astro";
-import DebugWidgetLoader from "../../../components/DebugWidgetLoader.astro";
+import DebugDock from "../../../components/DebugDock.astro";
 
 const destination = "Bali";
 const placeModules = import.meta.glob("../../../data/places/bali/*.ts", { eager: true });
@@ -109,8 +109,8 @@ const mapMarkers = places.map((place) => ({
     </style>
   </head>
   <body>
+    <DebugDock pageKey="bali" />
     <main>
-      <DebugWidgetLoader pageKey="bali" />
       <PageHeader title={destination} backHref="../../" backLabel="← Back to trips">
         <p class="intro">
           Research snapshot for destinations and supporting stays currently under consideration.

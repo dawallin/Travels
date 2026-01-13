@@ -1,16 +1,17 @@
 # Debug Widget (Implemented)
 
 ## Purpose
-Provide a production-safe, opt-in, in-page debug console for diagnosing issues (e.g., map markers or tiles) without shipping debug data when the feature is disabled.
+Provide a production-safe, always-available in-page debug console for diagnosing issues (e.g., map markers or tiles) without requiring server runtime checks.
 
 ## Activation
-* Enabled only when the current request URL includes `?debug=true`.
-* In static deployments, activation is determined **client-side** by parsing `window.location.search`.
-* When disabled, the widget is not rendered and no initial log payload is loaded.
+* A small bug icon is always visible in the top-right header/navigation area on every page.
+* The debug panel is **hidden by default** and toggled by clicking the bug icon.
+* Optional: `?debug=true` auto-opens the panel on load (client-side only).
+* The widget is always rendered in the DOM so it works in static deployments.
 
 ## UI behavior
-* Renders at the top of the page content area.
-* Default state is **collapsed** with a single bar showing **Debug** and the current log count.
+* The bug icon is always available in the header area and toggles the panel.
+* The panel is an overlay that opens on demand.
 * Expanded state shows:
   * A list of log entries in index order.
   * Each entry displays its source and message.
@@ -29,10 +30,9 @@ Each entry includes:
 * Oldest entries are dropped as new entries are added.
 
 ## SSR + client log behavior
-* Initial logs can be generated at build time (static output) and loaded on demand.
-* The client logger seeds from initial logs so they appear at the top of the list before client-side entries.
-* Client-side logs are appended in index order at runtime via `window.__travelsDebug`.
-* In static output, the debug widget bootstraps on the client and dynamically loads initial log data **only** when `debug=true` is present.
+* The logger is always available at runtime as `window.__travelsDebug`.
+* Client-side logs are appended in index order at runtime.
+* Initial logs can be lazy-loaded on first open to keep payloads small.
 
 ## Secret-handling guardrail
 * **Do not log secrets.**

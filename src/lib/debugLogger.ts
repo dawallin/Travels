@@ -18,13 +18,7 @@ export type DebugLogger = {
 
 const MAX_ENTRIES = 200;
 
-const isDebugEnabled = () => {
-  if (typeof window === "undefined") {
-    return false;
-  }
-
-  return new URLSearchParams(window.location.search).get("debug") === "true";
-};
+const isDebugEnabled = () => typeof window !== "undefined";
 
 const createLogger = (): DebugLogger => {
   let entries: DebugEntry[] = [];
@@ -45,10 +39,6 @@ const createLogger = (): DebugLogger => {
 
   return {
     log: (source, message, data = "") => {
-      if (!isDebugEnabled()) {
-        return;
-      }
-
       const entry: DebugEntry = {
         index,
         source,
@@ -73,10 +63,6 @@ const createLogger = (): DebugLogger => {
       };
     },
     seed: (seedEntries) => {
-      if (!isDebugEnabled()) {
-        return;
-      }
-
       if (!Array.isArray(seedEntries) || seedEntries.length === 0) {
         return;
       }
