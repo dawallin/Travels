@@ -3,7 +3,6 @@ import PageHeader from "../../../components/PageHeader.astro";
 import PlacesOverview from "../../../components/PlacesOverview.astro";
 import MapWidget from "../../../components/MapWidget.astro";
 import DebugWidgetLoader from "../../../components/DebugWidgetLoader.astro";
-import { getBaliInitialLogs } from "../../../lib/debugLogs/bali";
 
 const destination = "Bali";
 const placeModules = import.meta.glob("../../../data/places/bali/*.ts", { eager: true });
@@ -13,12 +12,6 @@ const mapMarkers = places.map((place) => ({
   latitude: place.latitude,
   longitude: place.longitude,
 }));
-const requestUrl = Astro.request?.url ? new URL(Astro.request.url) : Astro.url;
-const debugEnabled = requestUrl?.searchParams.get("debug") === "true";
-const initialLogs = debugEnabled ? getBaliInitialLogs() : [];
-const DebugWidget = debugEnabled
-  ? (await import("../../../components/DebugWidget.astro")).default
-  : null;
 ---
 <!doctype html>
 <html lang="en">
@@ -118,7 +111,6 @@ const DebugWidget = debugEnabled
   <body>
     <main>
       <DebugWidgetLoader pageKey="bali" />
-      {DebugWidget && <DebugWidget enabled={debugEnabled} initialLogs={initialLogs} />}
       <PageHeader title={destination} backHref="../../" backLabel="← Back to trips">
         <p class="intro">
           Research snapshot for destinations and supporting stays currently under consideration.

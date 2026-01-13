@@ -5,7 +5,8 @@ Provide a production-safe, opt-in, in-page debug console for diagnosing issues (
 
 ## Activation
 * Enabled only when the current request URL includes `?debug=true`.
-* When disabled, the widget is not rendered and no SSR log payload is embedded.
+* In static deployments, activation is determined **client-side** by parsing `window.location.search`.
+* When disabled, the widget is not rendered and no initial log payload is loaded.
 
 ## UI behavior
 * Renders at the top of the page content area.
@@ -28,15 +29,15 @@ Each entry includes:
 * Oldest entries are dropped as new entries are added.
 
 ## SSR + client log behavior
-* SSR logs are collected per request when `debug=true` and embedded into the page as initial log entries.
-* The client logger seeds from SSR logs so they appear at the top of the list before client-side entries.
+* Initial logs can be generated at build time (static output) and loaded on demand.
+* The client logger seeds from initial logs so they appear at the top of the list before client-side entries.
 * Client-side logs are appended in index order at runtime via `window.__travelsDebug`.
-* In static output, the debug widget bootstraps on the client and dynamically loads initial log data only when `debug=true` is present.
+* In static output, the debug widget bootstraps on the client and dynamically loads initial log data **only** when `debug=true` is present.
 
 ## Secret-handling guardrail
 * **Do not log secrets.**
 * The debug widget does not detect or mask secrets automatically.
-* **Responsibility is on the producer** (component/page that logs).
+* **Responsibility is on the producer** (component/page that logs) to mask sensitive values.
 * Recommendation: log **presence/length/prefix** instead of full tokens when in doubt.
 * The MapTiler client key is not considered a secret, but the guardrail still applies to other data.
 
