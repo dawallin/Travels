@@ -1,144 +1,204 @@
 ---
-type DebugEntry = {
-  index: number;
-  source: string;
-  message: string;
-  data: string;
-};
+import type { DebugEntry } from "../lib/debugLogger";
 
 type Props = {
-  enabled: boolean;
   initialLogs?: DebugEntry[];
+  pageKey?: string;
 };
 
-const { enabled, initialLogs = [] } = Astro.props;
+const { initialLogs = [], pageKey } = Astro.props;
 ---
-{enabled && (
-  <section class="debug-widget" data-debug-widget>
-    <div class="debug-header" data-debug-toggle>
-      <strong>Debug</strong>
-      <span class="debug-count" data-debug-count>0</span>
-      <span class="debug-chevron" aria-hidden="true">▾</span>
-    </div>
-    <div class="debug-panel" data-debug-panel hidden>
-      <div class="debug-controls">
-        <span class="debug-title">Logs</span>
-        <div class="debug-actions">
-          <button type="button" data-debug-copy>Copy all</button>
-          <button type="button" data-debug-clear>Clear</button>
-        </div>
-      </div>
-      <div class="debug-list" data-debug-list></div>
-    </div>
-    <script
-      type="module"
-      define:vars={{
-        initialLogs,
-      }}
+<section
+  class="debug-widget"
+  data-debug-widget
+  data-debug-open="false"
+  data-debug-page-key={pageKey}
+  aria-hidden="true"
+>
+  <div class="debug-header">
+    <span class="debug-title">Debug</span>
+    <span class="debug-count" data-debug-count>0</span>
+    <button
+      type="button"
+      class="debug-close"
+      data-debug-panel-toggle
+      aria-label="Close debug"
     >
-      import { getDebugLogger } from "../lib/debugLogger";
+      ×
+    </button>
+  </div>
+  <div class="debug-panel">
+    <div class="debug-controls">
+      <span class="debug-title">Logs</span>
+      <div class="debug-actions">
+        <button type="button" data-debug-copy>Copy all</button>
+        <button type="button" data-debug-clear>Clear</button>
+      </div>
+    </div>
+    <div class="debug-list" data-debug-list></div>
+  </div>
+  <script
+    type="module"
+    define:vars={{
+      initialLogs,
+    }}
+  >
+    import { getDebugLogger } from "../lib/debugLogger";
 
-      const widget = document.querySelector("[data-debug-widget]");
-      const toggle = widget?.querySelector("[data-debug-toggle]");
-      const panel = widget?.querySelector("[data-debug-panel]");
-      const count = widget?.querySelector("[data-debug-count]");
-      const list = widget?.querySelector("[data-debug-list]");
-      const copyButton = widget?.querySelector("[data-debug-copy]");
-      const clearButton = widget?.querySelector("[data-debug-clear]");
+    const widget = document.querySelector("[data-debug-widget]");
+    const panelToggle = widget?.querySelector("[data-debug-panel-toggle]");
+    const toggleButtons = document.querySelectorAll("[data-debug-toggle-button]");
+    const count = widget?.querySelector("[data-debug-count]");
+    const list = widget?.querySelector("[data-debug-list]");
+    const copyButton = widget?.querySelector("[data-debug-copy]");
+    const clearButton = widget?.querySelector("[data-debug-clear]");
 
-      if (!widget || !toggle || !panel || !count || !list || !copyButton || !clearButton) {
+    if (!widget || !count || !list || !copyButton || !clearButton) {
+      return;
+    }
+
+    let isExpanded = false;
+    let initialLogsLoaded = false;
+
+    const renderEntries = (entries) => {
+      count.textContent = String(entries.length);
+      list.innerHTML = "";
+
+      entries.forEach((entry) => {
+        const item = document.createElement("div");
+        item.className = "debug-entry";
+
+        const header = document.createElement("button");
+        header.type = "button";
+        header.className = "debug-entry-header";
+        header.textContent = `#${entry.index} · ${entry.source}: ${entry.message}`;
+
+        const pre = document.createElement("pre");
+        pre.className = "debug-entry-data";
+        pre.textContent = entry.data ?? "";
+        pre.hidden = true;
+
+        header.addEventListener("click", () => {
+          pre.hidden = !pre.hidden;
+        });
+
+        item.appendChild(header);
+        item.appendChild(pre);
+        list.appendChild(item);
+      });
+    };
+
+    const serializeEntries = (entries) =>
+      entries
+        .map((entry) =>
+          [
+            `#${entry.index} · ${entry.source}: ${entry.message}`,
+            entry.data ? entry.data : "",
+          ]
+            .filter(Boolean)
+            .join("\n")
+        )
+        .join("\n\n");
+
+    const logger = getDebugLogger();
+
+    if (logger) {
+      logger.seed(initialLogs);
+      logger.log("Debug", "Debug system ready", `URL: ${window.location.href}`);
+      logger.subscribe((entries) => {
+        renderEntries(entries);
+      });
+    }
+
+    const setExpanded = (nextExpanded) => {
+      isExpanded = nextExpanded;
+      widget.dataset.debugOpen = isExpanded ? "true" : "false";
+      widget.setAttribute("aria-hidden", isExpanded ? "false" : "true");
+      toggleButtons.forEach((button) => {
+        button.setAttribute("aria-pressed", String(isExpanded));
+      });
+
+      if (isExpanded) {
+        void loadInitialLogs();
+      }
+    };
+
+    const loadInitialLogs = async () => {
+      if (initialLogsLoaded || !logger) {
         return;
       }
 
-      let isExpanded = false;
-
-      const renderEntries = (entries) => {
-        count.textContent = String(entries.length);
-        list.innerHTML = "";
-
-        entries.forEach((entry) => {
-          const item = document.createElement("div");
-          item.className = "debug-entry";
-
-          const header = document.createElement("button");
-          header.type = "button";
-          header.className = "debug-entry-header";
-          header.textContent = `#${entry.index} · ${entry.source}: ${entry.message}`;
-
-          const pre = document.createElement("pre");
-          pre.className = "debug-entry-data";
-          pre.textContent = entry.data ?? "";
-          pre.hidden = true;
-
-          header.addEventListener("click", () => {
-            pre.hidden = !pre.hidden;
-          });
-
-          item.appendChild(header);
-          item.appendChild(pre);
-          list.appendChild(item);
-        });
-      };
-
-      const serializeEntries = (entries) =>
-        entries
-          .map((entry) =>
-            [
-              `#${entry.index} · ${entry.source}: ${entry.message}`,
-              entry.data ? entry.data : "",
-            ]
-              .filter(Boolean)
-              .join("\\n")
-          )
-          .join("\\n\\n");
-
-      const logger = getDebugLogger();
-
-      if (logger) {
-        logger.seed(initialLogs);
-        logger.subscribe((entries) => {
-          renderEntries(entries);
-        });
+      const pageKey = widget.dataset.debugPageKey;
+      if (!pageKey) {
+        return;
       }
 
-      toggle.addEventListener("click", () => {
-        isExpanded = !isExpanded;
-        panel.hidden = !isExpanded;
-        widget.dataset.debugExpanded = isExpanded ? "true" : "false";
-      });
+      initialLogsLoaded = true;
 
-      copyButton.addEventListener("click", async () => {
-        const entries = logger?.getAll() ?? [];
-        const text = serializeEntries(entries);
+      if (pageKey === "bali") {
+        const { getBaliInitialLogs } = await import("../lib/debugLogs/bali");
+        logger.seed(getBaliInitialLogs());
+      }
+    };
 
-        if (navigator.clipboard?.writeText) {
-          await navigator.clipboard.writeText(text);
-        } else {
-          const fallback = document.createElement("textarea");
-          fallback.value = text;
-          fallback.setAttribute("readonly", "true");
-          fallback.style.position = "absolute";
-          fallback.style.left = "-9999px";
-          document.body.appendChild(fallback);
-          fallback.select();
-          document.execCommand("copy");
-          document.body.removeChild(fallback);
-        }
-      });
+    const handleToggle = () => {
+      setExpanded(!isExpanded);
+    };
 
-      clearButton.addEventListener("click", () => {
-        logger?.clear();
-      });
-    </script>
-  </section>
-)}
+    toggleButtons.forEach((button) => {
+      button.addEventListener("click", handleToggle);
+    });
+    panelToggle?.addEventListener("click", handleToggle);
+
+    const debugParamEnabled = new URLSearchParams(window.location.search).get("debug") === "true";
+
+    if (debugParamEnabled) {
+      setExpanded(true);
+    }
+
+    copyButton.addEventListener("click", async () => {
+      const entries = logger?.getAll() ?? [];
+      const text = serializeEntries(entries);
+
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const fallback = document.createElement("textarea");
+        fallback.value = text;
+        fallback.setAttribute("readonly", "true");
+        fallback.style.position = "absolute";
+        fallback.style.left = "-9999px";
+        document.body.appendChild(fallback);
+        fallback.select();
+        document.execCommand("copy");
+        document.body.removeChild(fallback);
+      }
+    });
+
+    clearButton.addEventListener("click", () => {
+      logger?.clear();
+    });
+  </script>
+</section>
 
 <style>
   .debug-widget {
+    position: fixed;
+    top: 56px;
+    right: 14px;
+    width: min(420px, calc(100vw - 28px));
+    max-height: 70vh;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
     overflow: hidden;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.2);
+    z-index: 1090;
+    display: none;
+  }
+
+  .debug-widget[data-debug-open="true"] {
+    display: block;
   }
 
   .debug-header {
@@ -147,10 +207,10 @@ const { enabled, initialLogs = [] } = Astro.props;
     justify-content: space-between;
     gap: 12px;
     padding: 12px 16px;
-    cursor: pointer;
     background: #f0f4f8;
     color: var(--text);
     font-size: 0.95rem;
+    border-bottom: 1px solid var(--border);
   }
 
   .debug-count {
@@ -159,12 +219,16 @@ const { enabled, initialLogs = [] } = Astro.props;
     color: var(--muted);
   }
 
-  .debug-chevron {
-    transition: transform 0.2s ease;
+  .debug-close {
+    border: none;
+    background: transparent;
+    font-size: 1.1rem;
+    color: var(--muted);
+    cursor: pointer;
   }
 
-  .debug-widget[data-debug-expanded="true"] .debug-chevron {
-    transform: rotate(180deg);
+  .debug-close:hover {
+    color: var(--text);
   }
 
   .debug-panel {
@@ -172,6 +236,8 @@ const { enabled, initialLogs = [] } = Astro.props;
     display: grid;
     gap: 16px;
     background: var(--surface);
+    overflow: auto;
+    max-height: calc(70vh - 52px);
   }
 
   .debug-controls {
@@ -227,5 +293,13 @@ const { enabled, initialLogs = [] } = Astro.props;
     font-size: 0.8rem;
     white-space: pre-wrap;
     color: var(--text);
+  }
+
+  @media (max-width: 540px) {
+    .debug-widget {
+      top: 48px;
+      right: 10px;
+      width: min(100vw, calc(100vw - 20px));
+    }
   }
 </style>

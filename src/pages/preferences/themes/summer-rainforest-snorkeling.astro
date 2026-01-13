@@ -1,4 +1,6 @@
 ---
+import DebugDock from "../../../components/DebugDock.astro";
+
 export const theme = {
   id: "summer-rainforest",
   displayName: "Summer rainforest + snorkeling",
@@ -111,6 +113,7 @@ const siteTitle = `Theme: ${theme.displayName} – La Familia`;
     </style>
   </head>
   <body>
+    <DebugDock />
     <main>
       <section class="section">
         <a class="back-link" href="../../../">← Back to overview</a>

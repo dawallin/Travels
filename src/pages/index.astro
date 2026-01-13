@@ -3,6 +3,7 @@ import { theme as summer25Theme } from "./preferences/themes/summer-2025.astro";
 import { theme as rainforestTheme } from "./preferences/themes/summer-rainforest-snorkeling.astro";
 import { theme as skiTheme } from "./preferences/themes/ski-trip.astro";
 import Card from "../components/Card.astro";
+import DebugDock from "../components/DebugDock.astro";
 
 const siteTitle = "La Familia – Travel Planning";
 const planningThemes = [summer25Theme, rainforestTheme, skiTheme];
@@ -164,6 +165,7 @@ const getTripNotches = (themeIds) =>
     </style>
   </head>
   <body>
+    <DebugDock />
     <main>
       <section class="section identity">
         <div class="section-header">

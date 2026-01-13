@@ -1,6 +1,6 @@
 ---
 import PageHeader from "../components/PageHeader.astro";
-import DebugWidgetLoader from "../components/DebugWidgetLoader.astro";
+import DebugDock from "../components/DebugDock.astro";
 
 const { title, backHref = "../../" } = Astro.props;
 ---
@@ -78,8 +78,8 @@ const { title, backHref = "../../" } = Astro.props;
     </style>
   </head>
   <body>
+    <DebugDock />
     <main>
-      <DebugWidgetLoader />
       <PageHeader title={title} backHref={backHref} backLabel="← Back to Bali overview" />
       <section class="section">
         <slot />
