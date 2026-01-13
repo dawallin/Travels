@@ -18,8 +18,8 @@ const { pageKey } = Astro.props;
 <style>
   .debug-toggle-container {
     position: fixed;
-    top: 14px;
-    right: 14px;
+    top: calc(14px + env(safe-area-inset-top, 0px));
+    right: calc(14px + env(safe-area-inset-right, 0px));
     z-index: 1100;
   }
 
@@ -50,8 +50,8 @@ const { pageKey } = Astro.props;
 
   @media (max-width: 540px) {
     .debug-toggle-container {
-      top: 10px;
-      right: 10px;
+      top: calc(10px + env(safe-area-inset-top, 0px));
+      right: calc(10px + env(safe-area-inset-right, 0px));
     }
 
     .debug-toggle-button {
