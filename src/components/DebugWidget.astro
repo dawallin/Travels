@@ -45,17 +45,20 @@ const { initialLogs = [], pageKey } = Astro.props;
   >
     import { getDebugLogger } from "../lib/debugLogger";
 
-    const widget = document.querySelector("[data-debug-widget]");
-    const panelToggle = widget?.querySelector("[data-debug-panel-toggle]");
-    const toggleButtons = document.querySelectorAll("[data-debug-toggle-button]");
-    const count = widget?.querySelector("[data-debug-count]");
-    const list = widget?.querySelector("[data-debug-list]");
-    const copyButton = widget?.querySelector("[data-debug-copy]");
-    const clearButton = widget?.querySelector("[data-debug-clear]");
+    const initDebugWidget = () => {
+      const widget = document.querySelector("[data-debug-widget]");
+      const panelToggle = widget?.querySelector("[data-debug-panel-toggle]");
+      const toggleButtons = document.querySelectorAll("[data-debug-toggle-button]");
+      const count = widget?.querySelector("[data-debug-count]");
+      const list = widget?.querySelector("[data-debug-list]");
+      const copyButton = widget?.querySelector("[data-debug-copy]");
+      const clearButton = widget?.querySelector("[data-debug-clear]");
 
-    if (!widget || !count || !list || !copyButton || !clearButton) {
-      console.warn("[DebugWidget] Missing required elements; debug widget disabled.");
-    } else {
+      if (!widget || !count || !list || !copyButton || !clearButton) {
+        console.warn("[DebugWidget] Missing required elements; debug widget disabled.");
+        return;
+      }
+
       let isExpanded = false;
       let initialLogsLoaded = false;
 
@@ -178,6 +181,12 @@ const { initialLogs = [], pageKey } = Astro.props;
       clearButton.addEventListener("click", () => {
         logger?.clear();
       });
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initDebugWidget);
+    } else {
+      initDebugWidget();
     }
   </script>
 </section>
