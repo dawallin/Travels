@@ -45,8 +45,8 @@ const { initialLogs = [], pageKey } = Astro.props;
 <style>
   .debug-widget {
     position: fixed;
-    top: 56px;
-    right: 14px;
+    top: calc(56px + env(safe-area-inset-top, 0px));
+    right: calc(14px + env(safe-area-inset-right, 0px));
     width: min(420px, calc(100vw - 28px));
     max-height: 70vh;
     background: var(--surface);
@@ -158,8 +158,8 @@ const { initialLogs = [], pageKey } = Astro.props;
 
   @media (max-width: 540px) {
     .debug-widget {
-      top: 48px;
-      right: 10px;
+      top: calc(48px + env(safe-area-inset-top, 0px));
+      right: calc(10px + env(safe-area-inset-right, 0px));
       width: min(100vw, calc(100vw - 20px));
     }
   }
