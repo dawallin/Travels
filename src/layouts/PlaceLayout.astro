@@ -1,7 +1,13 @@
 ---
 import PageHeader from "../components/PageHeader.astro";
+import DebugWidgetLoader from "../components/DebugWidgetLoader.astro";
 
 const { title, backHref = "../../" } = Astro.props;
+const requestUrl = Astro.request?.url ? new URL(Astro.request.url) : Astro.url;
+const debugEnabled = requestUrl?.searchParams.get("debug") === "true";
+const DebugWidget = debugEnabled
+  ? (await import("../components/DebugWidget.astro")).default
+  : null;
 ---
 <!doctype html>
 <html lang="en">
@@ -78,6 +84,8 @@ const { title, backHref = "../../" } = Astro.props;
   </head>
   <body>
     <main>
+      <DebugWidgetLoader />
+      {DebugWidget && <DebugWidget enabled={debugEnabled} initialLogs={[]} />}
       <PageHeader title={title} backHref={backHref} backLabel="← Back to Bali overview" />
       <section class="section">
         <slot />

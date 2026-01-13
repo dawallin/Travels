@@ -10,7 +10,6 @@ const {
 
 const mapTilerKey = import.meta.env.PUBLIC_MAPTILER_KEY;
 const normalizedMarkers = Array.isArray(markers) ? markers : [];
-
 const validMarkers = normalizedMarkers
   .map((marker) => ({
     title: marker.title ?? marker.name ?? "",
@@ -24,6 +23,9 @@ const validMarkers = normalizedMarkers
       Math.abs(marker.lat) <= 90 &&
       Math.abs(marker.lon) <= 180
   );
+
+const totalMarkers = normalizedMarkers.length;
+const validMarkersCount = validMarkers.length;
 
 if (!mapTilerKey) {
   console.warn("[MapWidget] Missing PUBLIC_MAPTILER_KEY; map hidden.");
@@ -43,6 +45,8 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
         markers: validMarkers,
         mapTilerKey,
         singleMarkerZoom,
+        totalMarkers,
+        validMarkersCount,
       }}
     >
       import L from "leaflet";
@@ -50,45 +54,108 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
       import iconUrl from "leaflet/dist/images/marker-icon.png";
       import shadowUrl from "leaflet/dist/images/marker-shadow.png";
 
+      const debugEnabled = new URLSearchParams(window.location.search).get("debug") === "true";
+      const logDebug = async (message, data) => {
+        if (!debugEnabled) {
+          return;
+        }
+
+        const { getDebugLogger } = await import("../lib/debugLogger");
+        getDebugLogger()?.log("MapWidget", message, data);
+      };
+
+      if (debugEnabled) {
+        const keySummary = mapTilerKey
+          ? `present (len: ${mapTilerKey.length}, prefix: ${mapTilerKey.slice(0, 4)})`
+          : "missing";
+        const initData = `mapTilerKey: ${keySummary}\nmarkers: ${totalMarkers}\nvalid markers: ${validMarkersCount}`;
+        logDebug("Init", initData);
+
+        if (validMarkersCount === 0) {
+          logDebug("No valid markers", initData);
+        }
+      }
+
       const mapElement = document.getElementById(mapId);
 
-      if (mapElement) {
-        L.Icon.Default.mergeOptions({
-          iconRetinaUrl,
-          iconUrl,
-          shadowUrl,
-        });
+      try {
+        if (mapElement) {
+          L.Icon.Default.mergeOptions({
+            iconRetinaUrl,
+            iconUrl,
+            shadowUrl,
+          });
 
-        const map = L.map(mapElement, {
-          scrollWheelZoom: false,
-        });
+          const map = L.map(mapElement, {
+            scrollWheelZoom: false,
+          });
 
-        const tileLayer = L.tileLayer(
-          `https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${mapTilerKey}`,
-          {
-            attribution:
-              '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+          const tileLayer = L.tileLayer(
+            `https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${mapTilerKey}`,
+            {
+              attribution:
+                '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            }
+          );
+
+          tileLayer.addTo(map);
+
+          const bounds = L.latLngBounds([]);
+
+          markers.forEach((marker) => {
+            const position = [marker.lat, marker.lon];
+            L.marker(position, { title: marker.title }).addTo(map);
+            bounds.extend(position);
+          });
+
+          if (markers.length === 1) {
+            map.setView([markers[0].lat, markers[0].lon], singleMarkerZoom);
+          } else if (markers.length > 1) {
+            map.fitBounds(bounds, { padding: [24, 24] });
           }
-        );
-
-        tileLayer.addTo(map);
-
-        const bounds = L.latLngBounds([]);
-
-        markers.forEach((marker) => {
-          const position = [marker.lat, marker.lon];
-          L.marker(position, { title: marker.title }).addTo(map);
-          bounds.extend(position);
-        });
-
-        if (markers.length === 1) {
-          map.setView([markers[0].lat, markers[0].lon], singleMarkerZoom);
-        } else if (markers.length > 1) {
-          map.fitBounds(bounds, { padding: [24, 24] });
         }
+      } catch (error) {
+        const message =
+          error instanceof Error
+            ? `${error.message}${error.stack ? `\n${error.stack}` : ""}`
+            : String(error);
+        logDebug("Error", message);
       }
     </script>
   </section>
+)}
+
+{!shouldRenderMap && (
+  <script
+    type="module"
+    define:vars={{
+      mapTilerKey,
+      totalMarkers,
+      validMarkersCount,
+    }}
+  >
+    const debugEnabled = new URLSearchParams(window.location.search).get("debug") === "true";
+    const logDebug = async (message, data) => {
+      if (!debugEnabled) {
+        return;
+      }
+
+      const { getDebugLogger } = await import("../lib/debugLogger");
+      getDebugLogger()?.log("MapWidget", message, data);
+    };
+
+    if (debugEnabled) {
+      const keySummary = mapTilerKey
+        ? `present (len: ${mapTilerKey.length}, prefix: ${mapTilerKey.slice(0, 4)})`
+        : "missing";
+      const initData = `mapTilerKey: ${keySummary}\nmarkers: ${totalMarkers}\nvalid markers: ${validMarkersCount}`;
+      logDebug("Init", initData);
+
+      if (validMarkersCount === 0) {
+        logDebug("No valid markers", initData);
+      }
+    }
+  </script>
 )}
 
 <style>
