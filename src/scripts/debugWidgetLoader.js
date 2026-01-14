@@ -1,4 +1,4 @@
-const script = document.currentScript as HTMLScriptElement | null;
+const script = document.currentScript;
 const pageKey = script?.dataset.pageKey;
 const debugEnabled = new URLSearchParams(window.location.search).get("debug") === "true";
 
