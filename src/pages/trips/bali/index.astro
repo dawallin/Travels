@@ -126,5 +126,13 @@ const mapMarkers = places.map((place) => ({
         <PlacesOverview />
       </section>
     </main>
+    <script type="module">
+      import { getDebugLogger } from "../../../lib/debugLogger";
+
+      const logger = getDebugLogger();
+      if (logger?.isEnabled()) {
+        logger.log("Bali Page", "Loaded", `url: ${window.location.href}`);
+      }
+    </script>
   </body>
 </html>
