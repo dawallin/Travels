@@ -123,6 +123,13 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
         return items.map(formatter).join("\n");
       };
       const formatRawValue = (value) => (value === "" ? "?" : String(value));
+      const renderStatus = [
+        `rendered: true`,
+        mapTilerKey ? "mapTilerKey: present" : "mapTilerKey: missing",
+        `markersTotal: ${totalMarkers}`,
+        `markersWithLatLon: ${validMarkersCount}`,
+        `markersMissingLatLon: ${invalidMarkersCount}`,
+      ].join("\n");
       const initData = [
         `url: ${window.location.href}`,
         `container: #${mapId}`,
@@ -153,6 +160,7 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
         ),
       ].join("\n");
 
+      logDebug("Status", renderStatus);
       logDebug("Init", initData);
       logDebug("Markers", markersData);
 
@@ -168,6 +176,8 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
             iconUrl,
             shadowUrl,
           });
+
+          logDebug("Loading", "Map container ready, initializing Leaflet.");
 
           const map = L.map(mapElement, {
             scrollWheelZoom: false,
@@ -212,7 +222,11 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
 
           logDebug(
             "Ready",
-            [`bounds: ${boundsDecision}`, `markersPlaced: ${markers.length}`].join("\n")
+            [
+              `bounds: ${boundsDecision}`,
+              `markersPlaced: ${markers.length}`,
+              "tiles: requested",
+            ].join("\n")
           );
         }
       } catch (error) {
@@ -306,6 +320,15 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
       .filter(Boolean)
       .join("; ");
 
+    const renderStatusSummary = [
+      `rendered: false`,
+      mapTilerKey ? "mapTilerKey: present" : "mapTilerKey: missing",
+      `markersTotal: ${totalMarkers}`,
+      `markersWithLatLon: ${validMarkersCount}`,
+      `markersMissingLatLon: ${invalidMarkersCount}`,
+    ].join("\n");
+
+    logDebug("Status", renderStatusSummary);
     logDebug("Init", initData);
     logDebug("Markers", markersData);
     logDebug("Map hidden", renderStatus || "unknown reason");
