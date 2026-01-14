@@ -1,17 +1,6 @@
-import type { DebugEntry } from "../lib/debugLogger";
 import { getDebugLogger } from "../lib/debugLogger";
 
-type WidgetElements = {
-  widget: HTMLElement;
-  panelToggle: HTMLElement | null;
-  toggleButtons: NodeListOf<Element>;
-  count: HTMLElement;
-  list: HTMLElement;
-  copyButton: HTMLButtonElement;
-  clearButton: HTMLButtonElement;
-};
-
-const getInitialLogs = (widget: HTMLElement): DebugEntry[] => {
+const getInitialLogs = (widget) => {
   const raw = widget.dataset.debugInitialLogs;
   if (!raw) {
     return [];
@@ -19,21 +8,21 @@ const getInitialLogs = (widget: HTMLElement): DebugEntry[] => {
 
   try {
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as DebugEntry[]) : [];
+    return Array.isArray(parsed) ? parsed : [];
   } catch (error) {
     console.warn("[DebugWidget] Failed to parse initial logs.", error);
     return [];
   }
 };
 
-const getElements = (): WidgetElements | null => {
-  const widget = document.querySelector<HTMLElement>("[data-debug-widget]");
-  const panelToggle = widget?.querySelector<HTMLElement>("[data-debug-panel-toggle]") ?? null;
+const getElements = () => {
+  const widget = document.querySelector("[data-debug-widget]");
+  const panelToggle = widget?.querySelector("[data-debug-panel-toggle]") ?? null;
   const toggleButtons = document.querySelectorAll("[data-debug-toggle-button]");
-  const count = widget?.querySelector<HTMLElement>("[data-debug-count]");
-  const list = widget?.querySelector<HTMLElement>("[data-debug-list]");
-  const copyButton = widget?.querySelector<HTMLButtonElement>("[data-debug-copy]");
-  const clearButton = widget?.querySelector<HTMLButtonElement>("[data-debug-clear]");
+  const count = widget?.querySelector("[data-debug-count]");
+  const list = widget?.querySelector("[data-debug-list]");
+  const copyButton = widget?.querySelector("[data-debug-copy]");
+  const clearButton = widget?.querySelector("[data-debug-clear]");
 
   if (!widget || !count || !list || !copyButton || !clearButton) {
     console.warn("[DebugWidget] Missing required elements; debug widget disabled.");
@@ -51,7 +40,7 @@ const getElements = (): WidgetElements | null => {
   };
 };
 
-const serializeEntries = (entries: DebugEntry[]) =>
+const serializeEntries = (entries) =>
   entries
     .map((entry) =>
       [`#${entry.index} · ${entry.source}: ${entry.message}`, entry.data ?? ""]
@@ -60,7 +49,7 @@ const serializeEntries = (entries: DebugEntry[]) =>
     )
     .join("\n\n");
 
-const renderEntries = (list: HTMLElement, count: HTMLElement, entries: DebugEntry[]) => {
+const renderEntries = (list, count, entries) => {
   count.textContent = String(entries.length);
   list.innerHTML = "";
 
@@ -128,7 +117,7 @@ const initDebugWidget = () => {
     }
   };
 
-  const setExpanded = (nextExpanded: boolean) => {
+  const setExpanded = (nextExpanded) => {
     isExpanded = nextExpanded;
     widget.dataset.debugOpen = isExpanded ? "true" : "false";
     widget.setAttribute("aria-hidden", isExpanded ? "false" : "true");
