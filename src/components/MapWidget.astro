@@ -92,16 +92,9 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
       import iconUrl from "leaflet/dist/images/marker-icon.png";
       import shadowUrl from "leaflet/dist/images/marker-shadow.png";
 
-      const debugEnabled = new URLSearchParams(window.location.search).get("debug") === "true";
-      const debugSystemAvailable =
-        debugEnabled || Boolean(window.__travelsDebug) || Boolean(document.querySelector("[data-debug-widget]"));
       const getLogger = async () => {
         if (window.__travelsDebug) {
           return window.__travelsDebug;
-        }
-
-        if (!debugSystemAvailable) {
-          return null;
         }
 
         const { getDebugLogger } = await import("../lib/debugLogger");
@@ -164,6 +157,9 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
       logDebug("Markers", markersData);
 
       const mapElement = document.getElementById(mapId);
+      if (!mapElement) {
+        logDebug("Error", `Missing map container #${mapId}`);
+      }
 
       try {
         if (mapElement) {
@@ -184,6 +180,16 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
                 '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             }
           );
+          tileLayer.on("tileerror", (event) => {
+            const error = event?.error;
+            const errorMessage =
+              error instanceof Error
+                ? `${error.message}${error.stack ? `\n${error.stack}` : ""}`
+                : error
+                  ? String(error)
+                  : "Unknown tile error";
+            logDebug("Tile error", errorMessage);
+          });
 
           tileLayer.addTo(map);
 
@@ -232,16 +238,9 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
       invalidMarkers,
     }}
   >
-    const debugEnabled = new URLSearchParams(window.location.search).get("debug") === "true";
-    const debugSystemAvailable =
-      debugEnabled || Boolean(window.__travelsDebug) || Boolean(document.querySelector("[data-debug-widget]"));
     const getLogger = async () => {
       if (window.__travelsDebug) {
         return window.__travelsDebug;
-      }
-
-      if (!debugSystemAvailable) {
-        return null;
       }
 
       const { getDebugLogger } = await import("../lib/debugLogger");
@@ -300,8 +299,16 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
       ),
     ].join("\n");
 
+    const renderStatus = [
+      mapTilerKey ? null : "missing PUBLIC_MAPTILER_KEY",
+      validMarkersCount > 0 ? null : "no valid markers",
+    ]
+      .filter(Boolean)
+      .join("; ");
+
     logDebug("Init", initData);
     logDebug("Markers", markersData);
+    logDebug("Map hidden", renderStatus || "unknown reason");
   </script>
 )}
 
