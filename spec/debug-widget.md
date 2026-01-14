@@ -34,6 +34,21 @@ Each entry includes:
 * Client-side logs are appended in index order at runtime.
 * Initial logs can be lazy-loaded on first open to keep payloads small.
 
+## MapWidget runtime diagnostics
+When the MapWidget initializes on the client, it logs runtime diagnostics to help debug map issues in production.
+
+Expected MapWidget log entries:
+* `MapWidget / Init`
+  * Includes page URL, map container selector, MapTiler key presence/length/prefix, and marker counts.
+* `MapWidget / Markers`
+  * Includes total/valid/invalid marker counts plus readable lists of valid and invalid markers (with missing fields noted).
+* `MapWidget / Ready`
+  * Emitted after map creation and marker placement; includes bounds/fit decision and marker count.
+* `MapWidget / Error`
+  * Emitted when map initialization fails, including error message and stack string.
+
+These logs are client-side only and appear when the debug system is available.
+
 ## Secret-handling guardrail
 * **Do not log secrets.**
 * The debug widget does not detect or mask secrets automatically.
