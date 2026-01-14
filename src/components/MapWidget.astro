@@ -10,22 +10,58 @@ const {
 
 const mapTilerKey = import.meta.env.PUBLIC_MAPTILER_KEY;
 const normalizedMarkers = Array.isArray(markers) ? markers : [];
-const validMarkers = normalizedMarkers
+const markerSummaries = normalizedMarkers.map((marker) => {
+  const title = marker.title ?? marker.name ?? "(untitled)";
+  const rawLat = marker.lat ?? marker.latitude;
+  const rawLon = marker.lon ?? marker.lng ?? marker.longitude;
+  const lat = Number(rawLat);
+  const lon = Number(rawLon);
+  const issues: string[] = [];
+
+  if (rawLat == null) {
+    issues.push("lat missing");
+  } else if (!Number.isFinite(lat)) {
+    issues.push("lat invalid");
+  } else if (Math.abs(lat) > 90) {
+    issues.push("lat out of range");
+  }
+
+  if (rawLon == null) {
+    issues.push("lon missing");
+  } else if (!Number.isFinite(lon)) {
+    issues.push("lon invalid");
+  } else if (Math.abs(lon) > 180) {
+    issues.push("lon out of range");
+  }
+
+  return {
+    title,
+    rawLat,
+    rawLon,
+    lat,
+    lon,
+    issues,
+  };
+});
+const validMarkers = markerSummaries
+  .filter((marker) => marker.issues.length === 0)
   .map((marker) => ({
-    title: marker.title ?? marker.name ?? "",
-    lat: Number(marker.lat ?? marker.latitude),
-    lon: Number(marker.lon ?? marker.lng ?? marker.longitude),
-  }))
-  .filter(
-    (marker) =>
-      Number.isFinite(marker.lat) &&
-      Number.isFinite(marker.lon) &&
-      Math.abs(marker.lat) <= 90 &&
-      Math.abs(marker.lon) <= 180
-  );
+    title: marker.title,
+    lat: marker.lat,
+    lon: marker.lon,
+  }));
+const invalidMarkers = markerSummaries
+  .filter((marker) => marker.issues.length > 0)
+  .map((marker) => ({
+    title: marker.title,
+    rawLat: marker.rawLat ?? "",
+    rawLon: marker.rawLon ?? "",
+    issues: marker.issues,
+  }));
 
 const totalMarkers = normalizedMarkers.length;
 const validMarkersCount = validMarkers.length;
+const invalidMarkersCount = invalidMarkers.length;
 
 if (!mapTilerKey) {
   console.warn("[MapWidget] Missing PUBLIC_MAPTILER_KEY; map hidden.");
@@ -47,6 +83,8 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
         singleMarkerZoom,
         totalMarkers,
         validMarkersCount,
+        invalidMarkersCount,
+        invalidMarkers,
       }}
     >
       import L from "leaflet";
@@ -55,26 +93,75 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
       import shadowUrl from "leaflet/dist/images/marker-shadow.png";
 
       const debugEnabled = new URLSearchParams(window.location.search).get("debug") === "true";
-      const logDebug = async (message, data) => {
-        if (!debugEnabled) {
-          return;
+      const debugSystemAvailable =
+        debugEnabled || Boolean(window.__travelsDebug) || Boolean(document.querySelector("[data-debug-widget]"));
+      const getLogger = async () => {
+        if (window.__travelsDebug) {
+          return window.__travelsDebug;
+        }
+
+        if (!debugSystemAvailable) {
+          return null;
         }
 
         const { getDebugLogger } = await import("../lib/debugLogger");
-        getDebugLogger()?.log("MapWidget", message, data);
+        return getDebugLogger();
       };
-
-      if (debugEnabled) {
-        const keySummary = mapTilerKey
-          ? `present (len: ${mapTilerKey.length}, prefix: ${mapTilerKey.slice(0, 4)})`
-          : "missing";
-        const initData = `mapTilerKey: ${keySummary}\nmarkers: ${totalMarkers}\nvalid markers: ${validMarkersCount}`;
-        logDebug("Init", initData);
-
-        if (validMarkersCount === 0) {
-          logDebug("No valid markers", initData);
+      const logDebug = async (message, data) => {
+        const logger = await getLogger();
+        if (!logger?.isEnabled()) {
+          return;
         }
-      }
+
+        logger.log("MapWidget", message, data);
+      };
+      const formatKeySummary = () => {
+        if (!mapTilerKey) {
+          return "present: false";
+        }
+
+        return `present: true\nlen: ${mapTilerKey.length}\nprefix: ${mapTilerKey.slice(0, 4)}`;
+      };
+      const formatMarkerList = (items, formatter, emptyLabel = "  - none") => {
+        if (!items.length) {
+          return emptyLabel;
+        }
+
+        return items.map(formatter).join("\n");
+      };
+      const formatRawValue = (value) => (value === "" ? "?" : String(value));
+      const initData = [
+        `url: ${window.location.href}`,
+        `container: #${mapId}`,
+        "mapTilerKey:",
+        `  ${formatKeySummary().split("\n").join("\n  ")}`,
+        `markersTotal: ${totalMarkers}`,
+        `markersValid: ${validMarkersCount}`,
+        `markersInvalid: ${invalidMarkersCount}`,
+      ].join("\n");
+      const markersData = [
+        `markersTotal: ${totalMarkers}`,
+        `markersValid: ${validMarkersCount}`,
+        `markersInvalid: ${invalidMarkersCount}`,
+        "valid:",
+        formatMarkerList(
+          markers,
+          (marker) => `  - ${marker.title}: ${marker.lat}, ${marker.lon}`
+        ),
+        "invalid:",
+        formatMarkerList(
+          invalidMarkers,
+          (marker) =>
+            `  - ${marker.title}: ${formatRawValue(marker.rawLat)}, ${formatRawValue(
+              marker.rawLon
+            )} (${marker.issues.join(
+              ", "
+            )})`
+        ),
+      ].join("\n");
+
+      logDebug("Init", initData);
+      logDebug("Markers", markersData);
 
       const mapElement = document.getElementById(mapId);
 
@@ -108,11 +195,19 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
             bounds.extend(position);
           });
 
+          let boundsDecision = "none";
           if (markers.length === 1) {
             map.setView([markers[0].lat, markers[0].lon], singleMarkerZoom);
+            boundsDecision = "single marker zoom";
           } else if (markers.length > 1) {
             map.fitBounds(bounds, { padding: [24, 24] });
+            boundsDecision = "fit bounds";
           }
+
+          logDebug(
+            "Ready",
+            [`bounds: ${boundsDecision}`, `markersPlaced: ${markers.length}`].join("\n")
+          );
         }
       } catch (error) {
         const message =
@@ -132,29 +227,81 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
       mapTilerKey,
       totalMarkers,
       validMarkersCount,
+      invalidMarkersCount,
+      markers: validMarkers,
+      invalidMarkers,
     }}
   >
     const debugEnabled = new URLSearchParams(window.location.search).get("debug") === "true";
-    const logDebug = async (message, data) => {
-      if (!debugEnabled) {
-        return;
+    const debugSystemAvailable =
+      debugEnabled || Boolean(window.__travelsDebug) || Boolean(document.querySelector("[data-debug-widget]"));
+    const getLogger = async () => {
+      if (window.__travelsDebug) {
+        return window.__travelsDebug;
+      }
+
+      if (!debugSystemAvailable) {
+        return null;
       }
 
       const { getDebugLogger } = await import("../lib/debugLogger");
-      getDebugLogger()?.log("MapWidget", message, data);
+      return getDebugLogger();
     };
-
-    if (debugEnabled) {
-      const keySummary = mapTilerKey
-        ? `present (len: ${mapTilerKey.length}, prefix: ${mapTilerKey.slice(0, 4)})`
-        : "missing";
-      const initData = `mapTilerKey: ${keySummary}\nmarkers: ${totalMarkers}\nvalid markers: ${validMarkersCount}`;
-      logDebug("Init", initData);
-
-      if (validMarkersCount === 0) {
-        logDebug("No valid markers", initData);
+    const logDebug = async (message, data) => {
+      const logger = await getLogger();
+      if (!logger?.isEnabled()) {
+        return;
       }
-    }
+
+      logger.log("MapWidget", message, data);
+    };
+    const formatKeySummary = () => {
+      if (!mapTilerKey) {
+        return "present: false";
+      }
+
+      return `present: true\nlen: ${mapTilerKey.length}\nprefix: ${mapTilerKey.slice(0, 4)}`;
+    };
+    const formatMarkerList = (items, formatter, emptyLabel = "  - none") => {
+      if (!items.length) {
+        return emptyLabel;
+      }
+
+      return items.map(formatter).join("\n");
+    };
+    const formatRawValue = (value) => (value === "" ? "?" : String(value));
+    const initData = [
+      `url: ${window.location.href}`,
+      "container: (not rendered)",
+      "mapTilerKey:",
+      `  ${formatKeySummary().split("\n").join("\n  ")}`,
+      `markersTotal: ${totalMarkers}`,
+      `markersValid: ${validMarkersCount}`,
+      `markersInvalid: ${invalidMarkersCount}`,
+    ].join("\n");
+    const markersData = [
+      `markersTotal: ${totalMarkers}`,
+      `markersValid: ${validMarkersCount}`,
+      `markersInvalid: ${invalidMarkersCount}`,
+      "valid:",
+      formatMarkerList(
+        markers,
+        (marker) => `  - ${marker.title}: ${marker.lat}, ${marker.lon}`
+      ),
+      "invalid:",
+      formatMarkerList(
+        invalidMarkers,
+        (marker) =>
+          `  - ${marker.title}: ${formatRawValue(marker.rawLat)}, ${formatRawValue(
+            marker.rawLon
+          )} (${marker.issues.join(
+            ", "
+          )})`
+      ),
+    ].join("\n");
+
+    logDebug("Init", initData);
+    logDebug("Markers", markersData);
   </script>
 )}
 
