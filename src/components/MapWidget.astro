@@ -91,17 +91,10 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
       import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
       import iconUrl from "leaflet/dist/images/marker-icon.png";
       import shadowUrl from "leaflet/dist/images/marker-shadow.png";
+      import { getDebugLogger } from "../lib/debugLogger";
 
-      const getLogger = async () => {
-        if (window.__travelsDebug) {
-          return window.__travelsDebug;
-        }
-
-        const { getDebugLogger } = await import("../lib/debugLogger");
-        return getDebugLogger();
-      };
-      const logDebug = async (message, data) => {
-        const logger = await getLogger();
+      const logDebug = (message, data) => {
+        const logger = getDebugLogger();
         if (!logger?.isEnabled()) {
           return;
         }
@@ -252,16 +245,10 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
       invalidMarkers,
     }}
   >
-    const getLogger = async () => {
-      if (window.__travelsDebug) {
-        return window.__travelsDebug;
-      }
+    import { getDebugLogger } from "../lib/debugLogger";
 
-      const { getDebugLogger } = await import("../lib/debugLogger");
-      return getDebugLogger();
-    };
-    const logDebug = async (message, data) => {
-      const logger = await getLogger();
+    const logDebug = (message, data) => {
+      const logger = getDebugLogger();
       if (!logger?.isEnabled()) {
         return;
       }
