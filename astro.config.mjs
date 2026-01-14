@@ -1,7 +1,7 @@
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  site: "https://dawallin.github.io",
-  base: "/Travels",
+  site: "https://dawallin.github.io/Travels/",
+  base: "/Travels/",
   output: "static"
 });
