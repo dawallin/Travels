@@ -3,6 +3,7 @@ import PageHeader from "../../../components/PageHeader.astro";
 import PlacesOverview from "../../../components/PlacesOverview.astro";
 import MapWidget from "../../../components/MapWidget.astro";
 import DebugDock from "../../../components/DebugDock.astro";
+import baliDebugLogUrl from "../../../scripts/baliDebugLog.js?url";
 
 const destination = "Bali";
 const placeModules = import.meta.glob("../../../data/places/bali/*.ts", { eager: true });
@@ -126,13 +127,6 @@ const mapMarkers = places.map((place) => ({
         <PlacesOverview />
       </section>
     </main>
-    <script type="module">
-      import { getDebugLogger } from "../../../lib/debugLogger";
-
-      const logger = getDebugLogger();
-      if (logger?.isEnabled()) {
-        logger.log("Bali Page", "Loaded", `url: ${window.location.href}`);
-      }
-    </script>
+    <script type="module" src={baliDebugLogUrl}></script>
   </body>
 </html>
