@@ -1,7 +1,6 @@
 ---
 import DebugWidget from "./DebugWidget.astro";
-
-const { pageKey } = Astro.props;
+import debugDockUrl from "../scripts/debugDock.js";
 ---
 <div class="debug-toggle-container">
   <button
@@ -13,7 +12,8 @@ const { pageKey } = Astro.props;
     🐞
   </button>
 </div>
-<DebugWidget pageKey={pageKey} />
+<DebugWidget />
+<script type="module" src={debugDockUrl}></script>
 
 <style>
   .debug-toggle-container {

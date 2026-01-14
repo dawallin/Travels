@@ -1,20 +1,7 @@
----
-import type { DebugEntry } from "../lib/debugLogger";
-import widgetScriptUrl from "../scripts/debugWidget.js?url";
-
-type Props = {
-  initialLogs?: DebugEntry[];
-  pageKey?: string;
-};
-
-const { initialLogs = [], pageKey } = Astro.props;
----
 <section
   class="debug-widget"
   data-debug-widget
   data-debug-open="false"
-  data-debug-page-key={pageKey}
-  data-debug-initial-logs={JSON.stringify(initialLogs)}
   aria-hidden="true"
 >
   <div class="debug-header">
@@ -39,7 +26,6 @@ const { initialLogs = [], pageKey } = Astro.props;
     </div>
     <div class="debug-list" data-debug-list></div>
   </div>
-  <script type="module" src={widgetScriptUrl}></script>
 </section>
 
 <style>
