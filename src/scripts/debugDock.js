@@ -1,71 +1,3 @@
-const MAX_ENTRIES = 200;
-
-const createLogger = () => {
-  let entries = [];
-  let index = 0;
-  const subscribers = new Set();
-
-  const notify = () => {
-    const snapshot = [...entries];
-    subscribers.forEach((subscriber) => subscriber(snapshot));
-  };
-
-  const setEntries = (nextEntries) => {
-    entries = nextEntries.slice(-MAX_ENTRIES);
-    const maxIndex = entries.reduce((max, entry) => Math.max(max, entry.index), -1);
-    index = Math.max(index, maxIndex + 1);
-    notify();
-  };
-
-  return {
-    log: (source, message, data = "") => {
-      const entry = {
-        index,
-        source,
-        message,
-        data,
-      };
-
-      index += 1;
-      entries = [...entries, entry].slice(-MAX_ENTRIES);
-      notify();
-    },
-    clear: () => {
-      entries = [];
-      notify();
-    },
-    getAll: () => [...entries],
-    subscribe: (subscriber) => {
-      subscribers.add(subscriber);
-      subscriber([...entries]);
-      return () => {
-        subscribers.delete(subscriber);
-      };
-    },
-    seed: (seedEntries) => {
-      if (!Array.isArray(seedEntries) || seedEntries.length === 0) {
-        return;
-      }
-
-      const combined = [...seedEntries, ...entries];
-      setEntries(combined);
-    },
-    isEnabled: () => true,
-  };
-};
-
-const getDebugLogger = () => {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  if (!window.__travelsDebug) {
-    window.__travelsDebug = createLogger();
-  }
-
-  return window.__travelsDebug;
-};
-
 const serializeEntries = (entries) =>
   entries
     .map((entry) =>
@@ -98,7 +30,7 @@ const createEntry = (entry) => {
   return item;
 };
 
-const initDebugDock = () => {
+const initDebugDock = async () => {
   const widget = document.querySelector("[data-debug-widget]");
   const panelToggle = widget?.querySelector("[data-debug-panel-toggle]") ?? null;
   const toggleButtons = document.querySelectorAll("[data-debug-toggle-button]");
@@ -111,8 +43,14 @@ const initDebugDock = () => {
     return;
   }
 
-  let isExpanded = false;
+  const { getDebugLogger } = await import("../lib/debugLogger");
   const logger = getDebugLogger();
+
+  if (!logger?.isEnabled()) {
+    return;
+  }
+
+  let isExpanded = false;
   logger?.log("Debug", "Debug system ready", `URL: ${window.location.href}`);
 
   logger?.subscribe((entries) => {
