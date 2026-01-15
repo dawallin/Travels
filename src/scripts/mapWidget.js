@@ -1,13 +1,11 @@
-import L from "https://unpkg.com/leaflet@1.9.4/dist/leaflet-src.esm.js";
+const logDebug = (message, data) => {
+  window.travelsDebugLog?.("MapWidget", message, data ?? "");
+};
 
 const leafletAssetBase = "https://unpkg.com/leaflet@1.9.4/dist";
 const iconRetinaUrl = `${leafletAssetBase}/images/marker-icon-2x.png`;
 const iconUrl = `${leafletAssetBase}/images/marker-icon.png`;
 const shadowUrl = `${leafletAssetBase}/images/marker-shadow.png`;
-
-const logDebug = (message, data) => {
-  window.travelsDebugLog?.("MapWidget", message, data ?? "");
-};
 
 const formatMarkerList = (items, formatter, emptyLabel = "  - none") => {
   if (!items.length) {
@@ -110,6 +108,12 @@ const initMapWidget = (element) => {
   }
 
   try {
+    const { L } = window;
+    if (!L) {
+      logDebug("Error", "Leaflet not loaded; skipping map init.");
+      return;
+    }
+
     L.Icon.Default.mergeOptions({
       iconRetinaUrl,
       iconUrl,
