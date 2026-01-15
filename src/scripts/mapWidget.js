@@ -2,11 +2,6 @@ const logDebug = (message, data) => {
   window.travelsDebugLog?.("MapWidget", message, data ?? "");
 };
 
-const leafletAssetBase = "https://unpkg.com/leaflet@1.9.4/dist";
-const iconRetinaUrl = `${leafletAssetBase}/images/marker-icon-2x.png`;
-const iconUrl = `${leafletAssetBase}/images/marker-icon.png`;
-const shadowUrl = `${leafletAssetBase}/images/marker-shadow.png`;
-
 const formatMarkerList = (items, formatter, emptyLabel = "  - none") => {
   if (!items.length) {
     return emptyLabel;
@@ -50,6 +45,7 @@ const initMapWidget = (element) => {
     mapId,
     markers = [],
     mapTilerKey,
+    markerIcons = {},
     singleMarkerZoom,
     totalMarkers,
     validMarkersCount,
@@ -114,11 +110,46 @@ const initMapWidget = (element) => {
       return;
     }
 
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl,
-      iconUrl,
-      shadowUrl,
-    });
+    const iconDefaults = {
+      iconSize: [32, 32],
+      iconAnchor: [16, 32],
+      popupAnchor: [0, -28],
+      tooltipAnchor: [0, -24],
+    };
+    const iconCache = new Map();
+    const iconFor = (iconUrl) => {
+      if (!iconUrl) {
+        return null;
+      }
+      if (iconCache.has(iconUrl)) {
+        return iconCache.get(iconUrl);
+      }
+      const icon = L.icon({ iconUrl, ...iconDefaults });
+      iconCache.set(iconUrl, icon);
+      return icon;
+    };
+    const normalizeType = (value) => String(value ?? "").trim().toLowerCase();
+    const resolveMarkerIcon = (marker) => {
+      const type = normalizeType(marker.type);
+      if (type === "hotel") {
+        return iconFor(markerIcons.bed);
+      }
+      if (["attraction", "sight", "activity", "landmark"].includes(type)) {
+        return iconFor(markerIcons.landmark);
+      }
+      if (["destination", "place"].includes(type) || type.length === 0) {
+        return iconFor(markerIcons.pin);
+      }
+      return iconFor(markerIcons.pin);
+    };
+    const defaultIcon = iconFor(markerIcons.pin);
+    if (defaultIcon) {
+      L.Icon.Default.mergeOptions({
+        iconUrl: markerIcons.pin,
+        iconRetinaUrl: markerIcons.pin,
+        shadowUrl: "",
+      });
+    }
 
     logDebug("Loading", "Map container ready, initializing Leaflet.");
 
@@ -150,7 +181,8 @@ const initMapWidget = (element) => {
 
     markers.forEach((marker) => {
       const position = [marker.lat, marker.lon];
-      L.marker(position, { title: marker.title }).addTo(map);
+      const icon = resolveMarkerIcon(marker) ?? defaultIcon;
+      L.marker(position, { title: marker.title, icon }).addTo(map);
       bounds.extend(position);
     });
 

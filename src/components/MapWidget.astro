@@ -1,5 +1,8 @@
 ---
 import mapWidgetScript from "../scripts/mapWidget.js?url";
+import pinIconAsset from "../assets/map-icons/pin.svg";
+import bedIconAsset from "../assets/map-icons/bed.svg";
+import landmarkIconAsset from "../assets/map-icons/landmark.svg";
 
 const {
   markers = [],
@@ -9,11 +12,16 @@ const {
 } = Astro.props;
 
 const mapTilerKey = import.meta.env.PUBLIC_MAPTILER_KEY;
+const resolveIconUrl = (asset) => (typeof asset === "string" ? asset : asset?.src ?? "");
+const pinIconUrl = resolveIconUrl(pinIconAsset);
+const bedIconUrl = resolveIconUrl(bedIconAsset);
+const landmarkIconUrl = resolveIconUrl(landmarkIconAsset);
 const normalizedMarkers = Array.isArray(markers) ? markers : [];
 const markerSummaries = normalizedMarkers.map((marker) => {
   const title = marker.title ?? marker.name ?? "(untitled)";
   const rawLat = marker.lat ?? marker.latitude;
   const rawLon = marker.lon ?? marker.lng ?? marker.longitude;
+  const type = marker.type ?? marker.kind ?? marker.category ?? "";
   const lat = Number(rawLat);
   const lon = Number(rawLon);
   const issues: string[] = [];
@@ -38,6 +46,7 @@ const markerSummaries = normalizedMarkers.map((marker) => {
     title,
     rawLat,
     rawLon,
+    type,
     lat,
     lon,
     issues,
@@ -49,6 +58,7 @@ const validMarkers = markerSummaries
     title: marker.title,
     lat: marker.lat,
     lon: marker.lon,
+    type: marker.type ?? marker.kind ?? marker.category ?? "",
   }));
 const invalidMarkers = markerSummaries
   .filter((marker) => marker.issues.length > 0)
@@ -73,6 +83,11 @@ const mapConfig = {
   mapId,
   markers: validMarkers,
   mapTilerKey,
+  markerIcons: {
+    pin: pinIconUrl,
+    bed: bedIconUrl,
+    landmark: landmarkIconUrl,
+  },
   singleMarkerZoom,
   totalMarkers,
   validMarkersCount,
