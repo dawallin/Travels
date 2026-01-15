@@ -127,9 +127,9 @@ const baliSeedEntry = {
     </style>
   </head>
   <body>
-    <script is:inline>
+    <script is:inline define:vars={{ baliSeedEntry }}>
       window.__travelsDebugSeed = window.__travelsDebugSeed ?? [];
-      window.__travelsDebugSeed.push({JSON.stringify(baliSeedEntry)});
+      window.__travelsDebugSeed.push(baliSeedEntry);
     </script>
     <DebugDock />
     <main>

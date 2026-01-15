@@ -103,7 +103,12 @@ const mapConfig = {
   href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   crossorigin="anonymous"
 />
-<script type="module" src={mapWidgetScript}></script>
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  defer
+  crossorigin="anonymous"
+></script>
+<script src={mapWidgetScript} defer></script>
 
 <style>
   .map-widget {
