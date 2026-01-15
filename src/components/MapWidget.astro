@@ -93,15 +93,7 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
       import shadowUrl from "leaflet/dist/images/marker-shadow.png";
 
       const logDebug = (message, data) => {
-        try {
-          if (typeof window.travelsDebugLog !== "function") {
-            return;
-          }
-
-          window.travelsDebugLog("MapWidget", message, data ?? "");
-        } catch {
-          // Never allow debug logging to crash the map widget.
-        }
+        window.travelsDebugLog?.("MapWidget", message, data ?? "");
       };
       const formatKeySummary = () => {
         if (!mapTilerKey) {
@@ -248,15 +240,7 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
     }}
   >
     const logDebug = (message, data) => {
-      try {
-        if (typeof window.travelsDebugLog !== "function") {
-          return;
-        }
-
-        window.travelsDebugLog("MapWidget", message, data ?? "");
-      } catch {
-        // Never allow debug logging to crash the map widget.
-      }
+      window.travelsDebugLog?.("MapWidget", message, data ?? "");
     };
     const formatKeySummary = () => {
       if (!mapTilerKey) {

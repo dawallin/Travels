@@ -8,6 +8,9 @@ Provide a production-safe, always-available in-page debug console for diagnosing
 * Astro mixes SSR markup, bundled client scripts, and inline scripts; static imports in inline scripts can fail with
   `Cannot use import statement outside a module` and break the debug UI + map init.
 * MapWidget and other runtime widgets must **not import** a logger module; they must call the global debug API directly.
+* Widgets must not gate logging via `isEnabled` or query params; only use optional chaining on
+  `window.travelsDebugLog` so logging no-ops safely when absent.
+* There is only **one** debug stream: `window.travelsDebugLog`. No parallel logger instances or stores.
 
 ## Activation
 * A small bug icon is always visible in the top-right header/navigation area on every page.
