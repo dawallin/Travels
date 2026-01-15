@@ -1,8 +1,9 @@
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
-import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
-import iconUrl from "leaflet/dist/images/marker-icon.png";
-import shadowUrl from "leaflet/dist/images/marker-shadow.png";
+import L from "https://unpkg.com/leaflet@1.9.4/dist/leaflet-src.esm.js";
+
+const leafletAssetBase = "https://unpkg.com/leaflet@1.9.4/dist";
+const iconRetinaUrl = `${leafletAssetBase}/images/marker-icon-2x.png`;
+const iconUrl = `${leafletAssetBase}/images/marker-icon.png`;
+const shadowUrl = `${leafletAssetBase}/images/marker-shadow.png`;
 
 const logDebug = (message, data) => {
   window.travelsDebugLog?.("MapWidget", message, data ?? "");
