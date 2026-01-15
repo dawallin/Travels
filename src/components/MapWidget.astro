@@ -81,7 +81,6 @@ const mapConfig = {
   shouldRenderMap,
 };
 ---
-
 {shouldRenderMap && (
   <section
     class="map-widget"
@@ -98,6 +97,12 @@ const mapConfig = {
   <div data-map-widget hidden data-map-config={JSON.stringify(mapConfig)}></div>
 )}
 
+<!-- Leaflet assets load via CDN to avoid bare module imports on static hosting. -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  crossorigin="anonymous"
+/>
 <script type="module" src={mapWidgetScript}></script>
 
 <style>
