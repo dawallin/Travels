@@ -1,5 +1,5 @@
 ---
-import "leaflet/dist/leaflet.css";
+import mapWidgetScript from "../scripts/mapWidget.js?url";
 
 const {
   markers = [],
@@ -68,216 +68,37 @@ if (!mapTilerKey) {
 }
 
 const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
+const mapConfig = {
+  label,
+  mapId,
+  markers: validMarkers,
+  mapTilerKey,
+  singleMarkerZoom,
+  totalMarkers,
+  validMarkersCount,
+  invalidMarkersCount,
+  invalidMarkers,
+  shouldRenderMap,
+};
 ---
 
 {shouldRenderMap && (
-  <section class="map-widget" aria-label={label}>
+  <section
+    class="map-widget"
+    aria-label={label}
+    data-map-widget
+    data-map-config={JSON.stringify(mapConfig)}
+  >
     <h3 class="map-title">{label}</h3>
     <div id={mapId} class="map-canvas" aria-label={`${label} map`} role="region"></div>
-    <script
-      type="module"
-      define:vars={{
-        mapId,
-        markers: validMarkers,
-        mapTilerKey,
-        singleMarkerZoom,
-        totalMarkers,
-        validMarkersCount,
-        invalidMarkersCount,
-        invalidMarkers,
-      }}
-    >
-      import L from "leaflet";
-      import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
-      import iconUrl from "leaflet/dist/images/marker-icon.png";
-      import shadowUrl from "leaflet/dist/images/marker-shadow.png";
-
-      const logDebug = (message, data) => {
-        window.travelsDebugLog?.("MapWidget", message, data ?? "");
-      };
-      const formatMarkerList = (items, formatter, emptyLabel = "  - none") => {
-        if (!items.length) {
-          return emptyLabel;
-        }
-
-        return items.map(formatter).join("\n");
-      };
-      const formatRawValue = (value) => (value === "" ? "?" : String(value));
-      const keyPresent = Boolean(mapTilerKey);
-      const keyLength = mapTilerKey?.length ?? 0;
-      const keyPrefix = keyPresent ? mapTilerKey.slice(0, 4) : "";
-      const initData = [
-        `url: ${window.location.href}`,
-        `container: #${mapId}`,
-        `maptilerKeyPresent: ${keyPresent}`,
-        `maptilerKeyLen: ${keyLength}`,
-        keyPresent ? `maptilerKeyPrefix: ${keyPrefix}` : null,
-        `markersTotal: ${totalMarkers}`,
-        `markersValid: ${validMarkersCount}`,
-        `markersInvalid: ${invalidMarkersCount}`,
-      ]
-        .filter(Boolean)
-        .join("\n");
-      const markersData = [
-        "valid:",
-        formatMarkerList(
-          markers,
-          (marker) => `  - ${marker.title}: ${marker.lat}, ${marker.lon}`
-        ),
-        "invalid:",
-        formatMarkerList(
-          invalidMarkers,
-          (marker) =>
-            `  - ${marker.title}: ${formatRawValue(marker.rawLat)}, ${formatRawValue(
-              marker.rawLon
-            )} (${marker.issues.join(
-              ", "
-            )})`
-        ),
-      ].join("\n");
-
-      logDebug("Init", initData);
-      logDebug("Markers", markersData);
-
-      const mapElement = document.getElementById(mapId);
-      if (!mapElement) {
-        logDebug("Error", `Missing map container #${mapId}`);
-      }
-
-      try {
-        if (mapElement) {
-          L.Icon.Default.mergeOptions({
-            iconRetinaUrl,
-            iconUrl,
-            shadowUrl,
-          });
-
-          logDebug("Loading", "Map container ready, initializing Leaflet.");
-
-          const map = L.map(mapElement, {
-            scrollWheelZoom: false,
-          });
-
-          const tileLayer = L.tileLayer(
-            `https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${mapTilerKey}`,
-            {
-              attribution:
-                '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-            }
-          );
-          tileLayer.on("tileerror", (event) => {
-            const error = event?.error;
-            const errorMessage =
-              error instanceof Error
-                ? `${error.message}${error.stack ? `\n${error.stack}` : ""}`
-                : error
-                  ? String(error)
-                  : "Unknown tile error";
-            logDebug("Tile error", errorMessage);
-          });
-
-          tileLayer.addTo(map);
-
-          const bounds = L.latLngBounds([]);
-
-          markers.forEach((marker) => {
-            const position = [marker.lat, marker.lon];
-            L.marker(position, { title: marker.title }).addTo(map);
-            bounds.extend(position);
-          });
-
-          let boundsDecision = "none";
-          let fitBounds = false;
-          if (markers.length === 1) {
-            map.setView([markers[0].lat, markers[0].lon], singleMarkerZoom);
-            boundsDecision = "single marker zoom";
-          } else if (markers.length > 1) {
-            map.fitBounds(bounds, { padding: [24, 24] });
-            boundsDecision = "fit bounds";
-            fitBounds = true;
-          }
-
-          logDebug(
-            "Ready",
-            [
-              `markersPlaced: ${markers.length}`,
-              `fitBounds: ${fitBounds}`,
-              `boundsDecision: ${boundsDecision}`,
-              "tiles: requested",
-            ].join("\n")
-          );
-        }
-      } catch (error) {
-        const message =
-          error instanceof Error
-            ? `${error.message}${error.stack ? `\n${error.stack}` : ""}`
-            : String(error);
-        logDebug("Error", message);
-      }
-    </script>
   </section>
 )}
 
 {!shouldRenderMap && (
-  <script
-    type="module"
-    define:vars={{
-      mapTilerKey,
-      totalMarkers,
-      validMarkersCount,
-      invalidMarkersCount,
-      markers: validMarkers,
-      invalidMarkers,
-    }}
-  >
-    const logDebug = (message, data) => {
-      window.travelsDebugLog?.("MapWidget", message, data ?? "");
-    };
-    const formatMarkerList = (items, formatter, emptyLabel = "  - none") => {
-      if (!items.length) {
-        return emptyLabel;
-      }
-
-      return items.map(formatter).join("\n");
-    };
-    const formatRawValue = (value) => (value === "" ? "?" : String(value));
-    const keyPresent = Boolean(mapTilerKey);
-    const keyLength = mapTilerKey?.length ?? 0;
-    const keyPrefix = keyPresent ? mapTilerKey.slice(0, 4) : "";
-    const initData = [
-      `url: ${window.location.href}`,
-      "container: (not rendered)",
-      `maptilerKeyPresent: ${keyPresent}`,
-      `maptilerKeyLen: ${keyLength}`,
-      keyPresent ? `maptilerKeyPrefix: ${keyPrefix}` : null,
-      `markersTotal: ${totalMarkers}`,
-      `markersValid: ${validMarkersCount}`,
-      `markersInvalid: ${invalidMarkersCount}`,
-    ]
-      .filter(Boolean)
-      .join("\n");
-    const markersData = [
-      "valid:",
-      formatMarkerList(
-        markers,
-        (marker) => `  - ${marker.title}: ${marker.lat}, ${marker.lon}`
-      ),
-      "invalid:",
-      formatMarkerList(
-        invalidMarkers,
-        (marker) =>
-          `  - ${marker.title}: ${formatRawValue(marker.rawLat)}, ${formatRawValue(
-            marker.rawLon
-          )} (${marker.issues.join(
-            ", "
-          )})`
-      ),
-    ].join("\n");
-
-    logDebug("Init", initData);
-    logDebug("Markers", markersData);
-  </script>
+  <div data-map-widget hidden data-map-config={JSON.stringify(mapConfig)}></div>
 )}
+
+<script type="module" src={mapWidgetScript}></script>
 
 <style>
   .map-widget {
