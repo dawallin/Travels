@@ -2,6 +2,123 @@
 import DebugWidget from "./DebugWidget.astro";
 import debugDockUrl from "../scripts/debugDock.js?url";
 ---
+<script is:inline>
+  (() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    if (window.__travelsDebugStore) {
+      return;
+    }
+
+    const MAX_ENTRIES = 200;
+    let entries = [];
+    let index = 0;
+    const subscribers = new Set();
+
+    const notify = () => {
+      const snapshot = entries.slice();
+      subscribers.forEach((subscriber) => {
+        subscriber(snapshot);
+      });
+    };
+
+    const normalizeString = (value, fallback = "") => {
+      if (value == null) {
+        return fallback;
+      }
+
+      return String(value);
+    };
+
+    const appendEntry = (source, message, data = "") => {
+      const entry = {
+        index,
+        source: normalizeString(source, "Unknown"),
+        message: normalizeString(message, ""),
+        data: normalizeString(data, ""),
+      };
+      index += 1;
+      entries = entries.concat(entry).slice(-MAX_ENTRIES);
+      notify();
+    };
+
+    const seedEntries = (seed) => {
+      if (!Array.isArray(seed) || seed.length === 0) {
+        return;
+      }
+
+      seed.forEach((entry) => {
+        if (!entry || typeof entry !== "object") {
+          return;
+        }
+
+        appendEntry(entry.source, entry.message, entry.data ?? "");
+      });
+    };
+
+    const store = {
+      log: appendEntry,
+      clear: () => {
+        entries = [];
+        notify();
+      },
+      getAll: () => entries.slice(),
+      subscribe: (subscriber) => {
+        subscribers.add(subscriber);
+        subscriber(entries.slice());
+        return () => {
+          subscribers.delete(subscriber);
+        };
+      },
+      seed: seedEntries,
+    };
+
+    window.__travelsDebugStore = store;
+    window.travelsDebugLog = (source, message, data) => {
+      store.log(source, message, data ?? "");
+    };
+
+    if (window.__travelsDebugSeed) {
+      store.seed(window.__travelsDebugSeed);
+      window.__travelsDebugSeed = [];
+    }
+
+    window.addEventListener("error", (event) => {
+      const error = event?.error;
+      const message =
+        error instanceof Error
+          ? error.message
+          : normalizeString(event?.message, "Unhandled error");
+      const data = [
+        `message: ${normalizeString(event?.message, "Unknown error")}`,
+        event?.filename ? `file: ${event.filename}` : null,
+        Number.isFinite(event?.lineno) ? `line: ${event.lineno}` : null,
+        Number.isFinite(event?.colno) ? `column: ${event.colno}` : null,
+        error instanceof Error && error.stack ? `stack:\n${error.stack}` : null,
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      window.travelsDebugLog?.("Runtime Error", message, data);
+    });
+
+    window.addEventListener("unhandledrejection", (event) => {
+      const reason = event?.reason;
+      const message =
+        reason instanceof Error
+          ? reason.message
+          : normalizeString(reason, "Unhandled promise rejection");
+      const detail =
+        reason instanceof Error
+          ? `${reason.message}${reason.stack ? `\n${reason.stack}` : ""}`
+          : normalizeString(reason, "Unknown rejection");
+
+      window.travelsDebugLog?.("Unhandled Rejection", message, detail);
+    });
+  })();
+</script>
 <div class="debug-toggle-container">
   <button
     class="debug-toggle-button"

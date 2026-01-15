@@ -1,5 +1,3 @@
-import { getDebugLogger } from "../lib/debugLogger";
-
 const serializeEntries = (entries) =>
   entries
     .map((entry) =>
@@ -45,16 +43,16 @@ const initDebugDock = async () => {
     return;
   }
 
-  const logger = getDebugLogger();
+  const store = window.__travelsDebugStore;
 
-  if (!logger?.isEnabled()) {
+  if (!store) {
     return;
   }
 
   let isExpanded = false;
-  logger?.log("Debug", "Debug system ready", `URL: ${window.location.href}`);
+  window.travelsDebugLog?.("Debug", "Debug system ready", `URL: ${window.location.href}`);
 
-  logger?.subscribe((entries) => {
+  store.subscribe((entries) => {
     count.textContent = String(entries.length);
     list.innerHTML = "";
     entries.forEach((entry) => {
@@ -86,7 +84,7 @@ const initDebugDock = async () => {
   }
 
   copyButton.addEventListener("click", async () => {
-    const entries = logger?.getAll() ?? [];
+    const entries = store.getAll();
     const text = serializeEntries(entries);
 
     if (navigator.clipboard?.writeText) {
@@ -105,7 +103,7 @@ const initDebugDock = async () => {
   });
 
   clearButton.addEventListener("click", () => {
-    logger?.clear();
+    store.clear();
   });
 };
 

@@ -3,6 +3,15 @@
 ## Purpose
 Provide a production-safe, always-available in-page debug console for diagnosing issues (e.g., map markers or tiles) without requiring server runtime checks.
 
+## Astro guardrails
+* **Do not use static ES module imports inside inline `<script>` blocks.**
+* Astro mixes SSR markup, bundled client scripts, and inline scripts; static imports in inline scripts can fail with
+  `Cannot use import statement outside a module` and break the debug UI + map init.
+* MapWidget and other runtime widgets must **not import** a logger module; they must call the global debug API directly.
+* Widgets must not gate logging via `isEnabled` or query params; only use optional chaining on
+  `window.travelsDebugLog` so logging no-ops safely when absent.
+* There is only **one** debug stream: `window.travelsDebugLog`. No parallel logger instances or stores.
+
 ## Activation
 * A small bug icon is always visible in the top-right header/navigation area on every page.
 * The debug panel is **hidden by default** and toggled by clicking the bug icon.
@@ -25,14 +34,26 @@ Each entry includes:
 * `message`: short description.
 * `data`: string (raw text, YAML-like, or plain text).
 
+## Global debug API contract
+* A single global function exists on every page:
+  * `window.travelsDebugLog(source, message, dataString?)`
+* It appends to a **single global ring buffer** (max 200 entries) and notifies subscribers.
+* The debug UI reads from this same buffer; it does **not** create its own logger/store.
+* MapWidget and other widgets call `window.travelsDebugLog?.(...)` directly (no imports).
+* Logging helpers must be defensive: no-op if the global function is missing and never throw.
+
 ## Ring buffer limit
 * Max 200 entries.
 * Oldest entries are dropped as new entries are added.
 
 ## SSR + client log behavior
-* The logger is always available at runtime as `window.__travelsDebug`.
+* The debug buffer + `window.travelsDebugLog` are initialized early on every page.
 * Client-side logs are appended in index order at runtime.
-* Initial logs can be lazy-loaded on first open to keep payloads small.
+* Optional SSR seed entries can be injected into `window.__travelsDebugSeed` and merged into the buffer.
+
+## Runtime error capture
+* Global listeners for `error` and `unhandledrejection` write into the same debug stream.
+* This makes runtime parse/init failures visible to mobile users without DevTools.
 
 ## MapWidget runtime diagnostics
 When the MapWidget initializes on the client, it logs runtime diagnostics to help debug map issues in production.
@@ -40,10 +61,13 @@ When the MapWidget initializes on the client, it logs runtime diagnostics to hel
 Expected MapWidget log entries:
 * `MapWidget / Init`
   * Includes page URL, map container selector, MapTiler key presence/length/prefix, and marker counts.
+  * Fields: `url`, `container`, `maptilerKeyPresent`, `maptilerKeyLen`, `maptilerKeyPrefix` (if present),
+    `markersTotal`, `markersValid`, `markersInvalid`.
 * `MapWidget / Markers`
   * Includes total/valid/invalid marker counts plus readable lists of valid and invalid markers (with missing fields noted).
 * `MapWidget / Ready`
   * Emitted after map creation and marker placement; includes bounds/fit decision and marker count.
+  * Fields: `markersPlaced`, `fitBounds`, optional bounds decision/summary.
 * `MapWidget / Error`
   * Emitted when map initialization fails, including error message and stack string.
 
