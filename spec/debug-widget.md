@@ -37,6 +37,7 @@ Each entry includes:
 * It appends to a **single global ring buffer** (max 200 entries) and notifies subscribers.
 * The debug UI reads from this same buffer; it does **not** create its own logger/store.
 * MapWidget and other widgets call `window.travelsDebugLog?.(...)` directly (no imports).
+* Logging helpers must be defensive: no-op if the global function is missing and never throw.
 
 ## Ring buffer limit
 * Max 200 entries.
