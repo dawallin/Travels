@@ -13,6 +13,23 @@ const mapMarkers = places.map((place) => ({
   latitude: place.latitude,
   longitude: place.longitude,
 }));
+const placesWithCoords = mapMarkers.filter(
+  (marker) => Number.isFinite(Number(marker.latitude)) && Number.isFinite(Number(marker.longitude))
+);
+const baliSeedEntry = {
+  source: "Bali SSR",
+  message: "Places data",
+  data: [
+    `totalPlaces: ${places.length}`,
+    `withCoords: ${placesWithCoords.length}`,
+    "coords:",
+    placesWithCoords.length
+      ? placesWithCoords
+          .map((marker) => `  - ${marker.title}: ${marker.latitude}, ${marker.longitude}`)
+          .join("\n")
+      : "  - none",
+  ].join("\n"),
+};
 ---
 <!doctype html>
 <html lang="en">
@@ -110,6 +127,10 @@ const mapMarkers = places.map((place) => ({
     </style>
   </head>
   <body>
+    <script is:inline>
+      window.__travelsDebugSeed = window.__travelsDebugSeed ?? [];
+      window.__travelsDebugSeed.push({JSON.stringify(baliSeedEntry)});
+    </script>
     <DebugDock />
     <main>
       <PageHeader title={destination} backHref="../../" backLabel="← Back to trips">

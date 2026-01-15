@@ -91,15 +91,9 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
       import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
       import iconUrl from "leaflet/dist/images/marker-icon.png";
       import shadowUrl from "leaflet/dist/images/marker-shadow.png";
-      import { getDebugLogger } from "../lib/debugLogger";
 
       const logDebug = (message, data) => {
-        const logger = getDebugLogger();
-        if (!logger?.isEnabled()) {
-          return;
-        }
-
-        logger.log("MapWidget", message, data);
+        window.travelsDebugLog?.("MapWidget", message, data ?? "");
       };
       const formatKeySummary = () => {
         if (!mapTilerKey) {
@@ -245,15 +239,8 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
       invalidMarkers,
     }}
   >
-    import { getDebugLogger } from "../lib/debugLogger";
-
     const logDebug = (message, data) => {
-      const logger = getDebugLogger();
-      if (!logger?.isEnabled()) {
-        return;
-      }
-
-      logger.log("MapWidget", message, data);
+      window.travelsDebugLog?.("MapWidget", message, data ?? "");
     };
     const formatKeySummary = () => {
       if (!mapTilerKey) {
