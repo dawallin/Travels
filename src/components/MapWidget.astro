@@ -95,13 +95,6 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
       const logDebug = (message, data) => {
         window.travelsDebugLog?.("MapWidget", message, data ?? "");
       };
-      const formatKeySummary = () => {
-        if (!mapTilerKey) {
-          return "present: false";
-        }
-
-        return `present: true\nlen: ${mapTilerKey.length}\nprefix: ${mapTilerKey.slice(0, 4)}`;
-      };
       const formatMarkerList = (items, formatter, emptyLabel = "  - none") => {
         if (!items.length) {
           return emptyLabel;
@@ -110,26 +103,22 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
         return items.map(formatter).join("\n");
       };
       const formatRawValue = (value) => (value === "" ? "?" : String(value));
-      const renderStatus = [
-        `rendered: true`,
-        mapTilerKey ? "mapTilerKey: present" : "mapTilerKey: missing",
-        `markersTotal: ${totalMarkers}`,
-        `markersWithLatLon: ${validMarkersCount}`,
-        `markersMissingLatLon: ${invalidMarkersCount}`,
-      ].join("\n");
+      const keyPresent = Boolean(mapTilerKey);
+      const keyLength = mapTilerKey?.length ?? 0;
+      const keyPrefix = keyPresent ? mapTilerKey.slice(0, 4) : "";
       const initData = [
         `url: ${window.location.href}`,
         `container: #${mapId}`,
-        "mapTilerKey:",
-        `  ${formatKeySummary().split("\n").join("\n  ")}`,
+        `maptilerKeyPresent: ${keyPresent}`,
+        `maptilerKeyLen: ${keyLength}`,
+        keyPresent ? `maptilerKeyPrefix: ${keyPrefix}` : null,
         `markersTotal: ${totalMarkers}`,
         `markersValid: ${validMarkersCount}`,
         `markersInvalid: ${invalidMarkersCount}`,
-      ].join("\n");
+      ]
+        .filter(Boolean)
+        .join("\n");
       const markersData = [
-        `markersTotal: ${totalMarkers}`,
-        `markersValid: ${validMarkersCount}`,
-        `markersInvalid: ${invalidMarkersCount}`,
         "valid:",
         formatMarkerList(
           markers,
@@ -147,7 +136,6 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
         ),
       ].join("\n");
 
-      logDebug("Status", renderStatus);
       logDebug("Init", initData);
       logDebug("Markers", markersData);
 
@@ -199,19 +187,22 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
           });
 
           let boundsDecision = "none";
+          let fitBounds = false;
           if (markers.length === 1) {
             map.setView([markers[0].lat, markers[0].lon], singleMarkerZoom);
             boundsDecision = "single marker zoom";
           } else if (markers.length > 1) {
             map.fitBounds(bounds, { padding: [24, 24] });
             boundsDecision = "fit bounds";
+            fitBounds = true;
           }
 
           logDebug(
             "Ready",
             [
-              `bounds: ${boundsDecision}`,
               `markersPlaced: ${markers.length}`,
+              `fitBounds: ${fitBounds}`,
+              `boundsDecision: ${boundsDecision}`,
               "tiles: requested",
             ].join("\n")
           );
@@ -242,13 +233,6 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
     const logDebug = (message, data) => {
       window.travelsDebugLog?.("MapWidget", message, data ?? "");
     };
-    const formatKeySummary = () => {
-      if (!mapTilerKey) {
-        return "present: false";
-      }
-
-      return `present: true\nlen: ${mapTilerKey.length}\nprefix: ${mapTilerKey.slice(0, 4)}`;
-    };
     const formatMarkerList = (items, formatter, emptyLabel = "  - none") => {
       if (!items.length) {
         return emptyLabel;
@@ -257,19 +241,22 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
       return items.map(formatter).join("\n");
     };
     const formatRawValue = (value) => (value === "" ? "?" : String(value));
+    const keyPresent = Boolean(mapTilerKey);
+    const keyLength = mapTilerKey?.length ?? 0;
+    const keyPrefix = keyPresent ? mapTilerKey.slice(0, 4) : "";
     const initData = [
       `url: ${window.location.href}`,
       "container: (not rendered)",
-      "mapTilerKey:",
-      `  ${formatKeySummary().split("\n").join("\n  ")}`,
+      `maptilerKeyPresent: ${keyPresent}`,
+      `maptilerKeyLen: ${keyLength}`,
+      keyPresent ? `maptilerKeyPrefix: ${keyPrefix}` : null,
       `markersTotal: ${totalMarkers}`,
       `markersValid: ${validMarkersCount}`,
       `markersInvalid: ${invalidMarkersCount}`,
-    ].join("\n");
+    ]
+      .filter(Boolean)
+      .join("\n");
     const markersData = [
-      `markersTotal: ${totalMarkers}`,
-      `markersValid: ${validMarkersCount}`,
-      `markersInvalid: ${invalidMarkersCount}`,
       "valid:",
       formatMarkerList(
         markers,
@@ -287,25 +274,8 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
       ),
     ].join("\n");
 
-    const renderStatus = [
-      mapTilerKey ? null : "missing PUBLIC_MAPTILER_KEY",
-      validMarkersCount > 0 ? null : "no valid markers",
-    ]
-      .filter(Boolean)
-      .join("; ");
-
-    const renderStatusSummary = [
-      `rendered: false`,
-      mapTilerKey ? "mapTilerKey: present" : "mapTilerKey: missing",
-      `markersTotal: ${totalMarkers}`,
-      `markersWithLatLon: ${validMarkersCount}`,
-      `markersMissingLatLon: ${invalidMarkersCount}`,
-    ].join("\n");
-
-    logDebug("Status", renderStatusSummary);
     logDebug("Init", initData);
     logDebug("Markers", markersData);
-    logDebug("Map hidden", renderStatus || "unknown reason");
   </script>
 )}
 

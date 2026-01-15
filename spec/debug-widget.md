@@ -61,10 +61,13 @@ When the MapWidget initializes on the client, it logs runtime diagnostics to hel
 Expected MapWidget log entries:
 * `MapWidget / Init`
   * Includes page URL, map container selector, MapTiler key presence/length/prefix, and marker counts.
+  * Fields: `url`, `container`, `maptilerKeyPresent`, `maptilerKeyLen`, `maptilerKeyPrefix` (if present),
+    `markersTotal`, `markersValid`, `markersInvalid`.
 * `MapWidget / Markers`
   * Includes total/valid/invalid marker counts plus readable lists of valid and invalid markers (with missing fields noted).
 * `MapWidget / Ready`
   * Emitted after map creation and marker placement; includes bounds/fit decision and marker count.
+  * Fields: `markersPlaced`, `fitBounds`, optional bounds decision/summary.
 * `MapWidget / Error`
   * Emitted when map initialization fails, including error message and stack string.
 
