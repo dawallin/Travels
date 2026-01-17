@@ -10,6 +10,7 @@ const {
   mapId = "bali-map",
   singleMarkerZoom = 11,
 } = Astro.props;
+const fullscreenMapId = `${mapId}-fullscreen`;
 
 const mapTilerKey = import.meta.env.PUBLIC_MAPTILER_KEY;
 const resolveIconUrl = (asset) => (typeof asset === "string" ? asset : asset?.src ?? "");
@@ -81,6 +82,7 @@ const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
 const mapConfig = {
   label,
   mapId,
+  fullscreenMapId,
   markers: validMarkers,
   mapTilerKey,
   markerIcons: {
@@ -104,7 +106,81 @@ const mapConfig = {
     data-map-config={JSON.stringify(mapConfig)}
   >
     <h3 class="map-title">{label}</h3>
-    <div id={mapId} class="map-canvas" aria-label={`${label} map`} role="region"></div>
+    <div class="map-wrapper">
+      <div id={mapId} class="map-canvas" aria-label={`${label} map`} role="region"></div>
+      <button class="map-toggle" type="button" data-map-widget-toggle aria-label="Expand map">
+        <span class="map-toggle__icon map-toggle__icon--expand" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <path
+              d="M9 3H3v6M3 3l7 7M15 21h6v-6M21 21l-7-7"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </span>
+        <span class="map-toggle__icon map-toggle__icon--collapse" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <path
+              d="M3 9h6V3M3 9l7-7M21 15h-6v6M21 15l-7 7"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </span>
+      </button>
+    </div>
+    <div class="map-modal" data-map-widget-modal aria-hidden="true" hidden>
+      <div
+        class="map-modal__content"
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${label} fullscreen map`}
+      >
+        <div
+          id={fullscreenMapId}
+          class="map-canvas map-canvas--fullscreen"
+          aria-label={`${label} fullscreen map`}
+          role="region"
+        ></div>
+        <button
+          class="map-toggle map-toggle--fullscreen"
+          type="button"
+          data-map-widget-toggle
+          aria-label="Collapse map"
+        >
+          <span class="map-toggle__icon map-toggle__icon--expand" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+              <path
+                d="M9 3H3v6M3 3l7 7M15 21h6v-6M21 21l-7-7"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+          <span class="map-toggle__icon map-toggle__icon--collapse" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+              <path
+                d="M3 9h6V3M3 9l7-7M21 15h-6v6M21 15l-7 7"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
   </section>
 )}
 
@@ -146,9 +222,123 @@ const mapConfig = {
     border: 1px solid var(--border);
   }
 
+  .map-wrapper {
+    position: relative;
+  }
+
+  .map-toggle {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: rgba(20, 24, 28, 0.72);
+    color: #ffffff;
+    display: grid;
+    place-items: center;
+    z-index: 5;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease,
+      background 0.15s ease;
+  }
+
+  .map-toggle:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  }
+
+  .map-toggle:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.8);
+    outline-offset: 2px;
+  }
+
+  .map-toggle__icon {
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .map-toggle__icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .map-toggle__icon--collapse {
+    display: none;
+  }
+
+  .map-widget[data-map-fullscreen="true"] .map-toggle__icon--expand {
+    display: none;
+  }
+
+  .map-widget[data-map-fullscreen="true"] .map-toggle__icon--collapse {
+    display: inline-flex;
+  }
+
+  .map-modal {
+    position: fixed;
+    inset: 0;
+    padding: 4vh 4vw;
+    background: rgba(4, 6, 10, 0.72);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .map-widget[data-map-fullscreen="true"] .map-modal {
+    display: flex;
+  }
+
+  .map-modal__content {
+    position: relative;
+    width: min(96vw, 1200px);
+    height: min(90vh, 780px);
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    background: #0b0f14;
+  }
+
+  .map-canvas--fullscreen {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+  }
+
+  .map-toggle--fullscreen {
+    top: 16px;
+    right: 16px;
+    background: rgba(12, 14, 18, 0.8);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  :global(body.map-widget--no-scroll) {
+    overflow: hidden;
+  }
+
   @media (max-width: 640px) {
     .map-canvas {
       height: 280px;
+    }
+
+    .map-modal {
+      padding: 12px;
+    }
+
+    .map-modal__content {
+      width: 100%;
+      height: calc(100vh - 24px);
+      border-radius: 16px;
     }
   }
 </style>

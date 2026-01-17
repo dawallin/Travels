@@ -35,6 +35,7 @@ const initMapWidget = (element) => {
     return;
   }
   element.dataset.mapInitialized = "true";
+  element.dataset.mapFullscreen = "false";
 
   const config = parseConfig(element);
   if (!config) {
@@ -43,6 +44,7 @@ const initMapWidget = (element) => {
 
   const {
     mapId,
+    fullscreenMapId,
     markers = [],
     mapTilerKey,
     markerIcons = {},
@@ -151,61 +153,148 @@ const initMapWidget = (element) => {
       });
     }
 
-    logDebug("Loading", "Map container ready, initializing Leaflet.");
+    const createLeafletMap = (targetElement, contextLabel) => {
+      logDebug("Loading", `${contextLabel}: initializing Leaflet.`);
+      const map = L.map(targetElement, {
+        scrollWheelZoom: false,
+      });
 
-    const map = L.map(mapElement, {
-      scrollWheelZoom: false,
-    });
+      const tileLayer = L.tileLayer(
+        `https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${mapTilerKey}`,
+        {
+          attribution:
+            '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        }
+      );
+      tileLayer.on("tileerror", (event) => {
+        const error = event?.error;
+        const errorMessage =
+          error instanceof Error
+            ? `${error.message}${error.stack ? `\n${error.stack}` : ""}`
+            : error
+              ? String(error)
+              : "Unknown tile error";
+        logDebug("Tile error", errorMessage);
+      });
 
-    const tileLayer = L.tileLayer(
-      `https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${mapTilerKey}`,
-      {
-        attribution:
-          '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      tileLayer.addTo(map);
+
+      const bounds = L.latLngBounds([]);
+
+      markers.forEach((marker) => {
+        const position = [marker.lat, marker.lon];
+        const icon = resolveMarkerIcon(marker) ?? defaultIcon;
+        L.marker(position, { title: marker.title, icon }).addTo(map);
+        bounds.extend(position);
+      });
+
+      let boundsDecision = "none";
+      let fitBounds = false;
+      if (markers.length === 1) {
+        map.setView([markers[0].lat, markers[0].lon], singleMarkerZoom);
+        boundsDecision = "single marker zoom";
+      } else if (markers.length > 1) {
+        map.fitBounds(bounds, { padding: [24, 24] });
+        boundsDecision = "fit bounds";
+        fitBounds = true;
       }
-    );
-    tileLayer.on("tileerror", (event) => {
-      const error = event?.error;
-      const errorMessage =
-        error instanceof Error
-          ? `${error.message}${error.stack ? `\n${error.stack}` : ""}`
-          : error
-            ? String(error)
-            : "Unknown tile error";
-      logDebug("Tile error", errorMessage);
+
+      logDebug(
+        "Ready",
+        [
+          `markersPlaced: ${markers.length}`,
+          `fitBounds: ${fitBounds}`,
+          `boundsDecision: ${boundsDecision}`,
+          "tiles: requested",
+        ].join("\n")
+      );
+
+      return {
+        map,
+        bounds,
+        fitBounds,
+        singleMarker: markers.length === 1,
+      };
+    };
+
+    createLeafletMap(mapElement, "Inline map");
+    let fullscreenState = null;
+    let isFullscreen = false;
+    const modal = element.querySelector("[data-map-widget-modal]");
+    const fullscreenMapElement = fullscreenMapId
+      ? document.getElementById(fullscreenMapId)
+      : null;
+    const toggleButtons = element.querySelectorAll("[data-map-widget-toggle]");
+    const bodyClass = "map-widget--no-scroll";
+
+    const syncFullscreenState = () => {
+      element.dataset.mapFullscreen = String(isFullscreen);
+      if (modal) {
+        modal.hidden = !isFullscreen;
+        modal.setAttribute("aria-hidden", String(!isFullscreen));
+      }
+      toggleButtons.forEach((button) => {
+        button.setAttribute("aria-label", isFullscreen ? "Collapse map" : "Expand map");
+      });
+      document.body.classList.toggle(bodyClass, isFullscreen);
+    };
+
+    const closeFullscreen = () => {
+      if (!isFullscreen) {
+        return;
+      }
+      isFullscreen = false;
+      syncFullscreenState();
+      document.removeEventListener("keydown", handleKeydown);
+    };
+
+    const openFullscreen = () => {
+      if (isFullscreen) {
+        return;
+      }
+      if (!fullscreenMapElement) {
+        logDebug("Error", "Missing fullscreen map container.");
+        return;
+      }
+      isFullscreen = true;
+      syncFullscreenState();
+      document.addEventListener("keydown", handleKeydown);
+
+      if (!fullscreenState) {
+        fullscreenState = createLeafletMap(fullscreenMapElement, "Fullscreen map");
+      }
+
+      requestAnimationFrame(() => {
+        fullscreenState?.map.invalidateSize();
+        if (fullscreenState?.fitBounds) {
+          fullscreenState.map.fitBounds(fullscreenState.bounds, { padding: [24, 24] });
+        } else if (fullscreenState?.singleMarker && markers[0]) {
+          fullscreenState.map.setView([markers[0].lat, markers[0].lon], singleMarkerZoom);
+        }
+      });
+    };
+
+    const toggleFullscreen = () => {
+      if (isFullscreen) {
+        closeFullscreen();
+      } else {
+        openFullscreen();
+      }
+    };
+
+    const handleKeydown = (event) => {
+      if (event.key === "Escape") {
+        closeFullscreen();
+      }
+    };
+
+    toggleButtons.forEach((button) => {
+      button.addEventListener("click", toggleFullscreen);
     });
 
-    tileLayer.addTo(map);
-
-    const bounds = L.latLngBounds([]);
-
-    markers.forEach((marker) => {
-      const position = [marker.lat, marker.lon];
-      const icon = resolveMarkerIcon(marker) ?? defaultIcon;
-      L.marker(position, { title: marker.title, icon }).addTo(map);
-      bounds.extend(position);
-    });
-
-    let boundsDecision = "none";
-    let fitBounds = false;
-    if (markers.length === 1) {
-      map.setView([markers[0].lat, markers[0].lon], singleMarkerZoom);
-      boundsDecision = "single marker zoom";
-    } else if (markers.length > 1) {
-      map.fitBounds(bounds, { padding: [24, 24] });
-      boundsDecision = "fit bounds";
-      fitBounds = true;
+    if (!modal) {
+      logDebug("Error", "Missing fullscreen modal wrapper.");
     }
-
-    logDebug(
-      "Ready",
-      [
-        `markersPlaced: ${markers.length}`,
-        `fitBounds: ${fitBounds}`,
-        `boundsDecision: ${boundsDecision}`,
-        "tiles: requested",
-      ].join("\n")
-    );
   } catch (error) {
     const message =
       error instanceof Error
