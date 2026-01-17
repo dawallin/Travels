@@ -2,6 +2,7 @@
 import PageHeader from "../../../components/PageHeader.astro";
 import PlacesOverview from "../../../components/PlacesOverview.astro";
 import MapWidget from "../../../components/MapWidget.astro";
+import ItineraryList from "../../../components/ItineraryList.astro";
 import DebugDock from "../../../components/DebugDock.astro";
 import baliDebugLogUrl from "../../../scripts/baliDebugLog.js?url";
 
@@ -31,6 +32,14 @@ const baliSeedEntry = {
       : "  - none",
   ].join("\n"),
 };
+
+const itineraryStops = [
+  { title: "Jimbaran (arrival/departure)" },
+  { title: "Belimbing", days: 2 },
+  { title: "Munduk", days: 5 },
+  { title: "Menjangan", days: 5 },
+  { title: "Jimbaran (departure)" },
+];
 ---
 <!doctype html>
 <html lang="en">
@@ -140,12 +149,20 @@ const baliSeedEntry = {
         </p>
       </PageHeader>
       <section class="section">
+        <h2>Map</h2>
+        <MapWidget label="Bali map" markers={mapMarkers} />
+      </section>
+      <section class="section">
+        <h2>Itinerary</h2>
+        <p class="section-intro">Current working route based on destinations only.</p>
+        <ItineraryList items={itineraryStops} />
+      </section>
+      <section class="section">
         <h2>Places overview</h2>
         <p class="section-intro">
           Destinations are grouped with their immediate hotels and attractions. Status badges
           highlight how each place is currently tracked.
         </p>
-        <MapWidget label="Bali map" markers={mapMarkers} />
         <PlacesOverview />
       </section>
     </main>
