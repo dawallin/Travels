@@ -1,0 +1,44 @@
+---
+const { items = [] } = Astro.props;
+---
+
+<ol class="itinerary-list">
+  {items.map((item) => (
+    <li class="itinerary-item">
+      <div class="itinerary-stop">
+        <span class="itinerary-title">{item.title}</span>
+        {item.days ? <span class="itinerary-duration">{item.days} days</span> : null}
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .itinerary-list {
+    margin: 0;
+    padding-left: 20px;
+    display: grid;
+    gap: 12px;
+  }
+
+  .itinerary-item {
+    margin: 0;
+  }
+
+  .itinerary-stop {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 16px;
+  }
+
+  .itinerary-title {
+    font-weight: 600;
+  }
+
+  .itinerary-duration {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+</style>
