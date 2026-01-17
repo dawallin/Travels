@@ -8,12 +8,12 @@ const {
   markers = [],
   title,
   subtitle,
-  label = title ?? "Map overview",
   mapId = "bali-map",
   singleMarkerZoom = 11,
 } = Astro.props;
-const resolvedTitle = title ?? label ?? "Map overview";
+const resolvedTitle = title ?? "Map";
 const resolvedSubtitle = subtitle;
+const ariaLabel = resolvedSubtitle ? `${resolvedTitle} — ${resolvedSubtitle}` : resolvedTitle;
 const fullscreenMapId = `${mapId}-fullscreen`;
 
 const mapTilerKey = import.meta.env.PUBLIC_MAPTILER_KEY;
@@ -84,7 +84,7 @@ if (!mapTilerKey) {
 
 const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
 const mapConfig = {
-  label,
+  label: ariaLabel,
   mapId,
   fullscreenMapId,
   markers: validMarkers,
@@ -105,7 +105,7 @@ const mapConfig = {
 {shouldRenderMap && (
   <section
     class="map-widget"
-    aria-label={resolvedTitle}
+    aria-label={ariaLabel}
     data-map-widget
     data-map-config={JSON.stringify(mapConfig)}
   >
@@ -144,7 +144,7 @@ const mapConfig = {
     <div
       id={mapId}
       class="map-canvas"
-      aria-label={`${resolvedTitle} map`}
+      aria-label={`${ariaLabel} map`}
       role="region"
     ></div>
     <div class="map-modal" data-map-widget-modal aria-hidden="true" hidden>
@@ -152,7 +152,7 @@ const mapConfig = {
         class="map-modal__content"
         role="dialog"
         aria-modal="true"
-        aria-label={`${resolvedTitle} fullscreen map`}
+        aria-label={`${ariaLabel} fullscreen map`}
       >
         <header class="map-widget__header map-widget__header--modal">
           <div class="map-widget__titles">
@@ -194,7 +194,7 @@ const mapConfig = {
         <div
           id={fullscreenMapId}
           class="map-canvas map-canvas--fullscreen"
-          aria-label={`${resolvedTitle} fullscreen map`}
+          aria-label={`${ariaLabel} fullscreen map`}
           role="region"
         ></div>
       </div>
