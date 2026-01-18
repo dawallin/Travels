@@ -11,7 +11,10 @@ const {
   mapId = "bali-map",
   singleMarkerZoom = 11,
 } = Astro.props;
-const resolvedTitle = title ?? "Map";
+if (!title) {
+  throw new Error("[MapWidget] title prop is required.");
+}
+const resolvedTitle = title;
 const resolvedSubtitle = subtitle;
 const ariaLabel = resolvedSubtitle ? `${resolvedTitle} — ${resolvedSubtitle}` : resolvedTitle;
 const fullscreenMapId = `${mapId}-fullscreen`;
