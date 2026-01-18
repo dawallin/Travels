@@ -6,10 +6,14 @@ import landmarkIconAsset from "../assets/map-icons/landmark.svg";
 
 const {
   markers = [],
-  label = "Map overview",
+  title,
+  subtitle,
   mapId = "bali-map",
   singleMarkerZoom = 11,
 } = Astro.props;
+const resolvedTitle = title ?? "Map";
+const resolvedSubtitle = subtitle;
+const ariaLabel = resolvedSubtitle ? `${resolvedTitle} — ${resolvedSubtitle}` : resolvedTitle;
 const fullscreenMapId = `${mapId}-fullscreen`;
 
 const mapTilerKey = import.meta.env.PUBLIC_MAPTILER_KEY;
@@ -80,7 +84,7 @@ if (!mapTilerKey) {
 
 const shouldRenderMap = Boolean(mapTilerKey) && validMarkers.length > 0;
 const mapConfig = {
-  label,
+  label: ariaLabel,
   mapId,
   fullscreenMapId,
   markers: validMarkers,
@@ -101,13 +105,15 @@ const mapConfig = {
 {shouldRenderMap && (
   <section
     class="map-widget"
-    aria-label={label}
+    aria-label={ariaLabel}
     data-map-widget
     data-map-config={JSON.stringify(mapConfig)}
   >
-    <h3 class="map-title">{label}</h3>
-    <div class="map-wrapper">
-      <div id={mapId} class="map-canvas" aria-label={`${label} map`} role="region"></div>
+    <header class="map-widget__header">
+      <div class="map-widget__titles">
+        <h3 class="map-widget__title">{resolvedTitle}</h3>
+        {resolvedSubtitle && <p class="map-widget__subtitle">{resolvedSubtitle}</p>}
+      </div>
       <button class="map-toggle" type="button" data-map-widget-toggle aria-label="Expand map">
         <span class="map-toggle__icon map-toggle__icon--expand" aria-hidden="true">
           <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
@@ -134,51 +140,63 @@ const mapConfig = {
           </svg>
         </span>
       </button>
-    </div>
+    </header>
+    <div
+      id={mapId}
+      class="map-canvas"
+      aria-label={`${ariaLabel} map`}
+      role="region"
+    ></div>
     <div class="map-modal" data-map-widget-modal aria-hidden="true" hidden>
       <div
         class="map-modal__content"
         role="dialog"
         aria-modal="true"
-        aria-label={`${label} fullscreen map`}
+        aria-label={`${ariaLabel} fullscreen map`}
       >
+        <header class="map-widget__header map-widget__header--modal">
+          <div class="map-widget__titles">
+            <h3 class="map-widget__title">{resolvedTitle}</h3>
+            {resolvedSubtitle && <p class="map-widget__subtitle">{resolvedSubtitle}</p>}
+          </div>
+          <button
+            class="map-toggle map-toggle--fullscreen"
+            type="button"
+            data-map-widget-toggle
+            aria-label="Collapse map"
+          >
+            <span class="map-toggle__icon map-toggle__icon--expand" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <path
+                  d="M9 3H3v6M3 3l7 7M15 21h6v-6M21 21l-7-7"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+            <span class="map-toggle__icon map-toggle__icon--collapse" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <path
+                  d="M3 9h6V3M3 9l7-7M21 15h-6v6M21 15l-7 7"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        </header>
         <div
           id={fullscreenMapId}
           class="map-canvas map-canvas--fullscreen"
-          aria-label={`${label} fullscreen map`}
+          aria-label={`${ariaLabel} fullscreen map`}
           role="region"
         ></div>
-        <button
-          class="map-toggle map-toggle--fullscreen"
-          type="button"
-          data-map-widget-toggle
-          aria-label="Collapse map"
-        >
-          <span class="map-toggle__icon map-toggle__icon--expand" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-              <path
-                d="M9 3H3v6M3 3l7 7M15 21h6v-6M21 21l-7-7"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </span>
-          <span class="map-toggle__icon map-toggle__icon--collapse" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-              <path
-                d="M3 9h6V3M3 9l7-7M21 15h-6v6M21 15l-7 7"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </span>
-        </button>
       </div>
     </div>
   </section>
@@ -204,32 +222,60 @@ const mapConfig = {
 <style>
   .map-widget {
     display: grid;
-    gap: 12px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--surface);
   }
 
-  .map-title {
+  .map-widget__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface);
+  }
+
+  .map-widget__header--modal {
+    background: #0b0f14;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .map-widget__header--modal .map-widget__title {
+    color: #f4f6f8;
+  }
+
+  .map-widget__header--modal .map-widget__subtitle {
+    color: rgba(255, 255, 255, 0.65);
+  }
+
+  .map-widget__title {
     margin: 0;
     font-size: 1.05rem;
     letter-spacing: 0.01em;
     color: var(--text);
   }
 
+  .map-widget__titles {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .map-widget__subtitle {
+    margin: 2px 0 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
   .map-canvas {
     width: 100%;
     height: 320px;
-    border-radius: 14px;
     overflow: hidden;
-    border: 1px solid var(--border);
-  }
-
-  .map-wrapper {
-    position: relative;
+    border-top: 1px solid var(--border);
   }
 
   .map-toggle {
-    position: absolute;
-    top: 12px;
-    right: 12px;
     width: 44px;
     height: 44px;
     border-radius: 999px;
@@ -306,20 +352,15 @@ const mapConfig = {
     border: 1px solid rgba(255, 255, 255, 0.16);
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
     background: #0b0f14;
+    display: flex;
+    flex-direction: column;
   }
 
   .map-canvas--fullscreen {
+    flex: 1;
     width: 100%;
     height: 100%;
-    border-radius: 0;
     border: none;
-  }
-
-  .map-toggle--fullscreen {
-    top: 16px;
-    right: 16px;
-    background: rgba(12, 14, 18, 0.8);
-    border-color: rgba(255, 255, 255, 0.3);
   }
 
   :global(body.map-widget--no-scroll) {
