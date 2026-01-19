@@ -11,6 +11,13 @@ const formatMarkerList = (items, formatter, emptyLabel = "  - none") => {
 };
 
 const formatRawValue = (value) => (value === "" ? "?" : String(value));
+const escapeHtml = (value) =>
+  String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 
 const parseConfig = (element) => {
   const raw = element.dataset.mapConfig;
@@ -47,7 +54,6 @@ const initMapWidget = (element) => {
     fullscreenMapId,
     markers = [],
     mapTilerKey,
-    markerIcons = {},
     singleMarkerZoom,
     totalMarkers,
     validMarkersCount,
@@ -113,45 +119,51 @@ const initMapWidget = (element) => {
     }
 
     const iconDefaults = {
-      iconSize: [32, 32],
-      iconAnchor: [16, 32],
-      popupAnchor: [0, -28],
-      tooltipAnchor: [0, -24],
+      className: "",
+      iconSize: [36, 36],
+      iconAnchor: [18, 36],
+      popupAnchor: [0, -30],
     };
     const iconCache = new Map();
-    const iconFor = (iconUrl) => {
-      if (!iconUrl) {
-        return null;
+    const iconKey = (marker) => `${marker.statusClass ?? ""}::${marker.typeKey ?? ""}`;
+    const iconFor = (marker) => {
+      const key = iconKey(marker);
+      if (iconCache.has(key)) {
+        return iconCache.get(key);
       }
-      if (iconCache.has(iconUrl)) {
-        return iconCache.get(iconUrl);
-      }
-      const icon = L.icon({ iconUrl, ...iconDefaults });
-      iconCache.set(iconUrl, icon);
+      const className = ["map-marker", marker.statusClass].filter(Boolean).join(" ");
+      const glyph = marker.glyph ?? "";
+      const icon = L.divIcon({
+        ...iconDefaults,
+        className,
+        html: `<span class="map-marker__glyph" aria-hidden="true">${glyph}</span>`,
+      });
+      iconCache.set(key, icon);
       return icon;
     };
-    const normalizeType = (value) => String(value ?? "").trim().toLowerCase();
-    const resolveMarkerIcon = (marker) => {
-      const type = normalizeType(marker.type);
-      if (type === "hotel") {
-        return iconFor(markerIcons.bed);
+    const buildPopupContent = (marker) => {
+      const title = escapeHtml(marker.title ?? "");
+      const metaParts = [];
+      if (marker.typeLabel) {
+        metaParts.push(escapeHtml(marker.typeLabel));
       }
-      if (["attraction", "sight", "activity", "landmark"].includes(type)) {
-        return iconFor(markerIcons.landmark);
+      if (marker.statusLabel) {
+        metaParts.push(escapeHtml(marker.statusLabel));
       }
-      if (["destination", "place"].includes(type) || type.length === 0) {
-        return iconFor(markerIcons.pin);
-      }
-      return iconFor(markerIcons.pin);
+      const metaLine = metaParts.join(" · ");
+      const description = marker.description ? escapeHtml(marker.description) : "";
+      const link = marker.href ? escapeHtml(marker.href) : "";
+      return [
+        `<div class="map-popup">`,
+        `<p class="map-popup__title">${title}</p>`,
+        metaLine ? `<p class="map-popup__meta">${metaLine}</p>` : "",
+        description ? `<p class="map-popup__description">${description}</p>` : "",
+        link ? `<p class="map-popup__link"><a href="${link}">Learn more</a></p>` : "",
+        `</div>`,
+      ]
+        .filter(Boolean)
+        .join("");
     };
-    const defaultIcon = iconFor(markerIcons.pin);
-    if (defaultIcon) {
-      L.Icon.Default.mergeOptions({
-        iconUrl: markerIcons.pin,
-        iconRetinaUrl: markerIcons.pin,
-        shadowUrl: "",
-      });
-    }
 
     const createLeafletMap = (targetElement, contextLabel) => {
       logDebug("Loading", `${contextLabel}: initializing Leaflet.`);
@@ -183,8 +195,13 @@ const initMapWidget = (element) => {
 
       markers.forEach((marker) => {
         const position = [marker.lat, marker.lon];
-        const icon = resolveMarkerIcon(marker) ?? defaultIcon;
-        L.marker(position, { title: marker.title, icon }).addTo(map);
+        const icon = iconFor(marker);
+        L.marker(position, { title: marker.title, icon })
+          .addTo(map)
+          .bindPopup(buildPopupContent(marker), {
+            autoPan: true,
+            autoPanPadding: [16, 16],
+          });
         bounds.extend(position);
       });
 
