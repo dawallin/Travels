@@ -1,39 +1,19 @@
 ---
 import Card from "./Card.astro";
+import {
+  placeStatusChipLabels,
+  placeStatusColors,
+  placeTypeIcons,
+  placeTypeLabels,
+} from "./placePresentation";
 
 const { place, href } = Astro.props;
 
-const statusColors = {
-  included: "#3f8f5f",
-  possible: "#f2b531",
-  avoid: "#c57a7a",
-};
-const statusLabels = {
-  possible: "Possible",
-  avoid: "Avoid",
-};
-const typeLabels = {
-  destination: "Destination",
-  hotel: "Hotel",
-  attraction: "Attraction",
-};
-const typeIcons = {
-  destination: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 2c-3.31 0-6 2.69-6 6 0 4.5 6 12 6 12s6-7.5 6-12c0-3.31-2.69-6-6-6zm0 8.5A2.5 2.5 0 1 1 12 5.5a2.5 2.5 0 0 1 0 5z"/>
-  </svg>`,
-  hotel: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M4 7h10a4 4 0 0 1 4 4v6h-2v-2H6v2H4V7zm2 6h10v-2a2 2 0 0 0-2-2H6v4zm1-3h3v2H7v-2zm12 5h-1V7h1a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1z"/>
-  </svg>`,
-  attraction: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M4 20h16v-2H4v2zm2-4h2V8H6v8zm4 0h2V8h-2v8zm4 0h2V8h-2v8zm4 0h2V8h-2v8zM3 6l9-4 9 4v2H3V6z"/>
-  </svg>`,
-};
-
-const statusColor = statusColors[place.status] ?? statusColors.included;
-const statusLabel = statusLabels[place.status];
+const statusColor = placeStatusColors[place.status] ?? placeStatusColors.included;
+const statusLabel = placeStatusChipLabels[place.status];
 const typeKey = place.type ?? "destination";
-const badgeLabel = typeLabels[typeKey] ?? "Place";
-const badgeIcon = typeIcons[typeKey] ?? typeIcons.destination;
+const badgeLabel = placeTypeLabels[typeKey] ?? "Place";
+const badgeIcon = placeTypeIcons[typeKey] ?? placeTypeIcons.destination;
 const chip = statusLabel ? { label: statusLabel, tone: place.status } : null;
 ---
 

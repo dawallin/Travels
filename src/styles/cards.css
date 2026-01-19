@@ -1,3 +1,13 @@
+:global(:root) {
+  --status-included: #3f8f5f;
+  --status-possible: #f2b531;
+  --status-avoid: #c57a7a;
+  --status-possible-soft: rgba(242, 181, 49, 0.18);
+  --status-possible-text: #b77700;
+  --status-avoid-soft: rgba(197, 122, 122, 0.2);
+  --status-avoid-text: #8d4545;
+}
+
 .card {
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -123,13 +133,13 @@
 }
 
 .card-chip--possible {
-  background: rgba(242, 181, 49, 0.18);
-  color: #b77700;
+  background: var(--status-possible-soft);
+  color: var(--status-possible-text);
 }
 
 .card-chip--avoid {
-  background: rgba(197, 122, 122, 0.2);
-  color: #8d4545;
+  background: var(--status-avoid-soft);
+  color: var(--status-avoid-text);
 }
 
 .card.place-card {

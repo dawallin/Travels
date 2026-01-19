@@ -1,8 +1,6 @@
 ---
 import mapWidgetScript from "../scripts/mapWidget.js?url";
-import pinIconAsset from "../assets/map-icons/pin.svg";
-import bedIconAsset from "../assets/map-icons/bed.svg";
-import landmarkIconAsset from "../assets/map-icons/landmark.svg";
+import { placeStatusLabels, placeTypeIcons, placeTypeLabels } from "./placePresentation";
 
 const {
   markers = [],
@@ -20,16 +18,15 @@ const ariaLabel = resolvedSubtitle ? `${resolvedTitle} — ${resolvedSubtitle}` 
 const fullscreenMapId = `${mapId}-fullscreen`;
 
 const mapTilerKey = import.meta.env.PUBLIC_MAPTILER_KEY;
-const resolveIconUrl = (asset) => (typeof asset === "string" ? asset : asset?.src ?? "");
-const pinIconUrl = resolveIconUrl(pinIconAsset);
-const bedIconUrl = resolveIconUrl(bedIconAsset);
-const landmarkIconUrl = resolveIconUrl(landmarkIconAsset);
 const normalizedMarkers = Array.isArray(markers) ? markers : [];
 const markerSummaries = normalizedMarkers.map((marker) => {
   const title = marker.title ?? marker.name ?? "(untitled)";
   const rawLat = marker.lat ?? marker.latitude;
   const rawLon = marker.lon ?? marker.lng ?? marker.longitude;
   const type = marker.type ?? marker.kind ?? marker.category ?? "";
+  const status = marker.status ?? "included";
+  const description = marker.description ?? "";
+  const href = marker.href ?? marker.url ?? "";
   const lat = Number(rawLat);
   const lon = Number(rawLon);
   const issues: string[] = [];
@@ -55,11 +52,41 @@ const markerSummaries = normalizedMarkers.map((marker) => {
     rawLat,
     rawLon,
     type,
+    status,
+    description,
+    href,
     lat,
     lon,
     issues,
   };
 });
+const normalizeKey = (value) => String(value ?? "").trim().toLowerCase();
+const normalizeStatus = (value) => {
+  const normalized = normalizeKey(value);
+  if (normalized === "possible" || normalized === "avoid") {
+    return normalized;
+  }
+  return "included";
+};
+const normalizeType = (value) => {
+  const normalized = normalizeKey(value);
+  if (normalized === "hotel" || normalized === "attraction") {
+    return normalized;
+  }
+  return "destination";
+};
+const getMarkerPresentation = (marker) => {
+  const typeKey = normalizeType(marker.type);
+  const statusKey = normalizeStatus(marker.status);
+  return {
+    typeKey,
+    statusKey,
+    statusClass: `status-${statusKey}`,
+    typeLabel: placeTypeLabels[typeKey] ?? "Place",
+    statusLabel: placeStatusLabels[statusKey] ?? "Included",
+    glyph: placeTypeIcons[typeKey] ?? placeTypeIcons.destination,
+  };
+};
 const validMarkers = markerSummaries
   .filter((marker) => marker.issues.length === 0)
   .map((marker) => ({
@@ -67,6 +94,10 @@ const validMarkers = markerSummaries
     lat: marker.lat,
     lon: marker.lon,
     type: marker.type ?? marker.kind ?? marker.category ?? "",
+    status: marker.status ?? "included",
+    description: marker.description ?? "",
+    href: marker.href ?? "",
+    ...getMarkerPresentation(marker),
   }));
 const invalidMarkers = markerSummaries
   .filter((marker) => marker.issues.length > 0)
@@ -92,11 +123,6 @@ const mapConfig = {
   fullscreenMapId,
   markers: validMarkers,
   mapTilerKey,
-  markerIcons: {
-    pin: pinIconUrl,
-    bed: bedIconUrl,
-    landmark: landmarkIconUrl,
-  },
   singleMarkerZoom,
   totalMarkers,
   validMarkersCount,
@@ -368,6 +394,71 @@ const mapConfig = {
 
   :global(body.map-widget--no-scroll) {
     overflow: hidden;
+  }
+
+  :global(.map-marker) {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    background: var(--marker-color, var(--status-included));
+    color: #ffffff;
+    display: grid;
+    place-items: center;
+    border: 2px solid #ffffff;
+    box-shadow: 0 6px 12px rgba(15, 23, 42, 0.2);
+  }
+
+  :global(.map-marker.status-included) {
+    --marker-color: var(--status-included);
+  }
+
+  :global(.map-marker.status-possible) {
+    --marker-color: var(--status-possible);
+  }
+
+  :global(.map-marker.status-avoid) {
+    --marker-color: var(--status-avoid);
+  }
+
+  :global(.map-marker__glyph svg) {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+
+  :global(.map-popup) {
+    margin: 0;
+  }
+
+  :global(.map-popup__title) {
+    margin: 0 0 4px;
+    font-weight: 600;
+  }
+
+  :global(.map-popup__meta) {
+    margin: 0 0 6px;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  :global(.map-popup__description) {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+
+  :global(.map-popup__link) {
+    margin: 6px 0 0;
+    font-size: 0.85rem;
+  }
+
+  :global(.map-popup__link a) {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  :global(.map-popup__link a:hover) {
+    text-decoration: underline;
   }
 
   @media (max-width: 640px) {
