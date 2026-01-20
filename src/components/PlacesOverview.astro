@@ -1,9 +1,12 @@
 ---
 import PlaceCard from "./PlaceCard.astro";
 
-const tripId = "bali";
+const { tripId = "bali", places: providedPlaces } = Astro.props;
 const placeModules = import.meta.glob("../data/places/bali/*.ts", { eager: true });
-const places = Object.values(placeModules).map((module) => module.default ?? module.place ?? module);
+const fallbackPlaces = Object.values(placeModules).map(
+  (module) => module.default ?? module.place ?? module
+);
+const places = providedPlaces ?? fallbackPlaces;
 
 const statusOrder = ["included", "possible", "avoid"];
 const getStatusRank = (place) => {
