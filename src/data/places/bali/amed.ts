@@ -5,6 +5,6 @@ export default {
   status: "possible",
   parentDestinationId: "bali",
   description: "Coastal village area known for calm bays and views of Mount Agung.",
-  latitude: -8.3466,
-  longitude: 115.559,
+  latitude: -8.3469,
+  longitude: 115.56,
 };
