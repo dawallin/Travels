@@ -6,6 +6,6 @@ export default {
   parentDestinationId: "bali",
   description:
     "Coastal area close to the airport, used as a buffer night before departure.",
-  latitude: -8.7905,
+  latitude: -8.7906,
   longitude: 115.1617,
 };

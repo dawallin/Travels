@@ -6,6 +6,6 @@ export default {
   parentDestinationId: "bali",
   description:
     "Mountain village area with waterfalls, cooler climate and access to rainforest hiking.",
-  latitude: -8.2725,
-  longitude: 115.0826,
+  latitude: -8.2669,
+  longitude: 115.0516,
 };
