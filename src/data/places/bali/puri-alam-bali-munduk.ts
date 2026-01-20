@@ -6,6 +6,6 @@ export default {
   parentDestinationId: "munduk",
   description:
     "Small hillside eco-style hotel near Munduk with views over forest and valleys; quiet base for waterfalls and jungle trails.",
-  latitude: -8.2787,
-  longitude: 115.0766,
+  latitude: -8.28041,
+  longitude: 115.055812,
 };

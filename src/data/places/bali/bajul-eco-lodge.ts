@@ -6,6 +6,6 @@ export default {
   parentDestinationId: "pejarakan",
   description:
     "Eco-focused lodge near Banyuwedang/Pejarakan, close to West Bali National Park and Menjangan boat routes; quiet, nature-oriented stay.",
-  latitude: -8.1416,
-  longitude: 114.4699,
+  latitude: -8.13251,
+  longitude: 114.5564,
 };
