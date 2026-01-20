@@ -1,6 +1,6 @@
 export default {
   id: "praslin",
-  title: "Praslin – 4 days",
+  title: "Praslin",
   type: "destination",
   status: "included",
   parentDestinationId: "seychelles",

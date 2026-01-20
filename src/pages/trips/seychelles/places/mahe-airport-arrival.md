@@ -1,6 +1,6 @@
 ---
 layout: "../../../../layouts/PlaceLayout.astro"
-title: "Mahé Airport (SEZ) – Arrival"
+title: "Mahé Airport (SEZ)"
 backLabel: "← Back to Seychelles overview"
 ---
-Startpunkt på Mahé. Bra för första natt/ankomstlogistik innan vidare resa.
+Startpunkt på Mahé för vidare resa.

@@ -1,6 +1,6 @@
 export default {
   id: "la-digue",
-  title: "La Digue – 3 nights",
+  title: "La Digue",
   type: "destination",
   status: "included",
   parentDestinationId: "seychelles",
