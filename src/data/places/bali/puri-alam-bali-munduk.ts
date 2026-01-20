@@ -5,7 +5,7 @@ export default {
   status: "possible",
   parentDestinationId: "munduk",
   description:
-    "Bekvämt lodge-hotell nära by/väg, bra som utflyktsbas men mindre immersivt än mer avskilda alternativ.",
-  latitude: -8.2636,
-  longitude: 115.0789,
+    "Small hillside eco-style hotel near Munduk with views over forest and valleys; quiet base for waterfalls and jungle trails.",
+  latitude: -8.2787,
+  longitude: 115.0766,
 };

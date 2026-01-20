@@ -5,7 +5,7 @@ export default {
   status: "included",
   parentDestinationId: "bali",
   description:
-    "Mainland village on the northwest coast of Bali, used as the base area for visiting West Bali National Park and snorkeling/diving around Pulau Menjangan.",
-  latitude: -8.1256,
-  longitude: 114.4939,
+    "Mainland village on northwest Bali used as base for West Bali National Park and Pulau Menjangan boat access.",
+  latitude: -8.1297,
+  longitude: 114.4869,
 };
