@@ -1,12 +1,10 @@
 ---
 import { theme as summer25Theme } from "./preferences/themes/summer-2025.astro";
-import { theme as rainforestTheme } from "./preferences/themes/summer-rainforest-snorkeling.astro";
-import { theme as skiTheme } from "./preferences/themes/ski-trip.astro";
 import Card from "../components/Card.astro";
 import DebugDock from "../components/DebugDock.astro";
 
 const siteTitle = "La Familia – Travel Planning";
-const planningThemes = [summer25Theme, rainforestTheme, skiTheme];
+const planningThemes = [summer25Theme];
 const themesById = Object.fromEntries(planningThemes.map((theme) => [theme.id, theme]));
 const truncateNotch = (label) => (label.length > 10 ? `${label.slice(0, 9)}…` : label);
 const baselineNotch = {
@@ -23,20 +21,8 @@ const trips = [
   {
     destination: "Seychellerna",
     href: "trips/seychelles/",
-    themeIds: [],
+    themeIds: ["summer25"],
     status: "Status: active research • Focus: island hopping + beach stays",
-  },
-  {
-    destination: "Portugal",
-    href: "trips/portugal/",
-    themeIds: [],
-    status: "Status: placeholder • Focus: regional options under review",
-  },
-  {
-    destination: "Japan",
-    href: "trips/japan/",
-    themeIds: [],
-    status: "Status: placeholder • Focus: season timing and transit costs",
   },
 ];
 const getTripNotches = (themeIds) =>
