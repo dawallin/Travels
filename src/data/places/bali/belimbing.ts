@@ -6,6 +6,6 @@ export default {
   parentDestinationId: "bali",
   description:
     "Rural mountain area with dense vegetation and strong jungle atmosphere, away from mass tourism.",
-  latitude: -8.3839,
-  longitude: 114.9846,
+  latitude: -8.3676,
+  longitude: 115.0059,
 };
