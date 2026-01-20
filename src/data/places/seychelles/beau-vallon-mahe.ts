@@ -1,6 +1,6 @@
 export default {
   id: "beau-vallon-mahe",
-  title: "Beau Vallon, Mahé – 4 nights",
+  title: "Beau Vallon, Mahé",
   type: "destination",
   status: "included",
   parentDestinationId: "seychelles",

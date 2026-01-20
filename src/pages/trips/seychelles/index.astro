@@ -18,11 +18,10 @@ const mapMarkers = places.map((place) => ({
 }));
 
 const itineraryStops = [
-  { title: "Mahé Airport (arrival)" },
-  { title: "Praslin (4 days)" },
-  { title: "La Digue (3 nights)" },
-  { title: "Beau Vallon, Mahé (4 nights)" },
-  { title: "Mahé Airport (departure)" },
+  { title: "Mahé Airport" },
+  { title: "Praslin (4 dagar)" },
+  { title: "La Digue (3 dagar)" },
+  { title: "Beau Vallon, Mahé (4 dagar)" },
 ];
 ---
 <!doctype html>
@@ -125,7 +124,7 @@ const itineraryStops = [
     <main>
       <PageHeader title={destination} backHref="../../" backLabel="← Back to trips">
         <p class="intro">
-          Research snapshot for destinations and supporting stays currently under consideration.
+          Kort översikt av resans destinationer och stopp.
         </p>
       </PageHeader>
       <section class="section">
@@ -134,14 +133,13 @@ const itineraryStops = [
       </section>
       <section class="section">
         <h2>Itinerary</h2>
-        <p class="section-intro">Current working route based on destinations only.</p>
+        <p class="section-intro">Preliminär resplan för dagarna.</p>
         <ItineraryList items={itineraryStops} />
       </section>
       <section class="section">
         <h2>Places overview</h2>
         <p class="section-intro">
-          Destinations are grouped with their immediate hotels and attractions. Status badges
-          highlight how each place is currently tracked.
+          Destinationer med hotell och upplevelser samlade per plats.
         </p>
         <PlacesOverview tripId="seychelles" places={places} />
       </section>
