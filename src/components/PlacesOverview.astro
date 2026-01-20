@@ -5,16 +5,49 @@ const tripId = "bali";
 const placeModules = import.meta.glob("../data/places/bali/*.ts", { eager: true });
 const places = Object.values(placeModules).map((module) => module.default ?? module.place ?? module);
 
-const sortedPlaces = [...places].sort((a, b) => a.title.localeCompare(b.title));
-const destinationPlaces = sortedPlaces.filter(
-  (place) => place.type === "destination" && place.parentDestinationId === tripId
-);
+const statusOrder = ["included", "possible", "avoid"];
+const getStatusRank = (place) => {
+  const status = place.status ?? "included";
+  const rank = statusOrder.indexOf(status);
+  return rank === -1 ? statusOrder.length : rank;
+};
+const getChildTypeRank = (place) => {
+  if (place.type === "hotel") {
+    return 0;
+  }
+  if (place.type === "attraction") {
+    return 1;
+  }
+  return 2;
+};
+const compareByStatusThenTitle = (a, b) => {
+  const statusDelta = getStatusRank(a) - getStatusRank(b);
+  if (statusDelta !== 0) {
+    return statusDelta;
+  }
+  return a.title.localeCompare(b.title);
+};
+const compareChildren = (a, b) => {
+  const statusDelta = getStatusRank(a) - getStatusRank(b);
+  if (statusDelta !== 0) {
+    return statusDelta;
+  }
+  const typeDelta = getChildTypeRank(a) - getChildTypeRank(b);
+  if (typeDelta !== 0) {
+    return typeDelta;
+  }
+  return a.title.localeCompare(b.title);
+};
+
+const destinationPlaces = places
+  .filter((place) => place.type === "destination" && place.parentDestinationId === tripId)
+  .sort(compareByStatusThenTitle);
 const destinationIds = new Set(destinationPlaces.map((place) => place.id));
 
 const childrenByParent = new Map();
 const ungroupedPlaces = [];
 
-sortedPlaces.forEach((place) => {
+places.forEach((place) => {
   const isDestination = place.type === "destination" && place.parentDestinationId === tripId;
   if (!isDestination) {
     const isChild = place.type !== "destination" && destinationIds.has(place.parentDestinationId);
@@ -27,6 +60,11 @@ sortedPlaces.forEach((place) => {
     }
   }
 });
+
+childrenByParent.forEach((group, parentId) => {
+  childrenByParent.set(parentId, [...group].sort(compareChildren));
+});
+ungroupedPlaces.sort(compareChildren);
 
 const getContentHref = (placeId) => `places/${placeId}/`;
 const getPlaceCardProps = (place) => ({
