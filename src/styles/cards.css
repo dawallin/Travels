@@ -1,4 +1,4 @@
-:global(:root) {
+:root {
   --status-included: #3f8f5f;
   --status-possible: #f2b531;
   --status-avoid: #c57a7a;
