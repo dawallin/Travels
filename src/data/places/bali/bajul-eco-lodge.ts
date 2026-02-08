@@ -2,7 +2,7 @@ export default {
   id: "bajul-eco-lodge",
   title: "Bajul Eco Lodge",
   type: "hotel",
-  status: "included",
+  status: "possible",
   parentDestinationId: "pejarakan",
   description:
     "Eco-focused lodge near Banyuwedang/Pejarakan, close to West Bali National Park and Menjangan boat routes; quiet, nature-oriented stay.",
