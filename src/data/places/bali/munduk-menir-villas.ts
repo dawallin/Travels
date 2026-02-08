@@ -6,6 +6,11 @@ export default {
   parentDestinationId: "munduk",
   description:
     "Villa-style hotel in the cool highlands of Munduk with mountain views, peaceful nature setting, an outdoor pool, and easy access to nearby waterfalls and walking trails.",
-  latitude: -8.273449,
-  longitude: 115.0826,
+  address:
+    "Jl. Pure Puseh, Dusun Beji, Munduk, Kec. Banjar, Kabupaten Buleleng, Bali 81152, Indonesia",
+  tripadvisorUrl:
+    "https://www.tripadvisor.se/Hotel_Review-g608490-d12652402-Reviews-Munduk_Menir_Villas-Munduk_Banjar_Buleleng_Regency_Bali.html",
+  googleMapsUrl: "https://maps.app.goo.gl/LzTxUrp5eUxVeNt4A?g_st=ic",
+  latitude: -8.2734002,
+  longitude: 115.0827596,
 };
