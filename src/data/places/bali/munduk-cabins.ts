@@ -2,7 +2,7 @@ export default {
   id: "munduk-cabins",
   title: "Munduk Cabins",
   type: "hotel",
-  status: "included",
+  status: "possible",
   parentDestinationId: "munduk",
   description:
     "Nature-focused cabin accommodation offering strong rainforest atmosphere and proximity to hiking.",
