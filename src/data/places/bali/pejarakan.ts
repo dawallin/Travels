@@ -6,6 +6,6 @@ export default {
   parentDestinationId: "bali",
   description:
     "Mainland village on northwest Bali used as base for West Bali National Park and Pulau Menjangan boat access.",
-  latitude: -8.2199,
-  longitude: 114.9668,
+  latitude: -8.1543,
+  longitude: 114.5775,
 };
