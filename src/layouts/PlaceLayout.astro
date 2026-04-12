@@ -1,15 +1,45 @@
 ---
 import PageHeader from "../components/PageHeader.astro";
 import DebugDock from "../components/DebugDock.astro";
+import type { Place } from "../types/place";
 
-const { title, backHref = "../../", backLabel = "← Back to Bali overview" } = Astro.props;
+const {
+  title,
+  place,
+  backHref = "../../",
+  backLabel = "← Back to Bali overview",
+  renderStructuredDetails = false,
+  renderMarkdownContent,
+} = Astro.props as {
+  title?: string;
+  place?: Place;
+  backHref?: string;
+  backLabel?: string;
+  renderStructuredDetails?: boolean;
+  renderMarkdownContent?: boolean;
+};
+
+const hasDefaultSlot = Astro.slots.has("default");
+const shouldRenderMarkdownContent = renderMarkdownContent ?? hasDefaultSlot;
+const pageTitle = place?.title ?? title;
+const details = place?.details;
+const links = place?.links;
+const highlightItems = details?.highlights?.filter(Boolean) ?? [];
+const tipItems = details?.tips?.filter(Boolean) ?? [];
+const linkEntries = links
+  ? ([
+      ["Google Maps", links.googleMaps],
+      ["TripAdvisor", links.tripAdvisor],
+      ["Official site", links.official],
+    ] as const).filter(([, href]) => Boolean(href))
+  : [];
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} • Travels</title>
+    <title>{pageTitle} • Travels</title>
     <style>
       :root {
         color-scheme: light;
@@ -51,22 +81,9 @@ const { title, backHref = "../../", backLabel = "← Back to Bali overview" } = 
       }
 
       p {
-        margin: 0 0 16px;
+        margin: 0;
         line-height: 1.6;
         color: var(--text);
-      }
-
-      .back-link {
-        display: inline-block;
-        margin-bottom: 12px;
-        color: var(--muted);
-        text-decoration: none;
-        font-size: 0.95rem;
-      }
-
-      .back-link:hover {
-        color: var(--text);
-        text-decoration: underline;
       }
 
       .section {
@@ -75,15 +92,116 @@ const { title, backHref = "../../", backLabel = "← Back to Bali overview" } = 
         border-radius: 12px;
         padding: 28px 32px;
       }
+
+      .section h2 {
+        margin: 0 0 12px;
+        font-size: 1.15rem;
+        letter-spacing: -0.01em;
+      }
+
+      .section ul {
+        margin: 0;
+        padding-left: 22px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .section :global(p + p) {
+        margin-top: 16px;
+      }
+
+      .hero-image {
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        display: block;
+      }
+
+      .links-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 10px;
+      }
+
+      .markdown-content :global(p),
+      .markdown-content :global(li) {
+        line-height: 1.6;
+      }
+
+      .markdown-content :global(p) {
+        margin: 0 0 16px;
+      }
+
+      .markdown-content :global(ul) {
+        margin: 0;
+        padding-left: 22px;
+      }
     </style>
   </head>
   <body>
     <DebugDock />
     <main>
-      <PageHeader title={title} backHref={backHref} backLabel={backLabel} />
-      <section class="section">
-        <slot />
-      </section>
+      <PageHeader title={pageTitle} backHref={backHref} backLabel={backLabel} />
+
+      {place?.heroImage && (
+        <section class="section">
+          <img class="hero-image" src={place.heroImage} alt={place.title} loading="lazy" />
+        </section>
+      )}
+
+      {place?.description && (
+        <section class="section">
+          <h2>Description</h2>
+          <p>{place.description}</p>
+        </section>
+      )}
+
+      {renderStructuredDetails && details?.what && (
+        <>
+          <section class="section">
+            <h2>What</h2>
+            <p>{details.what}</p>
+            {details.summary && <p>{details.summary}</p>}
+          </section>
+
+          {highlightItems.length > 0 && (
+            <section class="section">
+              <h2>Highlights</h2>
+              <ul>
+                {highlightItems.map((item) => <li>{item}</li>)}
+              </ul>
+            </section>
+          )}
+
+          {tipItems.length > 0 && (
+            <section class="section">
+              <h2>Tips</h2>
+              <ul>
+                {tipItems.map((item) => <li>{item}</li>)}
+              </ul>
+            </section>
+          )}
+        </>
+      )}
+
+      {linkEntries.length > 0 && (
+        <section class="section">
+          <h2>Links</h2>
+          <ul class="links-list">
+            {linkEntries.map(([label, href]) => (
+              <li><a href={href} target="_blank" rel="noreferrer">{label}</a></li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {shouldRenderMarkdownContent && (
+        <section class="section markdown-content">
+          <slot />
+        </section>
+      )}
     </main>
   </body>
 </html>

@@ -1,0 +1,62 @@
+---
+import PlaceLayout from "../../../../layouts/PlaceLayout.astro";
+import type { Place } from "../../../../types/place";
+
+type PlaceModule = { default?: Place; place?: Place };
+type MarkdownModule = { Content: unknown };
+
+export function getStaticPaths() {
+  const placeModules = import.meta.glob("../../../../data/places/*/*.ts", { eager: true });
+
+  return Object.entries(placeModules)
+    .map(([path, module]) => {
+      const normalizedPath = path.replace(/\\/g, "/");
+      const match = normalizedPath.match(/data\/places\/([^/]+)\/([^/]+)\.ts$/);
+      if (!match) {
+        return null;
+      }
+
+      const [, trip, placeId] = match;
+      const typedModule = module as PlaceModule;
+      const place = typedModule.default ?? typedModule.place ?? (typedModule as Place);
+
+      return {
+        params: { trip, place: placeId },
+        props: {
+          trip,
+          place,
+        },
+      };
+    })
+    .filter(Boolean);
+}
+
+const markdownModules = import.meta.glob("../../../*/places/*.md");
+
+const { trip, place } = Astro.props as { trip: string; place: Place };
+const markdownModuleKey = `../../../${trip}/places/${place.id}.md`;
+const markdownLoader = markdownModules[markdownModuleKey];
+
+const hasStructuredDetails = Boolean(place?.details?.what);
+const shouldRenderMarkdownFallback = !hasStructuredDetails && Boolean(markdownLoader);
+const shouldRenderMinimalFallback = !hasStructuredDetails && !shouldRenderMarkdownFallback;
+
+let MarkdownContent: MarkdownModule["Content"] | null = null;
+if (shouldRenderMarkdownFallback && markdownLoader) {
+  const markdownModule = (await markdownLoader()) as MarkdownModule;
+  MarkdownContent = markdownModule.Content;
+}
+
+const tripTitle = trip.charAt(0).toUpperCase() + trip.slice(1);
+---
+<PlaceLayout
+  title={place.title}
+  place={place}
+  backHref={`/trips/${trip}/`}
+  backLabel={`← Back to ${tripTitle} overview`}
+  renderStructuredDetails={hasStructuredDetails}
+  renderMarkdownContent={shouldRenderMarkdownFallback || shouldRenderMinimalFallback}
+>
+  {shouldRenderMarkdownFallback && MarkdownContent && <MarkdownContent />}
+  {shouldRenderMinimalFallback && <p>{place.description ?? place.title}</p>}
+</PlaceLayout>
