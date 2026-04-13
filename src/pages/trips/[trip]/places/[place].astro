@@ -1,0 +1,243 @@
+---
+import PlaceLayout from '../../../../layouts/PlaceLayout.astro';
+
+const tripLabelById = {
+  bali: 'Bali',
+  seychelles: 'Seychelles',
+  mauritius: 'Mauritius',
+};
+
+const orderLinkTypes = ['google-maps', 'tripadvisor', 'official', 'other'];
+const linkTypeLabels = {
+  'google-maps': 'Google Maps',
+  tripadvisor: 'Tripadvisor',
+  official: 'Official',
+  other: 'Other',
+};
+
+const toArray = (value) => (Array.isArray(value) ? value.filter(Boolean) : []);
+const trimText = (value) => (typeof value === 'string' ? value.trim() : '');
+
+const extractBody = (rawMarkdown = '') => {
+  if (!rawMarkdown.startsWith('---')) return rawMarkdown.trim();
+  const parts = rawMarkdown.split('---');
+  if (parts.length < 3) return rawMarkdown.trim();
+  return parts.slice(2).join('---').trim();
+};
+
+const parseMarkdownSections = (body = '') => {
+  const lines = body.split('\n');
+  const narrative = [];
+  const links = [];
+  const highlights = [];
+  const tips = [];
+  let summary = '';
+  let mode = 'narrative';
+
+  for (const line of lines) {
+    const normalized = line.trim();
+    const lower = normalized.toLowerCase();
+
+    if (lower === 'länkar:' || lower === 'links:') {
+      mode = 'links';
+      continue;
+    }
+    if (lower === 'highlights:' || lower === 'höjdpunkter:' || lower === 'vattenfall i gruppen:') {
+      mode = 'highlights';
+      continue;
+    }
+    if (lower === 'tips:' || lower === 'restips:') {
+      mode = 'tips';
+      continue;
+    }
+    if (lower === 'summary:' || lower === 'sammanfattning:') {
+      mode = 'summary';
+      continue;
+    }
+
+    if (mode === 'links') {
+      if (/^-\s+https?:\/\//i.test(normalized)) {
+        links.push(normalized.replace(/^-\s+/, '').trim());
+        continue;
+      }
+      if (normalized === '') continue;
+      mode = 'narrative';
+    }
+
+    if (mode === 'highlights') {
+      if (/^-\s+/.test(normalized)) {
+        highlights.push(normalized.replace(/^-\s+/, '').trim());
+        continue;
+      }
+      if (normalized === '') continue;
+      mode = 'narrative';
+    }
+
+    if (mode === 'tips') {
+      if (/^-\s+/.test(normalized)) {
+        tips.push(normalized.replace(/^-\s+/, '').trim());
+        continue;
+      }
+      if (normalized === '') continue;
+      mode = 'narrative';
+    }
+
+    if (mode === 'summary') {
+      if (!summary && normalized) {
+        summary = normalized;
+        continue;
+      }
+      if (normalized === '') continue;
+      mode = 'narrative';
+    }
+
+    narrative.push(line);
+  }
+
+  return {
+    summary: trimText(summary),
+    highlights: highlights.filter(Boolean),
+    tips: tips.filter(Boolean),
+    links: links.filter(Boolean),
+    narrative: narrative.join('\n').trim(),
+  };
+};
+
+const getModuleKey = (modulePath) => modulePath.replace(/\\/g, '/');
+const getTripAndPlaceFromPath = (modulePath) => {
+  const match = getModuleKey(modulePath).match(/\/([^/]+)\/([^/]+)\.(ts|md)$/);
+  return match ? { trip: match[1], place: match[2] } : null;
+};
+
+export function getStaticPaths() {
+  const getModuleKey = (modulePath) => modulePath.replace(/\\/g, '/');
+  const getTripAndPlaceFromPath = (modulePath) => {
+    const match = getModuleKey(modulePath).match(/\/([^/]+)\/([^/]+)\.(ts|md)$/);
+    return match ? { trip: match[1], place: match[2] } : null;
+  };
+
+  const placeModules = import.meta.glob('../../../../data/places/*/*.ts', { eager: true });
+  const markdownModules = import.meta.glob('../*/places/*.md', { eager: true });
+  const markdownRawModules = import.meta.glob('../*/places/*.md', { query: '?raw', import: 'default', eager: true });
+
+  const tsByRouteKey = new Map();
+  for (const [modulePath, moduleValue] of Object.entries(placeModules)) {
+    const route = getTripAndPlaceFromPath(modulePath);
+    if (!route) continue;
+    const placeData = moduleValue?.default ?? moduleValue?.place ?? moduleValue;
+    tsByRouteKey.set(`${route.trip}/${route.place}`, placeData);
+  }
+
+  const markdownByRouteKey = new Map();
+  for (const [modulePath, moduleValue] of Object.entries(markdownModules)) {
+    const route = getTripAndPlaceFromPath(modulePath);
+    if (!route) continue;
+    markdownByRouteKey.set(`${route.trip}/${route.place}`, moduleValue?.default);
+  }
+
+  const markdownRawByRouteKey = new Map();
+  for (const [modulePath, rawValue] of Object.entries(markdownRawModules)) {
+    const route = getTripAndPlaceFromPath(modulePath);
+    if (!route) continue;
+    markdownRawByRouteKey.set(`${route.trip}/${route.place}`, rawValue);
+  }
+
+  const routeKeys = new Set([...tsByRouteKey.keys(), ...markdownByRouteKey.keys()]);
+  return Array.from(routeKeys).map((routeKey) => {
+    const [trip, place] = routeKey.split('/');
+    return {
+      params: { trip, place },
+      props: {
+        placeData: tsByRouteKey.get(routeKey),
+        Content: markdownByRouteKey.get(routeKey),
+        rawMarkdown: markdownRawByRouteKey.get(routeKey) ?? '',
+      },
+    };
+  });
+}
+
+const { trip } = Astro.params;
+const { placeData, Content, rawMarkdown } = Astro.props;
+if (!placeData) {
+  throw new Error('Missing TypeScript place data.');
+}
+
+const parsedMarkdown = parseMarkdownSections(extractBody(rawMarkdown));
+const tsSummary = trimText(placeData?.details?.summary);
+const tsHighlights = toArray(placeData?.details?.highlights);
+const tsTips = toArray(placeData?.details?.tips);
+const tsLinks = toArray(placeData?.links);
+const fallbackLinks = parsedMarkdown.links.map((url) => ({ type: 'other', url }));
+
+const summary = tsSummary || parsedMarkdown.summary;
+const highlights = tsHighlights.length > 0 ? tsHighlights : parsedMarkdown.highlights;
+const tips = tsTips.length > 0 ? tsTips : parsedMarkdown.tips;
+const links = tsLinks.length > 0 ? tsLinks : fallbackLinks;
+
+const linksByType = orderLinkTypes
+  .map((type) => ({
+    type,
+    label: linkTypeLabels[type],
+    items: links.filter((link) => link?.type === type && typeof link?.url === 'string'),
+  }))
+  .filter((group) => group.items.length > 0);
+
+const hasNarrativeMarkdown = Boolean(parsedMarkdown.narrative);
+const backLabel = `← Back to ${tripLabelById[trip] ?? trip} overview`;
+---
+<PlaceLayout title={placeData.title} backHref="../../" backLabel={backLabel}>
+  <p>{placeData.description}</p>
+
+  {summary && (
+    <section>
+      <h2>Summary</h2>
+      <p>{summary}</p>
+    </section>
+  )}
+
+  {highlights.length > 0 && (
+    <section>
+      <h2>Highlights</h2>
+      <ul>
+        {highlights.map((highlight) => (
+          <li>{highlight}</li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {tips.length > 0 && (
+    <section>
+      <h2>Tips</h2>
+      <ul>
+        {tips.map((tip) => (
+          <li>{tip}</li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {linksByType.length > 0 && (
+    <section>
+      <h2>Links</h2>
+      {linksByType.map((group) => (
+        <div>
+          <h3>{group.label}</h3>
+          <ul>
+            {group.items.map((link) => (
+              <li>
+                <a href={link.url} target="_blank" rel="noreferrer">{link.url}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </section>
+  )}
+
+  {hasNarrativeMarkdown && Content && (
+    <section>
+      <Content />
+    </section>
+  )}
+</PlaceLayout>
