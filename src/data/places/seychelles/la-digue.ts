@@ -6,9 +6,6 @@ export default {
   parentDestinationId: "seychelles",
   description: "Cykelvänlig ö med ikoniska granitstränder och lugn ö-känsla.",
   googleMapsUrl: "https://maps.app.goo.gl/GstJ5VSHxNJQeHFa7?g_st=ic",
-  details: {
-    summary: "Cykelvänlig ö med ikoniska granitstränder och lugn ö-känsla.",
-  },
   latitude: -4.35942,
   longitude: 55.83621,
 };

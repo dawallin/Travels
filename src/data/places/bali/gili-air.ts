@@ -5,9 +5,6 @@ export default {
   status: "possible",
   parentDestinationId: "bali",
   description: "Gili island stop with sandy beaches and an easygoing atmosphere.",
-  details: {
-    summary: "Gili island stop with sandy beaches and an easygoing atmosphere.",
-  },
   latitude: -8.3576,
   longitude: 116.0826,
 };

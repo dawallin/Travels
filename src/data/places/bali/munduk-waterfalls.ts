@@ -7,7 +7,6 @@ export default {
   description:
     "En klassisk vandringsrunda i Munduk-området som tar dig genom en dal med flera vattenfall, frodig grönska och krydd-/kaffeodlingar. Välj enstaka fall eller gör en längre trek som binder ihop flera.",
   details: {
-    summary: "En klassisk vandringsrunda i Munduk-området som tar dig genom en dal med flera vattenfall, frodig grönska och krydd-/kaffeodlingar. Välj enstaka fall eller gör en längre trek som binder ihop flera.",
     highlights: [
       "Munduk Waterfall: Ett av de mest lättillgängliga vattenfallen nära Munduk och ofta en del av en längre runda.",
       "Red Coral Waterfall: Kraftfullt fall som ofta kombineras med andra i samma dal; kan även nås som kortare hike.",
