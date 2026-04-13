@@ -6,6 +6,9 @@ export default {
   parentDestinationId: "seychelles",
   description: "Startpunkt på Mahé för vidare resa.",
   googleMapsUrl: "https://maps.app.goo.gl/Z4WN6TE15qxpHsMw6?g_st=ic",
+  details: {
+    summary: "Startpunkt på Mahé för vidare resa.",
+  },
   latitude: -4.67434,
   longitude: 55.5218,
 };

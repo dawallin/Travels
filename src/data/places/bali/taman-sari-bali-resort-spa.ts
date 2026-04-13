@@ -11,6 +11,13 @@ export default {
   tripadvisorUrl:
     "https://www.tripadvisor.com/Hotel_Review-g608493-d1498492-Reviews-Taman_Sari_Bali_Resort_Spa-Pemuteran_Gerokgak_Buleleng_Regency_Bali.html",
   googleMapsUrl: "https://maps.app.goo.gl/FC1RY3ebVrfqNva76?g_st=ic",
+  details: {
+    summary: "Resort and spa in Pemuteran on Bali's northwest coast, close to Menjangan and West Bali National Park.",
+  },
+  links: [
+    { type: "tripadvisor", url: "https://www.tripadvisor.com/Hotel_Review-g608493-d1498492-Reviews-Taman_Sari_Bali_Resort_Spa-Pemuteran_Gerokgak_Buleleng_Regency_Bali.html" },
+    { type: "google-maps", url: "https://maps.app.goo.gl/FC1RY3ebVrfqNva76?g_st=ic" },
+  ],
   latitude: -8.141910,
   longitude: 114.652610,
 };

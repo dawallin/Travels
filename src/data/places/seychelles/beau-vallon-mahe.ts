@@ -6,6 +6,9 @@ export default {
   parentDestinationId: "seychelles",
   description: "Bra bas på Mahé med strand, restauranger och utflykter (t.ex. Anse Major).",
   googleMapsUrl: "https://maps.app.goo.gl/hUjzkEQszCKPhRe57?g_st=ic",
+  details: {
+    summary: "Bra bas på Mahé med strand, restauranger och utflykter (t.ex. Anse Major).",
+  },
   latitude: -4.62091,
   longitude: 55.4301,
 };
