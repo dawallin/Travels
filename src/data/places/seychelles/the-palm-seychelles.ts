@@ -5,6 +5,9 @@ export default {
   status: "included",
   parentDestinationId: "beau-vallon-mahe",
   description: "Boende vid Bel Ombre/Mt Simpson med utsikt mot Beau Vallon-bukten.",
+  details: {
+    summary: "Boende vid Bel Ombre/Mt Simpson med utsikt mot Beau Vallon-bukten.",
+  },
   googleMapsUrl: "https://maps.app.goo.gl/Fz1cduUvTigQUsay6?g_st=ic",
   latitude: -4.61825,
   longitude: 55.41848,
