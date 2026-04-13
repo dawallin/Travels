@@ -10,6 +10,10 @@ export default {
   tripadvisorUrl:
     "https://www.tripadvisor.se/Hotel_Review-g3561989-d8113334-Reviews-Watermark_Hotel_Spa_Jimbaran-Kedonganan_Jimbaran_South_Kuta_Bali.html",
   googleMapsUrl: "https://maps.app.goo.gl/xkrq1BuY6MqhY32i6",
+  links: [
+    { type: "tripadvisor", url: "https://www.tripadvisor.se/Hotel_Review-g3561989-d8113334-Reviews-Watermark_Hotel_Spa_Jimbaran-Kedonganan_Jimbaran_South_Kuta_Bali.html" },
+    { type: "google-maps", url: "https://maps.app.goo.gl/xkrq1BuY6MqhY32i6" },
+  ],
   latitude: -8.75377,
   longitude: 115.17789,
 };

@@ -11,6 +11,10 @@ export default {
   tripadvisorUrl:
     "https://www.tripadvisor.se/Hotel_Review-g608496-d919319-Reviews-Sarinbuana_Eco_Lodge-Tabanan_Bali.html",
   googleMapsUrl: "https://maps.app.goo.gl/N9pS4M181Ek3JWVHA?g_st=i",
+  links: [
+    { type: "tripadvisor", url: "https://www.tripadvisor.se/Hotel_Review-g608496-d919319-Reviews-Sarinbuana_Eco_Lodge-Tabanan_Bali.html" },
+    { type: "google-maps", url: "https://maps.app.goo.gl/N9pS4M181Ek3JWVHA?g_st=i" },
+  ],
   latitude: -8.391441,
   longitude: 115.078297,
 };

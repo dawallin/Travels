@@ -11,6 +11,10 @@ export default {
   tripadvisorUrl:
     "https://www.tripadvisor.se/Hotel_Review-g608490-d12652402-Reviews-Munduk_Menir_Villas-Munduk_Banjar_Buleleng_Regency_Bali.html",
   googleMapsUrl: "https://maps.app.goo.gl/LzTxUrp5eUxVeNt4A?g_st=ic",
+  links: [
+    { type: "tripadvisor", url: "https://www.tripadvisor.se/Hotel_Review-g608490-d12652402-Reviews-Munduk_Menir_Villas-Munduk_Banjar_Buleleng_Regency_Bali.html" },
+    { type: "google-maps", url: "https://maps.app.goo.gl/LzTxUrp5eUxVeNt4A?g_st=ic" },
+  ],
   latitude: -8.2734002,
   longitude: 115.0827596,
 };
