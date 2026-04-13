@@ -4,8 +4,7 @@ export default {
   type: "attraction",
   status: "included",
   parentDestinationId: "sanur",
-  description:
-    "Modernt shoppingcenter i Sanur med butiker, restauranger och underhållning nära strandpromenaden.",
+  description: "Modernt köpcenter i Sanur med shopping, restauranger och aktiviteter.",
   tripadvisorUrl:
     "https://www.tripadvisor.com/Attraction_Review-g297700-d28099043-Reviews-Icon_Bali_Mall_Sanur-Sanur_Denpasar_Bali.html",
   googleMapsUrl: "https://maps.google.com/?q=-8.6939,115.2633",

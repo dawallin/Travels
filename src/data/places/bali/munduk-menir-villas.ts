@@ -5,7 +5,7 @@ export default {
   status: "included",
   parentDestinationId: "munduk",
   description:
-    "Villa-style hotel in the cool highlands of Munduk with mountain views, peaceful nature setting, an outdoor pool, and easy access to nearby waterfalls and walking trails.",
+    "Villa-style hotel in the cool highlands of Munduk with mountain views, peaceful nature setting, an outdoor pool, and scenic surroundings for exploring waterfalls and walking trails.",
   address:
     "Jl. Pure Puseh, Dusun Beji, Munduk, Kec. Banjar, Kabupaten Buleleng, Bali 81152, Indonesia",
   tripadvisorUrl:
