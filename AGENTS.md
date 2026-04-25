@@ -13,6 +13,17 @@ Priority order:
 4. Relevant skill
 5. General best practices
 Specs define the task truth. Skills are helpers, not overrides.
+## Skills and reusable workflows
+
+Reusable workflows live under `skills/`.
+
+When a task matches one of these workflows, read the corresponding `SKILL.md` before planning or editing files.
+
+Important skills:
+
+- `skills/writing-spec/SKILL.md`: use when creating or updating files under `spec/`
+- `skills/reviewing-against-spec/SKILL.md`: use when reviewing a PR or checking whether changes match a spec
+- `skills/safe-refactor/SKILL.md`: use for non-breaking migrations and staged refactors
 ## Before editing
 Agents should:
 - Find and read the relevant spec in `spec/` when one exists
