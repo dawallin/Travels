@@ -4,8 +4,10 @@ export default {
   type: "destination",
   status: "possible",
   parentDestinationId: "mauritius",
-  description:
-    "Mauritius internationella flygplats (MRU), belägen på sydöstra delen av ön. Start- och slutpunkt för resan.",
+  description: "Mauritius internationella flygplats (MRU), belägen på sydöstra delen av ön. Start- och slutpunkt för resan.",
+  details: {
+    what: "Mauritius internationella flygplats (MRU), belägen på sydöstra delen av ön. Start- och slutpunkt för resan.",
+  },
   latitude: -20.4302,
   longitude: 57.6836,
 };
