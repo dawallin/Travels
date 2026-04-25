@@ -1,0 +1,115 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+import PlaceLayout from "../../../../layouts/PlaceLayout.astro";
+import { getAllPlaces, getPlaceByTripAndId } from "../../../../data/places/load-place-data";
+import {
+  normalizePlaceDetails,
+  normalizePlaceLinks,
+} from "../../../../data/places/place-detail-helpers";
+
+export function getStaticPaths() {
+  return getAllPlaces()
+    .filter(({ tripId, place }) => {
+      const markdownPath = path.resolve(
+        path.dirname(fileURLToPath(import.meta.url)),
+        `../../${tripId}/places/${place.id}.md`,
+      );
+
+      return !fs.existsSync(markdownPath);
+    })
+    .map(({ tripId, place }) => ({
+      params: {
+        trip: tripId,
+        place: place.id,
+      },
+    }));
+}
+
+const paramsTrip = Astro.params.trip ?? "";
+const paramsPlace = Astro.params.place ?? "";
+const placeEntry = getPlaceByTripAndId(paramsTrip, paramsPlace);
+
+if (!placeEntry) {
+  throw new Error(`Unknown place route: ${paramsTrip}/${paramsPlace}`);
+}
+
+const { tripId, place } = placeEntry;
+const details = normalizePlaceDetails(place);
+const links = normalizePlaceLinks(place);
+
+const tripLabelMap: Record<string, string> = {
+  bali: "← Back to Bali overview",
+  mauritius: "← Back to Mauritius overview",
+  seychelles: "← Back to Seychelles overview",
+};
+
+const backLabel = tripLabelMap[tripId] ?? "← Back to trip overview";
+const backHref = `../../`;
+---
+<PlaceLayout title={place.title} backHref={backHref} backLabel={backLabel}>
+  {details?.what && <p>{details.what}</p>}
+
+  {details?.summary && <p>{details.summary}</p>}
+
+  {details?.highlights && details.highlights.length > 0 && (
+    <>
+      <h2>Highlights</h2>
+      <ul>
+        {details.highlights.map((item) => <li>{item}</li>)}
+      </ul>
+    </>
+  )}
+
+  {details?.tips && details.tips.length > 0 && (
+    <>
+      <h2>Tips</h2>
+      <ul>
+        {details.tips.map((item) => <li>{item}</li>)}
+      </ul>
+    </>
+  )}
+
+  {details?.goodToKnow && details.goodToKnow.length > 0 && (
+    <>
+      <h2>Good to know</h2>
+      <ul>
+        {details.goodToKnow.map((item) => <li>{item}</li>)}
+      </ul>
+    </>
+  )}
+
+  {details?.bestTime && (
+    <>
+      <h2>Best time</h2>
+      <p>{details.bestTime}</p>
+    </>
+  )}
+
+  {links && (
+    <>
+      <h2>Links</h2>
+      <ul>
+        {links.googleMaps && (
+          <li>
+            <a href={links.googleMaps} target="_blank" rel="noopener noreferrer">Google Maps</a>
+          </li>
+        )}
+        {links.tripAdvisor && (
+          <li>
+            <a href={links.tripAdvisor} target="_blank" rel="noopener noreferrer">TripAdvisor</a>
+          </li>
+        )}
+        {links.official && (
+          <li>
+            <a href={links.official} target="_blank" rel="noopener noreferrer">Official website</a>
+          </li>
+        )}
+      </ul>
+    </>
+  )}
+
+  {!details && <p>{place.description}</p>}
+</PlaceLayout>
