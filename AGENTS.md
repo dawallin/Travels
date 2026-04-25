@@ -51,35 +51,32 @@ spec/*.md
 skills/*/SKILL.md
 ```
 
-Design intent:
+### Design intent
+- Keep travel data source-controlled and reviewable.
+- Prefer typed, structured data where it improves consistency.
+- Preserve existing URLs and visual behavior unless a spec says otherwise.
+- Avoid inventing or enriching travel facts without explicit instruction.
 
-* Keep travel data source-controlled and reviewable.
-* Prefer typed, structured data where it improves consistency.
-* Preserve existing URLs and visual behavior unless a spec says otherwise.
-* Avoid inventing or enriching travel facts without explicit instruction.
-
-Validation
-
+### Validation
 Use the validation steps from the active spec.
 
 If no spec-specific validation exists, run:
 
-npm run build
+`npm run build`
 
 Before finishing, inspect the diff for:
 
-* unrelated file changes
-* unintended content changes
-* unintended route or layout changes
-* temporary or generated files
+- unrelated file changes
+- unintended content changes
+- unintended route or layout changes
+- temporary or generated files
 
 If validation cannot be run, say so clearly.
 
-Final response
-
+### Final response
 End with a concise summary:
 
-* what changed
-* what did not change
-* what was validated
-* skipped work or remaining risk
+- what changed
+- what did not change
+- what was validated
+- skipped work or remaining risk
