@@ -23,3 +23,8 @@ export const getAllPlaces = () =>
 
 export const getPlaceByTripAndId = (tripId: string, placeId: string) =>
   getAllPlaces().find((entry) => entry.tripId === tripId && entry.place.id === placeId);
+
+const markdownPlacePages = import.meta.glob("../../pages/trips/*/places/*.md", { eager: true });
+
+export const hasMarkdownPlacePage = (tripId: string, placeId: string) =>
+  Object.prototype.hasOwnProperty.call(markdownPlacePages, `../../pages/trips/${tripId}/places/${placeId}.md`);
