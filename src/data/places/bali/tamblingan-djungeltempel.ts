@@ -6,10 +6,9 @@ export default {
   parentDestinationId: "munduk",
   description:
     "Ett stillsamt djungeltempel vid Lake Tamblingan, känt för sin mystiska sjö- och skogsmiljö. Passar bra som en naturnära halvdagstur från Munduk.",
-  links: [
-    { type: "other", url: "https://en.wikipedia.org/wiki/Lake_Tamblingan" },
-    { type: "other", url: "https://wanderlog.com/place/details/2060867/pura-dalem-tamblingan" },
-  ],
+  details: {
+    what: "Ett stillsamt djungeltempel vid Lake Tamblingan, känt för sin mystiska sjö- och skogsmiljö. Passar bra som en naturnära halvdagstur från Munduk.",
+  },
   latitude: -8.2719,
   longitude: 115.0866,
 };
