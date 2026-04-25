@@ -5,7 +5,13 @@ export default {
   status: "included",
   parentDestinationId: "beau-vallon-mahe",
   description: "Större grön ö nära Mahé – fin dagsutflykt för natur och strand.",
+  details: {
+    what: "Större grön ö nära Mahé – fin dagsutflykt för natur och strand.",
+  },
   googleMapsUrl: "https://maps.app.goo.gl/LX5wbfceirQzc42m6?g_st=ic",
+  links: {
+    googleMaps: "https://maps.app.goo.gl/LX5wbfceirQzc42m6?g_st=ic",
+  },
   latitude: -4.48333,
   longitude: 55.23333,
 };

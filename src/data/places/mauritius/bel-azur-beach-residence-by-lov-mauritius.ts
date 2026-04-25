@@ -5,9 +5,17 @@ export default {
   status: "included",
   parentDestinationId: "trou-aux-biches",
   description: "Hotel in Trou aux Biches, Mauritius.",
+  details: {
+    what: "Hotel in Trou aux Biches, Mauritius.",
+  },
   tripadvisorUrl:
     "https://www.tripadvisor.se/Hotel_Review-g15591605-d1556783-Reviews-Bel_Azur_Beach_Residence_by_LOV_Mauritius-Pointe_aux_Biches.html",
   googleMapsUrl: "https://maps.app.goo.gl/UsEUUJq35ZekFUiK7",
+  links: {
+    googleMaps: "https://maps.app.goo.gl/UsEUUJq35ZekFUiK7",
+    tripAdvisor:
+      "https://www.tripadvisor.se/Hotel_Review-g15591605-d1556783-Reviews-Bel_Azur_Beach_Residence_by_LOV_Mauritius-Pointe_aux_Biches.html",
+  },
   latitude: -20.0461,
   longitude: 57.531083,
 };
