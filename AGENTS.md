@@ -49,6 +49,7 @@ src/data/places/{trip}/{place}.ts
 src/pages/trips/{trip}/places/{place}.md
 spec/*.md
 skills/*/SKILL.md
+```
 
 Design intent:
 
