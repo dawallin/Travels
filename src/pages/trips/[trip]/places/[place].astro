@@ -1,0 +1,159 @@
+---
+import PlaceLayout from "../../../../layouts/PlaceLayout.astro";
+import { getAllPlaces, hasMarkdownPlacePage } from "../../../../data/places";
+import type { Place, PlaceDetails, PlaceLinks, LegacyPlaceLink } from "../../../../data/places/types";
+
+interface DynamicPlaceParams {
+  trip: string;
+  place: string;
+}
+
+const isStrictLinks = (links: unknown): links is PlaceLinks => {
+  if (!links || Array.isArray(links)) {
+    return false;
+  }
+
+  const candidate = links as Record<string, unknown>;
+  const allowedKeys = ["googleMaps", "tripAdvisor", "official"];
+
+  return Object.keys(candidate).every((key) => allowedKeys.includes(key));
+};
+
+const isStrictDetails = (details: unknown): details is PlaceDetails =>
+  Boolean(details && typeof details === "object" && !Array.isArray(details) && "what" in details);
+
+const linksFromLegacyArray = (links: LegacyPlaceLink[] | undefined): PlaceLinks => {
+  if (!links) {
+    return {};
+  }
+
+  return links.reduce<PlaceLinks>((acc, link) => {
+    if (link.type === "google-maps" && !acc.googleMaps) {
+      acc.googleMaps = link.url;
+    }
+
+    if (link.type === "tripadvisor" && !acc.tripAdvisor) {
+      acc.tripAdvisor = link.url;
+    }
+
+    if (link.type === "official" && !acc.official) {
+      acc.official = link.url;
+    }
+
+    return acc;
+  }, {});
+};
+
+const getRenderableLinks = (place: Place): PlaceLinks => {
+  const placeLinks = place.links;
+
+  if (isStrictLinks(placeLinks)) {
+    return placeLinks;
+  }
+
+  return {
+    ...linksFromLegacyArray(Array.isArray(placeLinks) ? placeLinks : undefined),
+    googleMaps: place.googleMapsUrl,
+    tripAdvisor: place.tripadvisorUrl,
+  };
+};
+
+const { place, trip } = Astro.props;
+const details = isStrictDetails(place.details) ? place.details : undefined;
+const fallbackHighlights = !details && Array.isArray(place.details?.highlights) ? place.details.highlights : place.highlights;
+const links = getRenderableLinks(place);
+
+export async function getStaticPaths() {
+  return getAllPlaces()
+    .filter(({ trip, place }) => !hasMarkdownPlacePage(trip, place.id))
+    .map(({ trip, place }) => ({
+      params: {
+        trip,
+        place: place.id,
+      } satisfies DynamicPlaceParams,
+      props: {
+        trip,
+        place,
+      },
+    }));
+}
+
+const backLabel = `← Back to ${trip.charAt(0).toUpperCase()}${trip.slice(1)} overview`;
+---
+<PlaceLayout title={place.title} backHref={`../../`} backLabel={backLabel}>
+  {details?.what ? <p>{details.what}</p> : <p>{place.description}</p>}
+
+  {details?.summary ? <p>{details.summary}</p> : null}
+
+  {details?.highlights?.length ? (
+    <>
+      <h2>Highlights</h2>
+      <ul>
+        {details.highlights.map((highlight) => (
+          <li>{highlight}</li>
+        ))}
+      </ul>
+    </>
+  ) : fallbackHighlights?.length ? (
+    <>
+      <h2>Highlights</h2>
+      <ul>
+        {fallbackHighlights.map((highlight) => (
+          <li>{highlight}</li>
+        ))}
+      </ul>
+    </>
+  ) : null}
+
+  {details?.tips?.length ? (
+    <>
+      <h2>Tips</h2>
+      <ul>
+        {details.tips.map((tip) => (
+          <li>{tip}</li>
+        ))}
+      </ul>
+    </>
+  ) : null}
+
+  {details?.goodToKnow?.length ? (
+    <>
+      <h2>Good to know</h2>
+      <ul>
+        {details.goodToKnow.map((note) => (
+          <li>{note}</li>
+        ))}
+      </ul>
+    </>
+  ) : null}
+
+  {details?.bestTime ? (
+    <>
+      <h2>Best time</h2>
+      <p>{details.bestTime}</p>
+    </>
+  ) : null}
+
+  {links.googleMaps || links.tripAdvisor || links.official ? (
+    <>
+      <h2>Links</h2>
+      <ul>
+        {links.googleMaps ? (
+          <li>
+            <a href={links.googleMaps} target="_blank" rel="noreferrer">Google Maps</a>
+          </li>
+        ) : null}
+        {links.tripAdvisor ? (
+          <li>
+            <a href={links.tripAdvisor} target="_blank" rel="noreferrer">TripAdvisor</a>
+          </li>
+        ) : null}
+        {links.official ? (
+          <li>
+            <a href={links.official} target="_blank" rel="noreferrer">Official website</a>
+          </li>
+        ) : null}
+      </ul>
+    </>
+  ) : null}
+</PlaceLayout>
