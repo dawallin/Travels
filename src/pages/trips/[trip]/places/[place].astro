@@ -1,6 +1,6 @@
 ---
 import PlaceLayout from "../../../../layouts/PlaceLayout.astro";
-import { getAllPlaces, hasMarkdownPlacePage } from "../../../../data/places";
+import { getAllPlaces } from "../../../../data/places";
 import type { Place, PlaceDetails, PlaceLinks, LegacyPlaceLink } from "../../../../data/places/types";
 
 interface DynamicPlaceParams {
@@ -64,9 +64,7 @@ const fallbackHighlights = !details && Array.isArray(place.details?.highlights) 
 const links = getRenderableLinks(place);
 
 export async function getStaticPaths() {
-  return getAllPlaces()
-    .filter(({ trip, place }) => !hasMarkdownPlacePage(trip, place.id))
-    .map(({ trip, place }) => ({
+  return getAllPlaces().map(({ trip, place }) => ({
       params: {
         trip,
         place: place.id,

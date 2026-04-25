@@ -6,15 +6,10 @@ interface PlaceRecord {
 }
 
 const placeModules = import.meta.glob("./*/*.ts", { eager: true });
-const markdownPlacePages = import.meta.glob("../../pages/trips/*/places/*.md");
-
 const parseTripFromPlaceModulePath = (path: string): string | undefined => {
   const match = path.match(/^\.\/([^/]+)\/[^/]+\.ts$/);
   return match?.[1];
 };
-
-const getMarkdownPagePath = (trip: string, placeId: string): string =>
-  `../../pages/trips/${trip}/places/${placeId}.md`;
 
 export const getAllPlaces = (): PlaceRecord[] => {
   const records: PlaceRecord[] = [];
@@ -36,5 +31,3 @@ export const getAllPlaces = (): PlaceRecord[] => {
 export const getPlaceByTripAndId = (trip: string, placeId: string): Place | undefined =>
   getAllPlaces().find((entry) => entry.trip === trip && entry.place.id === placeId)?.place;
 
-export const hasMarkdownPlacePage = (trip: string, placeId: string): boolean =>
-  getMarkdownPagePath(trip, placeId) in markdownPlacePages;
