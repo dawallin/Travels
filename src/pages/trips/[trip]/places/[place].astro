@@ -3,6 +3,11 @@ import PlaceLayout from "../../../../layouts/PlaceLayout.astro";
 import { getAllPlaces } from "../../../../data/places";
 import type { Place, PlaceDetails, PlaceLinks, LegacyPlaceLink } from "../../../../data/places/types";
 
+interface RenderableLink {
+  label: string;
+  url: string;
+}
+
 interface DynamicPlaceParams {
   trip: string;
   place: string;
@@ -22,40 +27,85 @@ const isStrictLinks = (links: unknown): links is PlaceLinks => {
 const isStrictDetails = (details: unknown): details is PlaceDetails =>
   Boolean(details && typeof details === "object" && !Array.isArray(details) && "what" in details);
 
-const linksFromLegacyArray = (links: LegacyPlaceLink[] | undefined): PlaceLinks => {
-  if (!links) {
-    return {};
+const labelForLegacyLinkType = (type: string): string => {
+  if (type === "google-maps") {
+    return "Google Maps";
   }
 
-  return links.reduce<PlaceLinks>((acc, link) => {
-    if (link.type === "google-maps" && !acc.googleMaps) {
-      acc.googleMaps = link.url;
-    }
+  if (type === "tripadvisor") {
+    return "TripAdvisor";
+  }
 
-    if (link.type === "tripadvisor" && !acc.tripAdvisor) {
-      acc.tripAdvisor = link.url;
-    }
+  if (type === "official") {
+    return "Official website";
+  }
 
-    if (link.type === "official" && !acc.official) {
-      acc.official = link.url;
-    }
-
-    return acc;
-  }, {});
+  return "Other link";
 };
 
-const getRenderableLinks = (place: Place): PlaceLinks => {
+const linksFromStrictObject = (links: PlaceLinks): RenderableLink[] => {
+  const renderable: RenderableLink[] = [];
+
+  if (links.googleMaps) {
+    renderable.push({ label: "Google Maps", url: links.googleMaps });
+  }
+
+  if (links.tripAdvisor) {
+    renderable.push({ label: "TripAdvisor", url: links.tripAdvisor });
+  }
+
+  if (links.official) {
+    renderable.push({ label: "Official website", url: links.official });
+  }
+
+  return renderable;
+};
+
+const linksFromLegacyArray = (links: LegacyPlaceLink[] | undefined): RenderableLink[] => {
+  if (!links) {
+    return [];
+  }
+
+  return links
+    .filter((link) => Boolean(link?.url))
+    .map((link) => ({
+      label: labelForLegacyLinkType(link.type),
+      url: link.url,
+    }));
+};
+
+const getRenderableLinks = (place: Place): RenderableLink[] => {
   const placeLinks = place.links;
 
   if (isStrictLinks(placeLinks)) {
-    return placeLinks;
+    return linksFromStrictObject(placeLinks);
   }
 
-  return {
-    ...linksFromLegacyArray(Array.isArray(placeLinks) ? placeLinks : undefined),
-    googleMaps: place.googleMapsUrl,
-    tripAdvisor: place.tripadvisorUrl,
-  };
+  if (Array.isArray(placeLinks)) {
+    const renderable = linksFromLegacyArray(placeLinks);
+
+    if (!placeLinks.some((link) => link.type === "google-maps") && place.googleMapsUrl) {
+      renderable.push({ label: "Google Maps", url: place.googleMapsUrl });
+    }
+
+    if (!placeLinks.some((link) => link.type === "tripadvisor") && place.tripadvisorUrl) {
+      renderable.push({ label: "TripAdvisor", url: place.tripadvisorUrl });
+    }
+
+    return renderable;
+  }
+
+  const fallbackLinks: RenderableLink[] = [];
+
+  if (place.googleMapsUrl) {
+    fallbackLinks.push({ label: "Google Maps", url: place.googleMapsUrl });
+  }
+
+  if (place.tripadvisorUrl) {
+    fallbackLinks.push({ label: "TripAdvisor", url: place.tripadvisorUrl });
+  }
+
+  return fallbackLinks;
 };
 
 const { place, trip } = Astro.props;
@@ -132,25 +182,15 @@ const backLabel = `← Back to ${trip.charAt(0).toUpperCase()}${trip.slice(1)} o
     </>
   ) : null}
 
-  {links.googleMaps || links.tripAdvisor || links.official ? (
+  {links.length ? (
     <>
       <h2>Links</h2>
       <ul>
-        {links.googleMaps ? (
+        {links.map((link) => (
           <li>
-            <a href={links.googleMaps} target="_blank" rel="noreferrer">Google Maps</a>
+            <a href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
           </li>
-        ) : null}
-        {links.tripAdvisor ? (
-          <li>
-            <a href={links.tripAdvisor} target="_blank" rel="noreferrer">TripAdvisor</a>
-          </li>
-        ) : null}
-        {links.official ? (
-          <li>
-            <a href={links.official} target="_blank" rel="noreferrer">Official website</a>
-          </li>
-        ) : null}
+        ))}
       </ul>
     </>
   ) : null}
