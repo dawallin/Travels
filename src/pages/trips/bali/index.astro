@@ -138,6 +138,31 @@ const itineraryStops = [
         color: var(--muted);
         max-width: 720px;
       }
+
+      .medical-subtitle {
+        margin: 24px 0 10px;
+        font-size: 1rem;
+        color: var(--text);
+      }
+
+      .medical-area {
+        margin-top: 20px;
+      }
+
+      .medical-list {
+        margin: 0;
+        padding-left: 20px;
+        display: grid;
+        gap: 14px;
+      }
+
+      .medical-list li {
+        line-height: 1.6;
+      }
+
+      .medical-label {
+        color: var(--muted);
+      }
     </style>
   </head>
   <body>
@@ -168,6 +193,123 @@ const itineraryStops = [
           highlight how each place is currently tracked.
         </p>
         <PlacesOverview />
+      </section>
+      <section class="section">
+        <h2>Akutnummer & sjukvård</h2>
+        <p class="section-intro">
+          Dessa sjukhus och kliniker kan vara relevanta vid akut sjukdom, olycka eller behov av
+          vård under Bali-resan. Vid allvarliga tillstånd bör större sjukhus prioriteras.
+        </p>
+
+        <h3 class="medical-subtitle">Akutnummer & specialisthjukhus – hela Bali</h3>
+        <p class="section-intro">
+          Dessa sjukhus har högst medicinsk standard och störst lager av motgift (antivenom) vid
+          ormbett.
+        </p>
+        <ol class="medical-list">
+          <li>
+            <strong>BIMC Hospital Kuta</strong><br />
+            <span class="medical-label">Bäst för turister/akut</span><br />
+            Adress: Jl. Bypass Ngurah Rai No.100, Kuta<br />
+            Akuttelefon: +62 361 761 263<br />
+            WhatsApp: +62 811 3960 8500
+          </li>
+          <li>
+            <strong>Bali International Hospital (BIH)</strong><br />
+            <span class="medical-label">Öns modernaste sjukhus</span><br />
+            Adress: Jl. Raya Puputan No.1, Sanur<br />
+            Telefon: +62 361 281 117
+          </li>
+          <li>
+            <strong>Sanglah General Hospital (RSUP Prof. Ngoerah)</strong><br />
+            <span class="medical-label">Expert på ormbett</span><br />
+            Adress: Jl. Diponegoro, Dauh Puri Klod, Denpasar<br />
+            Telefon: +62 361 227 912
+          </li>
+        </ol>
+
+        <h3 class="medical-subtitle">Lokala sjukhus & kliniker – ort för ort</h3>
+
+        <div class="medical-area">
+          <h4>Sanur</h4>
+          <ol class="medical-list">
+            <li>
+              <strong>BIMC Siloam Sanur</strong><br />
+              Adress: Jl. Bypass Ngurah Rai No.100X, Sanur<br />
+              Telefon: +62 361 271 010<br />
+              WhatsApp: +62 811 3960 8500
+            </li>
+          </ol>
+        </div>
+
+        <div class="medical-area">
+          <h4>Pemuteran</h4>
+          <ol class="medical-list">
+            <li>
+              <strong>Pemuteran Medical Care</strong><br />
+              Adress: Jl. Raya Singaraja-Gilimanuk, Pemuteran<br />
+              WhatsApp: +62 821 4452 7998
+            </li>
+            <li>
+              <strong>Putu Parwata Clinic</strong><br />
+              Adress: Jl. Raya Singaraja-Gilimanuk, Gerokgak<br />
+              WhatsApp: +62 813 3855 0663
+            </li>
+          </ol>
+        </div>
+
+        <div class="medical-area">
+          <h4>Munduk</h4>
+          <ol class="medical-list">
+            <li>
+              <strong>Puskesmas Banjar II</strong><br />
+              <span class="medical-label">Lokalvård</span><br />
+              Adress: Jl. Raya Munduk, Banjar<br />
+              Telefon: +62 362 94250
+            </li>
+            <li>
+              <strong>Parama Sidhi Hospital</strong><br />
+              <span class="medical-label">Närmaste stora sjukhus i Singaraja, ca 1 timme bort</span
+              ><br />
+              Adress: Jl. Ahmad Yani No.171, Singaraja<br />
+              WhatsApp: +62 811 3861 171
+            </li>
+          </ol>
+        </div>
+
+        <div class="medical-area">
+          <h4>Barukari / Sidemen-området</h4>
+          <ol class="medical-list">
+            <li>
+              <strong>Puskesmas Sidemen</strong><br />
+              <span class="medical-label">Lokalvård</span><br />
+              Adress: Jl. Raya Sidemen, Sidemen<br />
+              Telefon: +62 366 23201
+            </li>
+            <li>
+              <strong>RSUD Klungkung</strong><br />
+              <span class="medical-label">Större sjukhus, ca 30–40 min bort</span><br />
+              Adress: Jl. Flamboyan No.40, Klungkung<br />
+              Telefon: +62 366 21172
+            </li>
+          </ol>
+        </div>
+
+        <div class="medical-area">
+          <h4>Jimbaran</h4>
+          <ol class="medical-list">
+            <li>
+              <strong>Udayana University Hospital (RS Unud)</strong><br />
+              Adress: Jl. Rumah Sakit Unud No.1, Jimbaran<br />
+              WhatsApp akut: +62 813 3955 5511
+            </li>
+            <li>
+              <strong>Kasih Ibu General Hospital (Kedonganan)</strong><br />
+              Adress: Jl. Raya Uluwatu No.69X, Kedonganan<br />
+              WhatsApp: +62 811 3811 011
+            </li>
+          </ol>
+        </div>
       </section>
     </main>
     <script type="module" src={baliDebugLogUrl}></script>
