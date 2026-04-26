@@ -1,12 +1,11 @@
 ---
 import PlaceLayout from "../../../../layouts/PlaceLayout.astro";
 import { getAllPlaces } from "../../../../data/places";
-import type { Place, PlaceDetails, PlaceLinks, LegacyPlaceLink } from "../../../../data/places/types";
+import type { Place, PlaceDetails, PlaceLinks } from "../../../../data/places/types";
 
 interface RenderableLink {
   label: string;
   url: string;
-  isOther?: boolean;
 }
 
 interface DynamicPlaceParams {
@@ -14,123 +13,48 @@ interface DynamicPlaceParams {
   place: string;
 }
 
-const isStrictLinks = (links: unknown): links is PlaceLinks => {
-  if (!links || Array.isArray(links)) {
-    return false;
-  }
-
-  const candidate = links as Record<string, unknown>;
-  const allowedKeys = ["googleMaps", "tripAdvisor", "official"];
-
-  return Object.keys(candidate).every((key) => allowedKeys.includes(key));
-};
-
 const isStrictDetails = (details: unknown): details is PlaceDetails =>
   Boolean(details && typeof details === "object" && !Array.isArray(details) && "what" in details);
 
-const labelForLegacyLinkType = (type: string): string => {
-  if (type === "google-maps") {
-    return "Google Maps";
+const linksFromStrictObject = (links: PlaceLinks | undefined, place: Place): { knownLinks: RenderableLink[]; otherLinks: RenderableLink[] } => {
+  const knownLinks: RenderableLink[] = [];
+  const otherLinks: RenderableLink[] = [];
+
+  if (links?.googleMaps) {
+    knownLinks.push({ label: "Google Maps", url: links.googleMaps });
+  } else if (place.googleMapsUrl) {
+    knownLinks.push({ label: "Google Maps", url: place.googleMapsUrl });
   }
 
-  if (type === "tripadvisor") {
-    return "TripAdvisor";
+  if (links?.tripAdvisor) {
+    knownLinks.push({ label: "TripAdvisor", url: links.tripAdvisor });
+  } else if (place.tripadvisorUrl) {
+    knownLinks.push({ label: "TripAdvisor", url: place.tripadvisorUrl });
   }
 
-  if (type === "official") {
-    return "Official website";
+  if (links?.official) {
+    knownLinks.push({ label: "Official website", url: links.official });
   }
 
-  return "Other";
-};
-
-const getReadableUrlLabel = (url: string): string => {
-  try {
-    const { hostname } = new URL(url);
-    const normalized = hostname.replace(/^www\./, "");
-    return normalized || url;
-  } catch {
-    return url;
-  }
-};
-
-const linksFromStrictObject = (links: PlaceLinks): RenderableLink[] => {
-  const renderable: RenderableLink[] = [];
-
-  if (links.googleMaps) {
-    renderable.push({ label: "Google Maps", url: links.googleMaps });
+  if (links?.other?.length) {
+    otherLinks.push(
+      ...links.other
+        .filter((link) => Boolean(link?.url))
+        .map((link) => ({
+          label: link.label || link.url,
+          url: link.url,
+        })),
+    );
   }
 
-  if (links.tripAdvisor) {
-    renderable.push({ label: "TripAdvisor", url: links.tripAdvisor });
-  }
-
-  if (links.official) {
-    renderable.push({ label: "Official website", url: links.official });
-  }
-
-  return renderable;
-};
-
-const linksFromLegacyArray = (links: LegacyPlaceLink[] | undefined): RenderableLink[] => {
-  if (!links) {
-    return [];
-  }
-
-  return links
-    .filter((link) => Boolean(link?.url))
-    .map((link) => {
-      const typedLabel = labelForLegacyLinkType(link.type);
-      const isOther = typedLabel === "Other";
-
-      return {
-        label: isOther ? getReadableUrlLabel(link.url) : typedLabel,
-        url: link.url,
-        isOther,
-      };
-    });
-};
-
-const getRenderableLinks = (place: Place): RenderableLink[] => {
-  const placeLinks = place.links;
-
-  if (isStrictLinks(placeLinks)) {
-    return linksFromStrictObject(placeLinks);
-  }
-
-  if (Array.isArray(placeLinks)) {
-    const renderable = linksFromLegacyArray(placeLinks);
-
-    if (!placeLinks.some((link) => link.type === "google-maps") && place.googleMapsUrl) {
-      renderable.push({ label: "Google Maps", url: place.googleMapsUrl });
-    }
-
-    if (!placeLinks.some((link) => link.type === "tripadvisor") && place.tripadvisorUrl) {
-      renderable.push({ label: "TripAdvisor", url: place.tripadvisorUrl });
-    }
-
-    return renderable;
-  }
-
-  const fallbackLinks: RenderableLink[] = [];
-
-  if (place.googleMapsUrl) {
-    fallbackLinks.push({ label: "Google Maps", url: place.googleMapsUrl });
-  }
-
-  if (place.tripadvisorUrl) {
-    fallbackLinks.push({ label: "TripAdvisor", url: place.tripadvisorUrl });
-  }
-
-  return fallbackLinks;
+  return { knownLinks, otherLinks };
 };
 
 const { place, trip } = Astro.props;
 const details = isStrictDetails(place.details) ? place.details : undefined;
 const fallbackHighlights = !details && Array.isArray(place.details?.highlights) ? place.details.highlights : place.highlights;
-const links = getRenderableLinks(place);
-const knownLinks = links.filter((link) => !link.isOther);
-const otherLinks = links.filter((link) => link.isOther);
+const { knownLinks, otherLinks } = linksFromStrictObject(place.links, place);
+const hasAnyLinks = knownLinks.length > 0 || otherLinks.length > 0;
 
 export async function getStaticPaths() {
   return getAllPlaces().map(({ trip, place }) => ({
@@ -201,16 +125,18 @@ const backLabel = `← Back to ${trip.charAt(0).toUpperCase()}${trip.slice(1)} o
     </>
   ) : null}
 
-  {links.length ? (
+  {hasAnyLinks ? (
     <>
       <h2>Links</h2>
-      <ul>
-        {knownLinks.map((link) => (
-          <li>
-            <a href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
-          </li>
-        ))}
-      </ul>
+      {knownLinks.length ? (
+        <ul>
+          {knownLinks.map((link) => (
+            <li>
+              <a href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
+            </li>
+          ))}
+        </ul>
+      ) : null}
       {otherLinks.length ? (
         <>
           <h3>Other</h3>
