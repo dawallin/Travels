@@ -11,6 +11,6 @@ export default {
   links: {
     tripAdvisor: "https://www.tripadvisor.com/Attraction_Review-g293925-d12084531-Reviews-Ben_Thanh_Night_Market-Ho_Chi_Minh_City.html",
   },
-  latitude: 10.77238,
-  longitude: 106.69873,
+  latitude: 10.772275,
+  longitude: 106.69756,
 };

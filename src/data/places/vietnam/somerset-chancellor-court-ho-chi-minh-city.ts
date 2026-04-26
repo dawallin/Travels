@@ -11,6 +11,6 @@ export default {
   links: {
     tripAdvisor: "https://www.tripadvisor.com/Hotel_Review-g293925-d627072-Reviews-Somerset_Chancellor_Court_Ho_Chi_Minh_City-Ho_Chi_Minh_City.html",
   },
-  latitude: 10.7836,
-  longitude: 106.7002,
+  latitude: 10.78434,
+  longitude: 106.69950,
 };
