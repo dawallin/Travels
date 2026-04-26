@@ -1,7 +1,7 @@
 export default {
   id: "icon-bali-mall-sanur",
   title: "ICON Bali Mall (Sanur)",
-  type: "attraction",
+  type: "shopping",
   status: "included",
   parentDestinationId: "sanur",
   description:

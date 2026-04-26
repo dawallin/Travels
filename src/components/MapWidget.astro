@@ -70,7 +70,12 @@ const normalizeStatus = (value) => {
 };
 const normalizeType = (value) => {
   const normalized = normalizeKey(value);
-  if (normalized === "hotel" || normalized === "attraction") {
+  if (
+    normalized === "hotel" ||
+    normalized === "attraction" ||
+    normalized === "restaurant" ||
+    normalized === "shopping"
+  ) {
     return normalized;
   }
   return "destination";
