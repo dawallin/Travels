@@ -1,4 +1,5 @@
 export type PlaceStatus = "included" | "possible" | "avoid";
+export type PlaceType = "destination" | "hotel" | "attraction" | "restaurant" | "shopping";
 
 export interface PlaceLinks {
   googleMaps?: string;
@@ -27,7 +28,7 @@ export interface LegacyPlaceDetails {
 export interface Place {
   id: string;
   title: string;
-  type: string;
+  type: PlaceType;
   status: PlaceStatus;
   parentDestinationId: string;
   description: string;
