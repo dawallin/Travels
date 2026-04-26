@@ -6,6 +6,7 @@ import type { Place, PlaceDetails, PlaceLinks, LegacyPlaceLink } from "../../../
 interface RenderableLink {
   label: string;
   url: string;
+  isOther?: boolean;
 }
 
 interface DynamicPlaceParams {
@@ -40,7 +41,17 @@ const labelForLegacyLinkType = (type: string): string => {
     return "Official website";
   }
 
-  return "Other link";
+  return "Other";
+};
+
+const getReadableUrlLabel = (url: string): string => {
+  try {
+    const { hostname } = new URL(url);
+    const normalized = hostname.replace(/^www\./, "");
+    return normalized || url;
+  } catch {
+    return url;
+  }
 };
 
 const linksFromStrictObject = (links: PlaceLinks): RenderableLink[] => {
@@ -68,10 +79,16 @@ const linksFromLegacyArray = (links: LegacyPlaceLink[] | undefined): RenderableL
 
   return links
     .filter((link) => Boolean(link?.url))
-    .map((link) => ({
-      label: labelForLegacyLinkType(link.type),
-      url: link.url,
-    }));
+    .map((link) => {
+      const typedLabel = labelForLegacyLinkType(link.type);
+      const isOther = typedLabel === "Other";
+
+      return {
+        label: isOther ? getReadableUrlLabel(link.url) : typedLabel,
+        url: link.url,
+        isOther,
+      };
+    });
 };
 
 const getRenderableLinks = (place: Place): RenderableLink[] => {
@@ -112,6 +129,8 @@ const { place, trip } = Astro.props;
 const details = isStrictDetails(place.details) ? place.details : undefined;
 const fallbackHighlights = !details && Array.isArray(place.details?.highlights) ? place.details.highlights : place.highlights;
 const links = getRenderableLinks(place);
+const knownLinks = links.filter((link) => !link.isOther);
+const otherLinks = links.filter((link) => link.isOther);
 
 export async function getStaticPaths() {
   return getAllPlaces().map(({ trip, place }) => ({
@@ -186,12 +205,24 @@ const backLabel = `← Back to ${trip.charAt(0).toUpperCase()}${trip.slice(1)} o
     <>
       <h2>Links</h2>
       <ul>
-        {links.map((link) => (
+        {knownLinks.map((link) => (
           <li>
             <a href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
           </li>
         ))}
       </ul>
+      {otherLinks.length ? (
+        <>
+          <h3>Other</h3>
+          <ul>
+            {otherLinks.map((link) => (
+              <li>
+                <a href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
     </>
   ) : null}
 </PlaceLayout>
