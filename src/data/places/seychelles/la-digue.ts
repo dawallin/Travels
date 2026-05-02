@@ -8,7 +8,6 @@ export default {
   details: {
     what: "Cykelvänlig ö med ikoniska granitstränder och lugn ö-känsla.",
   },
-  googleMapsUrl: "https://maps.app.goo.gl/GstJ5VSHxNJQeHFa7?g_st=ic",
   links: {
     googleMaps: "https://maps.app.goo.gl/GstJ5VSHxNJQeHFa7?g_st=ic",
   },

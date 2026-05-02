@@ -8,7 +8,6 @@ export default {
   details: {
     what: "Boende vid Bel Ombre/Mt Simpson med utsikt mot Beau Vallon-bukten.",
   },
-  googleMapsUrl: "https://maps.app.goo.gl/Fz1cduUvTigQUsay6?g_st=ic",
   links: {
     googleMaps: "https://maps.app.goo.gl/Fz1cduUvTigQUsay6?g_st=ic",
   },

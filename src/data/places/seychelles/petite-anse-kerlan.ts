@@ -8,7 +8,6 @@ export default {
   details: {
     what: "Lugn vik/strand på västra Praslin – fin för kort stopp om logistiken passar.",
   },
-  googleMapsUrl: "https://maps.app.goo.gl/h7Lu7XQEFcYrHA8G8?g_st=ic",
   links: {
     googleMaps: "https://maps.app.goo.gl/h7Lu7XQEFcYrHA8G8?g_st=ic",
   },

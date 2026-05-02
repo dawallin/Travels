@@ -11,9 +11,6 @@ export default {
   },
   address:
     "Jl. Pure Puseh, Dusun Beji, Munduk, Kec. Banjar, Kabupaten Buleleng, Bali 81152, Indonesia",
-  tripadvisorUrl:
-    "https://www.tripadvisor.se/Hotel_Review-g608490-d12652402-Reviews-Munduk_Menir_Villas-Munduk_Banjar_Buleleng_Regency_Bali.html",
-  googleMapsUrl: "https://maps.app.goo.gl/LzTxUrp5eUxVeNt4A?g_st=ic",
   links: {
     googleMaps: "https://maps.app.goo.gl/LzTxUrp5eUxVeNt4A?g_st=ic",
     tripAdvisor: "https://www.tripadvisor.se/Hotel_Review-g608490-d12652402-Reviews-Munduk_Menir_Villas-Munduk_Banjar_Buleleng_Regency_Bali.html"

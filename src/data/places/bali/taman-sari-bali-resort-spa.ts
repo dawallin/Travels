@@ -11,9 +11,6 @@ export default {
   },
   address:
     "Jl Seririt - Gilimanuk, Pemuteran, Gerokgak, Kabupaten Buleleng, Bali 81155, Indonesia",
-  tripadvisorUrl:
-    "https://www.tripadvisor.com/Hotel_Review-g608493-d1498492-Reviews-Taman_Sari_Bali_Resort_Spa-Pemuteran_Gerokgak_Buleleng_Regency_Bali.html",
-  googleMapsUrl: "https://maps.app.goo.gl/FC1RY3ebVrfqNva76?g_st=ic",
   links: {
     googleMaps: "https://maps.app.goo.gl/FC1RY3ebVrfqNva76?g_st=ic",
     tripAdvisor: "https://www.tripadvisor.com/Hotel_Review-g608493-d1498492-Reviews-Taman_Sari_Bali_Resort_Spa-Pemuteran_Gerokgak_Buleleng_Regency_Bali.html"

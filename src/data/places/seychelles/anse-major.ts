@@ -8,7 +8,6 @@ export default {
   details: {
     what: "Vandring till avskild strand på Mahé (populär trail + bad/snorkling).",
   },
-  googleMapsUrl: "https://maps.app.goo.gl/f8qTLapsfcxFcBF9A?g_st=ic",
   links: {
     googleMaps: "https://maps.app.goo.gl/f8qTLapsfcxFcBF9A?g_st=ic",
   },

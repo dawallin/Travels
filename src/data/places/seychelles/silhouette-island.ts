@@ -8,7 +8,6 @@ export default {
   details: {
     what: "Större grön ö nära Mahé – fin dagsutflykt för natur och strand.",
   },
-  googleMapsUrl: "https://maps.app.goo.gl/LX5wbfceirQzc42m6?g_st=ic",
   links: {
     googleMaps: "https://maps.app.goo.gl/LX5wbfceirQzc42m6?g_st=ic",
   },
