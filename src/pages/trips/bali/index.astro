@@ -1,9 +1,9 @@
 ---
+import TripLayout from "../../../layouts/TripLayout.astro";
 import PageHeader from "../../../components/PageHeader.astro";
 import PlacesOverview from "../../../components/PlacesOverview.astro";
 import MapWidget from "../../../components/MapWidget.astro";
 import ItineraryList from "../../../components/ItineraryList.astro";
-import DebugDock from "../../../components/DebugDock.astro";
 import baliDebugLogUrl from "../../../scripts/baliDebugLog.js?url";
 
 const destination = "Bali";
@@ -45,273 +45,204 @@ const itineraryStops = [
   { title: "Denpasar (Ngurah Rai International Airport) (departure)" },
 ];
 ---
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{destination} • Travels</title>
-    <style>
-      :root {
-        color-scheme: light;
-        --text: #1f2933;
-        --muted: #5b6570;
-        --border: #d7dce1;
-        --surface: #ffffff;
-        --accent: #2f5d7c;
-        --background: #f6f7f9;
-        --notch-width: 12px;
-        --notch-gap: 4px;
-        --notch-padding: 6px;
-      }
+<TripLayout title={destination}>
+  <script slot="prelude" is:inline define:vars={{ baliSeedEntry }}>
+    window.__travelsDebugSeed = window.__travelsDebugSeed ?? [];
+    window.__travelsDebugSeed.push(baliSeedEntry);
+  </script>
 
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-        color: var(--text);
-        background: var(--background);
-      }
-
-      main {
-        max-width: 960px;
-        margin: 0 auto;
-        padding: 64px 24px 104px;
-        display: flex;
-        flex-direction: column;
-        gap: 32px;
-      }
-
-      @media (min-width: 1100px) {
-        main {
-          max-width: 1200px;
-        }
-      }
-
-      h1 {
-        margin: 0 0 12px;
-        font-size: 2.4rem;
-        letter-spacing: -0.02em;
-      }
-
-      h2 {
-        margin: 0 0 12px;
-        font-size: 1.2rem;
-        letter-spacing: -0.01em;
-      }
-
-      p {
-        margin: 0 0 18px;
-        line-height: 1.6;
-        color: var(--text);
-      }
-
-      .back-link {
-        display: inline-block;
-        margin-bottom: 12px;
-        color: var(--muted);
-        text-decoration: none;
-        font-size: 0.95rem;
-      }
-
-      .back-link:hover {
-        color: var(--text);
-        text-decoration: underline;
-      }
-
-      .section {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 32px 36px;
-      }
-
-      .intro {
-        color: var(--muted);
-        max-width: 720px;
-      }
-
-      .section-intro {
-        color: var(--muted);
-        max-width: 720px;
-      }
-
-      .medical-subtitle {
-        margin: 24px 0 10px;
-        font-size: 1rem;
-        color: var(--text);
-      }
-
-      .medical-area {
-        margin-top: 20px;
-      }
-
-      .medical-list {
-        margin: 0;
-        padding-left: 20px;
-        display: grid;
-        gap: 14px;
-      }
-
-      .medical-list li {
-        line-height: 1.6;
-      }
-
-      .medical-label {
-        color: var(--muted);
-      }
-    </style>
-  </head>
-  <body>
-    <script is:inline define:vars={{ baliSeedEntry }}>
-      window.__travelsDebugSeed = window.__travelsDebugSeed ?? [];
-      window.__travelsDebugSeed.push(baliSeedEntry);
-    </script>
-    <DebugDock />
-    <main>
-      <PageHeader title={destination} backHref="../../" backLabel="← Back to trips">
+  <div class="trip-shell">
+    <PageHeader title={destination} backHref="../../" backLabel="← Back to trips" className="trip-hero">
+      <div class="hero-copy">
+        <p class="section-kicker">Trip Overview</p>
         <p class="intro">
           Research snapshot for destinations and supporting stays currently under consideration.
         </p>
-      </PageHeader>
-      <section class="section">
-        <h2>Map</h2>
-        <MapWidget title="Map" subtitle="Bali map" markers={mapMarkers} />
-      </section>
-      <section class="section">
-        <h2>Itinerary</h2>
-        <p class="section-intro">Current working route based on destinations only.</p>
-        <ItineraryList items={itineraryStops} />
-      </section>
-      <section class="section">
-        <h2>Places overview</h2>
-        <p class="section-intro">
-          Destinations are grouped with their immediate hotels and attractions. Status badges
-          highlight how each place is currently tracked.
-        </p>
-        <PlacesOverview />
-      </section>
-      <section class="section">
-        <h2>Akutnummer & sjukvård</h2>
-        <p class="section-intro">
-          Dessa sjukhus och kliniker kan vara relevanta vid akut sjukdom, olycka eller behov av
-          vård under Bali-resan. Vid allvarliga tillstånd bör större sjukhus prioriteras.
-        </p>
+      </div>
+    </PageHeader>
 
-        <h3 class="medical-subtitle">Akutnummer & specialisthjukhus – hela Bali</h3>
-        <p class="section-intro">
-          Dessa sjukhus har högst medicinsk standard och störst lager av motgift (antivenom) vid
-          ormbett.
-        </p>
+    <section class="trip-card">
+      <div class="section-heading">
+        <p class="section-kicker">Map</p>
+        <h2>See the trip at a glance</h2>
+      </div>
+      <MapWidget title="Map" subtitle="Bali map" markers={mapMarkers} />
+    </section>
+
+    <section class="trip-card">
+      <div class="section-heading">
+        <p class="section-kicker">Itinerary</p>
+        <h2>Current route</h2>
+      </div>
+      <p class="section-intro">Current working route based on destinations only.</p>
+      <ItineraryList items={itineraryStops} />
+    </section>
+
+    <section class="trip-card trip-card--overview">
+      <div class="section-heading">
+        <p class="section-kicker">Places Overview</p>
+        <h2>Tracked destinations and stays</h2>
+      </div>
+      <p class="section-intro">
+        Destinations are grouped with their immediate hotels and attractions. Status badges
+        highlight how each place is currently tracked.
+      </p>
+      <PlacesOverview />
+    </section>
+
+    <section class="trip-card trip-card--sidebar">
+      <div class="section-heading">
+        <p class="section-kicker">Health</p>
+        <h2>Akutnummer & sjukvård</h2>
+      </div>
+      <p class="section-intro">
+        Dessa sjukhus och kliniker kan vara relevanta vid akut sjukdom, olycka eller behov av
+        vård under Bali-resan. Vid allvarliga tillstånd bör större sjukhus prioriteras.
+      </p>
+
+      <h3 class="medical-subtitle">Akutnummer & specialisthjukhus – hela Bali</h3>
+      <p class="section-intro">
+        Dessa sjukhus har högst medicinsk standard och störst lager av motgift (antivenom) vid
+        ormbett.
+      </p>
+      <ol class="medical-list">
+        <li>
+          <strong>BIMC Hospital Kuta</strong><br />
+          <span class="medical-label">Bäst för turister/akut</span><br />
+          Adress: Jl. Bypass Ngurah Rai No.100, Kuta<br />
+          Akuttelefon: +62 361 761 263<br />
+          WhatsApp: +62 811 3960 8500
+        </li>
+        <li>
+          <strong>Bali International Hospital (BIH)</strong><br />
+          <span class="medical-label">Öns modernaste sjukhus</span><br />
+          Adress: Jl. Raya Puputan No.1, Sanur<br />
+          Telefon: +62 361 281 117
+        </li>
+        <li>
+          <strong>Sanglah General Hospital (RSUP Prof. Ngoerah)</strong><br />
+          <span class="medical-label">Expert på ormbett</span><br />
+          Adress: Jl. Diponegoro, Dauh Puri Klod, Denpasar<br />
+          Telefon: +62 361 227 912
+        </li>
+      </ol>
+
+      <h3 class="medical-subtitle">Lokala sjukhus & kliniker – ort för ort</h3>
+
+      <div class="medical-area">
+        <h4>Sanur</h4>
         <ol class="medical-list">
           <li>
-            <strong>BIMC Hospital Kuta</strong><br />
-            <span class="medical-label">Bäst för turister/akut</span><br />
-            Adress: Jl. Bypass Ngurah Rai No.100, Kuta<br />
-            Akuttelefon: +62 361 761 263<br />
+            <strong>BIMC Siloam Sanur</strong><br />
+            Adress: Jl. Bypass Ngurah Rai No.100X, Sanur<br />
+            Telefon: +62 361 271 010<br />
             WhatsApp: +62 811 3960 8500
           </li>
+        </ol>
+      </div>
+
+      <div class="medical-area">
+        <h4>Pemuteran</h4>
+        <ol class="medical-list">
           <li>
-            <strong>Bali International Hospital (BIH)</strong><br />
-            <span class="medical-label">Öns modernaste sjukhus</span><br />
-            Adress: Jl. Raya Puputan No.1, Sanur<br />
-            Telefon: +62 361 281 117
+            <strong>Pemuteran Medical Care</strong><br />
+            Adress: Jl. Raya Singaraja-Gilimanuk, Pemuteran<br />
+            WhatsApp: +62 821 4452 7998
           </li>
           <li>
-            <strong>Sanglah General Hospital (RSUP Prof. Ngoerah)</strong><br />
-            <span class="medical-label">Expert på ormbett</span><br />
-            Adress: Jl. Diponegoro, Dauh Puri Klod, Denpasar<br />
-            Telefon: +62 361 227 912
+            <strong>Putu Parwata Clinic</strong><br />
+            Adress: Jl. Raya Singaraja-Gilimanuk, Gerokgak<br />
+            WhatsApp: +62 813 3855 0663
           </li>
         </ol>
+      </div>
 
-        <h3 class="medical-subtitle">Lokala sjukhus & kliniker – ort för ort</h3>
+      <div class="medical-area">
+        <h4>Munduk</h4>
+        <ol class="medical-list">
+          <li>
+            <strong>Puskesmas Banjar II</strong><br />
+            <span class="medical-label">Lokalvård</span><br />
+            Adress: Jl. Raya Munduk, Banjar<br />
+            Telefon: +62 362 94250
+          </li>
+          <li>
+            <strong>Parama Sidhi Hospital</strong><br />
+            <span class="medical-label">Närmaste stora sjukhus i Singaraja, ca 1 timme bort</span><br />
+            Adress: Jl. Ahmad Yani No.171, Singaraja<br />
+            WhatsApp: +62 811 3861 171
+          </li>
+        </ol>
+      </div>
 
-        <div class="medical-area">
-          <h4>Sanur</h4>
-          <ol class="medical-list">
-            <li>
-              <strong>BIMC Siloam Sanur</strong><br />
-              Adress: Jl. Bypass Ngurah Rai No.100X, Sanur<br />
-              Telefon: +62 361 271 010<br />
-              WhatsApp: +62 811 3960 8500
-            </li>
-          </ol>
-        </div>
+      <div class="medical-area">
+        <h4>Barukari / Sidemen-området</h4>
+        <ol class="medical-list">
+          <li>
+            <strong>Puskesmas Sidemen</strong><br />
+            <span class="medical-label">Lokalvård</span><br />
+            Adress: Jl. Raya Sidemen, Sidemen<br />
+            Telefon: +62 366 23201
+          </li>
+          <li>
+            <strong>RSUD Klungkung</strong><br />
+            <span class="medical-label">Större sjukhus, ca 30–40 min bort</span><br />
+            Adress: Jl. Flamboyan No.40, Klungkung<br />
+            Telefon: +62 366 21172
+          </li>
+        </ol>
+      </div>
 
-        <div class="medical-area">
-          <h4>Pemuteran</h4>
-          <ol class="medical-list">
-            <li>
-              <strong>Pemuteran Medical Care</strong><br />
-              Adress: Jl. Raya Singaraja-Gilimanuk, Pemuteran<br />
-              WhatsApp: +62 821 4452 7998
-            </li>
-            <li>
-              <strong>Putu Parwata Clinic</strong><br />
-              Adress: Jl. Raya Singaraja-Gilimanuk, Gerokgak<br />
-              WhatsApp: +62 813 3855 0663
-            </li>
-          </ol>
-        </div>
+      <div class="medical-area">
+        <h4>Jimbaran</h4>
+        <ol class="medical-list">
+          <li>
+            <strong>Udayana University Hospital (RS Unud)</strong><br />
+            Adress: Jl. Rumah Sakit Unud No.1, Jimbaran<br />
+            WhatsApp akut: +62 813 3955 5511
+          </li>
+          <li>
+            <strong>Kasih Ibu General Hospital (Kedonganan)</strong><br />
+            Adress: Jl. Raya Uluwatu No.69X, Kedonganan<br />
+            WhatsApp: +62 811 3811 011
+          </li>
+        </ol>
+      </div>
+    </section>
+  </div>
 
-        <div class="medical-area">
-          <h4>Munduk</h4>
-          <ol class="medical-list">
-            <li>
-              <strong>Puskesmas Banjar II</strong><br />
-              <span class="medical-label">Lokalvård</span><br />
-              Adress: Jl. Raya Munduk, Banjar<br />
-              Telefon: +62 362 94250
-            </li>
-            <li>
-              <strong>Parama Sidhi Hospital</strong><br />
-              <span class="medical-label">Närmaste stora sjukhus i Singaraja, ca 1 timme bort</span
-              ><br />
-              Adress: Jl. Ahmad Yani No.171, Singaraja<br />
-              WhatsApp: +62 811 3861 171
-            </li>
-          </ol>
-        </div>
+  <script type="module" src={baliDebugLogUrl}></script>
+</TripLayout>
 
-        <div class="medical-area">
-          <h4>Barukari / Sidemen-området</h4>
-          <ol class="medical-list">
-            <li>
-              <strong>Puskesmas Sidemen</strong><br />
-              <span class="medical-label">Lokalvård</span><br />
-              Adress: Jl. Raya Sidemen, Sidemen<br />
-              Telefon: +62 366 23201
-            </li>
-            <li>
-              <strong>RSUD Klungkung</strong><br />
-              <span class="medical-label">Större sjukhus, ca 30–40 min bort</span><br />
-              Adress: Jl. Flamboyan No.40, Klungkung<br />
-              Telefon: +62 366 21172
-            </li>
-          </ol>
-        </div>
+<style>
+  .medical-subtitle {
+    margin: 24px 0 10px;
+    font-size: 1.2rem;
+    line-height: 1.1;
+  }
 
-        <div class="medical-area">
-          <h4>Jimbaran</h4>
-          <ol class="medical-list">
-            <li>
-              <strong>Udayana University Hospital (RS Unud)</strong><br />
-              Adress: Jl. Rumah Sakit Unud No.1, Jimbaran<br />
-              WhatsApp akut: +62 813 3955 5511
-            </li>
-            <li>
-              <strong>Kasih Ibu General Hospital (Kedonganan)</strong><br />
-              Adress: Jl. Raya Uluwatu No.69X, Kedonganan<br />
-              WhatsApp: +62 811 3811 011
-            </li>
-          </ol>
-        </div>
-      </section>
-    </main>
-    <script type="module" src={baliDebugLogUrl}></script>
-  </body>
-</html>
+  .medical-area {
+    margin-top: 20px;
+  }
+
+  .medical-area h4 {
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+  }
+
+  .medical-list {
+    margin: 0;
+    padding-left: 20px;
+    display: grid;
+    gap: 14px;
+  }
+
+  .medical-list li {
+    line-height: 1.6;
+    color: #31434e;
+  }
+
+  .medical-label {
+    color: var(--muted);
+  }
+</style>
