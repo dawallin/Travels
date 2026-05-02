@@ -1,7 +1,7 @@
 ---
-const { title, backHref, backLabel = "← Back" } = Astro.props;
+const { title, backHref, backLabel = "← Back", className = "" } = Astro.props;
 ---
-<section class="section">
+<section class:list={["section", className]}>
   {backHref && (
     <a class="back-link" href={backHref}>
       {backLabel}

@@ -7,6 +7,7 @@ const fallbackPlaces = Object.values(placeModules).map(
   (module) => module.default ?? module.place ?? module
 );
 const places = providedPlaces ?? fallbackPlaces;
+const hasPossiblePlaces = places.some((place) => (place.status ?? "included") === "possible");
 
 const statusOrder = ["included", "possible", "avoid"];
 const getStatusRank = (place) => {
@@ -81,13 +82,28 @@ const getPlaceCardProps = (place) => ({
   href: getContentHref(place.id),
 });
 ---
-<section class="places-overview">
+<section class="places-overview" data-places-overview>
+  {hasPossiblePlaces && (
+    <div class="overview-controls">
+      <span class="overview-controls__label">Possible items</span>
+      <button
+        class="possible-filter-toggle"
+        type="button"
+        data-possible-filter-toggle
+        data-state="included"
+        aria-pressed="true"
+      >
+        <span class="possible-filter-toggle__state">Included</span>
+      </button>
+    </div>
+  )}
+
   {destinationPlaces.map((destination) => {
     const destinationCardProps = getPlaceCardProps(destination);
     const destinationChildren = childrenByParent.get(destination.id) ?? [];
     return (
-      <div class="destination-group">
-        <div class="destination-card">
+      <div class="destination-group" data-place-group>
+        <div class="destination-card" data-place-card data-place-status={destination.status ?? "included"}>
           <PlaceCard {...destinationCardProps} />
         </div>
         {destinationChildren.length > 0 && (
@@ -95,7 +111,7 @@ const getPlaceCardProps = (place) => ({
             {destinationChildren.map((place) => {
               const childCardProps = getPlaceCardProps(place);
               return (
-                <div class="child-card">
+                <div class="child-card" data-place-card data-place-status={place.status ?? "included"}>
                   <PlaceCard {...childCardProps} />
                 </div>
               );
@@ -107,13 +123,13 @@ const getPlaceCardProps = (place) => ({
   })}
 
   {ungroupedPlaces.length > 0 && (
-    <div class="ungrouped">
+    <div class="ungrouped" data-place-group>
       <h3>Ungrouped</h3>
       <div class="child-list">
         {ungroupedPlaces.map((place) => {
           const cardProps = getPlaceCardProps(place);
           return (
-            <div class="child-card">
+            <div class="child-card" data-place-card data-place-status={place.status ?? "included"}>
               <PlaceCard {...cardProps} />
             </div>
           );
@@ -123,12 +139,108 @@ const getPlaceCardProps = (place) => ({
   )}
 </section>
 
+<script type="module">
+  const overviews = document.querySelectorAll("[data-places-overview]");
+
+  const applyPossibleFilter = (overview, excluded) => {
+    const cards = overview.querySelectorAll("[data-place-card]");
+    cards.forEach((card) => {
+      const isPossible = card.getAttribute("data-place-status") === "possible";
+      card.hidden = excluded && isPossible;
+    });
+
+    const groups = overview.querySelectorAll("[data-place-group]");
+    groups.forEach((group) => {
+      const visibleCards = group.querySelectorAll("[data-place-card]:not([hidden])");
+      group.hidden = visibleCards.length === 0;
+    });
+  };
+
+  overviews.forEach((overview) => {
+    const toggle = overview.querySelector("[data-possible-filter-toggle]");
+    if (!(toggle instanceof HTMLButtonElement)) {
+      return;
+    }
+
+    const syncState = (excluded) => {
+      toggle.dataset.state = excluded ? "excluded" : "included";
+      toggle.setAttribute("aria-pressed", excluded ? "false" : "true");
+      const stateLabel = toggle.querySelector(".possible-filter-toggle__state");
+      if (stateLabel) {
+        stateLabel.textContent = excluded ? "Excluded" : "Included";
+      }
+      applyPossibleFilter(overview, excluded);
+    };
+
+    syncState(false);
+
+    toggle.addEventListener("click", () => {
+      const excluded = toggle.dataset.state !== "excluded";
+      syncState(excluded);
+    });
+  });
+</script>
+
 <style>
   .places-overview {
     --place-indent: 32px;
     display: grid;
-    gap: 28px;
+    gap: 22px;
     width: 100%;
+  }
+
+  .overview-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+  }
+
+  .overview-controls__label {
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .possible-filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 0 14px;
+    border: 1px solid rgba(47, 101, 121, 0.18);
+    border-radius: 999px;
+    font: inherit;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .possible-filter-toggle[data-state="included"] {
+    color: #fff9ee;
+    background: linear-gradient(180deg, #d7a53b, #c48e18);
+    border-color: rgba(169, 117, 0, 0.28);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      0 8px 18px rgba(196, 142, 24, 0.22);
+  }
+
+  .possible-filter-toggle[data-state="excluded"] {
+    color: #6f7782;
+    background: linear-gradient(180deg, rgba(228, 232, 236, 0.96), rgba(210, 216, 221, 0.96));
+    border-color: rgba(112, 124, 136, 0.16);
+    box-shadow:
+      inset 0 2px 5px rgba(103, 116, 128, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.72);
   }
 
   .destination-group,
@@ -136,18 +248,21 @@ const getPlaceCardProps = (place) => ({
     display: grid;
     gap: 16px;
     width: 100%;
+    min-width: 0;
   }
 
   .child-list {
     display: grid;
     gap: 14px;
-    padding-left: var(--place-indent);
-    width: 100%;
+    margin-left: var(--place-indent);
+    width: auto;
+    min-width: 0;
   }
 
   .destination-card,
   .child-card {
     width: 100%;
+    min-width: 0;
   }
 
   .ungrouped h3 {
@@ -158,8 +273,12 @@ const getPlaceCardProps = (place) => ({
   }
 
   @media (max-width: 640px) {
+    .places-overview {
+      --place-indent: 20px;
+    }
+
     .child-list {
-      padding-left: 20px;
+      margin-left: var(--place-indent);
     }
   }
 </style>

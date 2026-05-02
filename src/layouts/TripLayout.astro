@@ -1,0 +1,212 @@
+---
+import DebugDock from "../components/DebugDock.astro";
+
+const { title } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} • Travels</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --text: #22313d;
+        --muted: #64717d;
+        --border: rgba(77, 101, 120, 0.18);
+        --border-strong: rgba(77, 101, 120, 0.3);
+        --surface: rgba(255, 252, 247, 0.94);
+        --surface-strong: #fffdf9;
+        --background: #f4efe7;
+        --accent: #2f6579;
+        --accent-strong: #214a59;
+        --shadow-soft: 0 18px 40px rgba(26, 44, 56, 0.08);
+        --shadow-card: 0 10px 24px rgba(26, 44, 56, 0.06);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        background:
+          radial-gradient(circle at top, rgba(150, 198, 210, 0.18), transparent 34%),
+          linear-gradient(180deg, #f6f1e8 0%, #f2ede5 100%);
+      }
+
+      body {
+        margin: 0;
+        font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        color: var(--text);
+        background: transparent;
+      }
+
+      main {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 24px 16px 88px;
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      p {
+        margin: 0;
+        line-height: 1.6;
+        color: var(--text);
+      }
+
+      :global(.trip-shell) {
+        display: grid;
+        gap: 18px;
+      }
+
+      :global(.trip-hero) {
+        position: relative;
+        overflow: hidden;
+        min-height: 320px;
+        border-radius: 28px;
+        border: 1px solid var(--border-strong);
+        box-shadow: var(--shadow-soft);
+        background:
+          radial-gradient(circle at top right, rgba(102, 165, 183, 0.28), transparent 38%),
+          linear-gradient(180deg, rgba(255, 249, 239, 0.96), rgba(253, 248, 241, 0.98));
+      }
+
+      :global(.trip-hero::before) {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 15% 20%, rgba(67, 133, 153, 0.22), transparent 0 24%),
+          radial-gradient(circle at 85% 15%, rgba(219, 188, 122, 0.28), transparent 0 20%);
+        pointer-events: none;
+      }
+
+      :global(.trip-hero) {
+        padding: 18px 18px 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 28px;
+      }
+
+      :global(.trip-hero .back-link) {
+        position: relative;
+        z-index: 1;
+        align-self: flex-start;
+        display: inline-flex;
+        align-items: center;
+        min-height: 40px;
+        padding: 0 14px;
+        border-radius: 999px;
+        background: rgba(255, 252, 247, 0.82);
+        border: 1px solid rgba(255, 255, 255, 0.55);
+        color: var(--accent-strong);
+        text-decoration: none;
+        font-size: 0.94rem;
+        backdrop-filter: blur(12px);
+      }
+
+      :global(.trip-hero h1),
+      :global(.trip-card h2),
+      :global(.trip-card h3),
+      :global(.trip-card h4) {
+        margin: 0;
+        font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+        letter-spacing: -0.03em;
+        color: #23343f;
+      }
+
+      :global(.trip-hero h1) {
+        position: relative;
+        z-index: 1;
+        font-size: clamp(2.35rem, 8vw, 4.8rem);
+        line-height: 0.95;
+        max-width: 10ch;
+        text-wrap: balance;
+      }
+
+      :global(.hero-copy) {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: 12px;
+        max-width: 40rem;
+      }
+
+      :global(.section-kicker) {
+        margin: 0;
+        font-size: 0.78rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      :global(.intro),
+      :global(.section-intro) {
+        color: #334650;
+        max-width: 44rem;
+      }
+
+      :global(.trip-card) {
+        padding: 22px 18px;
+        border-radius: 24px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        box-shadow: var(--shadow-card);
+      }
+
+      :global(.trip-card--overview) {
+        background: linear-gradient(180deg, rgba(255, 253, 248, 0.98), rgba(255, 250, 242, 0.94));
+      }
+
+      :global(.trip-card--sidebar) {
+        background: linear-gradient(180deg, rgba(255, 252, 247, 0.96), rgba(252, 248, 241, 0.92));
+      }
+
+      :global(.section-heading) {
+        display: grid;
+        gap: 6px;
+        margin-bottom: 16px;
+      }
+
+      :global(.trip-card h2) {
+        font-size: clamp(1.45rem, 4vw, 2rem);
+        line-height: 1.05;
+      }
+
+      :global(.section-intro) {
+        margin-bottom: 18px;
+      }
+
+      @media (min-width: 720px) {
+        main {
+          padding: 40px 24px 96px;
+        }
+
+        :global(.trip-shell) {
+          gap: 20px;
+        }
+
+        :global(.trip-hero) {
+          padding: 24px 24px 28px;
+        }
+
+        :global(.trip-card) {
+          padding: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <slot name="prelude" />
+    <DebugDock />
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>
