@@ -8,7 +8,6 @@ export default {
   details: {
     what: "Bas på Praslin för stränder, naturreservat och dagstur till Curieuse.",
   },
-  googleMapsUrl: "https://maps.app.goo.gl/CqCLvqwN1vTn2fmJ9?g_st=ic",
   links: {
     googleMaps: "https://maps.app.goo.gl/CqCLvqwN1vTn2fmJ9?g_st=ic",
   },

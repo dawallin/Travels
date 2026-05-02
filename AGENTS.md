@@ -1,119 +1,111 @@
+# AGENTS.md
+
 ## Purpose
 
-This file defines the default rules for AI agents working in this repository.
-Keep work scoped, incremental, and safe. Prefer small changes that are easy to review.
+Repository-wide operating rules for AI agents working on this project.
+Default goals: keep scope tight, preserve existing behavior, and ship small reviewable changes.
 
-## Working model
+## Instruction Priority
 
-This repo uses:
-
-- `AGENTS.md` for general agent behavior
-- `spec/` for task-specific plans, requirements, checklists, and validation
-- `skills/` for optional reusable workflows
-
-Priority order:
+When instructions conflict, follow this order:
 
 1. Current user request
 2. Relevant spec in `spec/`
-3. This file
-4. Relevant skill
-5. General best practices
+3. This file (`AGENTS.md`)
+4. Relevant skill workflow in `skills/`
+5. General engineering best practices
 
-Specs define the task truth. Skills are helpers, not overrides.
+Specs are the source of truth for task scope and acceptance.
 
-## Skills and reusable workflows
+## Repository Overview
 
-Reusable workflows live under `skills/`.
+This is an Astro static travel-planning site with typed place data and statically generated pages.
 
-When a task matches one of these workflows, read the corresponding `SKILL.md` before planning or editing files.
+- Framework: `astro` (ES modules)
+- Build/verify command: `npm run build` (same as `npm run verify`)
+- Dev command: `npm run dev`
+- Key external integration: Map widget uses `PUBLIC_MAPTILER_KEY`
 
-Important skills:
+## Project Structure
 
-- `skills/writing-spec/SKILL.md`: use when creating or updating files under `spec/`
-- `skills/reviewing-against-spec/SKILL.md`: use when reviewing a PR or checking whether changes match a spec
-- `skills/safe-refactor/SKILL.md`: use for non-breaking migrations and staged refactors
+- `src/data/places/types.ts`: canonical data model (`Place`, `PlaceDetails`, link types)
+- `src/data/places/{trip}/*.ts`: place-level source data (one file per place)
+- `src/data/places/index.ts`: dynamic loading and lookup helpers via `import.meta.glob`
+- `src/pages/trips/[trip]/places/[place].astro`: dynamic place-detail route (generated from `getStaticPaths`)
+- `src/pages/trips/{trip}/index.astro`: trip overview pages
+- `src/components/` and `src/layouts/`: rendering primitives and page layout
+- `src/scripts/`: client-side behavior (map/debug widgets)
+- `spec/*.md`: scoped plans, constraints, and validation checklists
+- `skills/*/SKILL.md`: reusable agent workflows
 
-## Before editing
+## Required Workflow Before Editing
 
-Agents should:
+1. Locate and read the relevant spec in `spec/` (if one exists).
+2. Identify whether a skill applies; if yes, read that `SKILL.md` before making changes.
+3. Confirm scope boundaries (in-scope, non-goals, constraints, validation).
+4. Implement the smallest viable change that satisfies the request.
 
-- Find and read the relevant spec in `spec/` when one exists
-- Follow the spec’s scope, non-goals, constraints, and validation steps
-- Use a skill only when it clearly matches the task
-- Prefer existing repo patterns over new abstractions
-- Make the smallest reasonable change
+Ask the user only when ambiguity creates real risk (scope, correctness, or data loss).
 
-Ask only when ambiguity creates real scope, safety, or data-loss risk.
+## Skills
 
-## Hard rules
+Use these when they match the task:
+
+- `skills/writing-spec/SKILL.md`: creating/updating spec files
+- `skills/reviewing-against-spec/SKILL.md`: PR/spec compliance review
+- `skills/safe-refactor/SKILL.md`: staged, non-breaking refactors
+
+Do not treat skills as overrides to specs.
+
+## Guardrails
 
 Do not:
 
-- Invent travel content or facts
-- Add missing content just to fill a schema
-- Rewrite unrelated files
-- Broaden scope silently
-- Change routes, URLs, or visual design unless requested
-- Remove fallback behavior unless the active spec explicitly allows it
+- Invent travel facts, links, descriptions, coordinates, or metadata
+- Auto-fill missing content just to satisfy a structure
+- Change routes, slugs, URLs, or page hierarchy unless requested by user/spec
+- Change visual design or interaction patterns unless requested by user/spec
+- Remove compatibility/fallback paths unless the active spec allows it
+- Modify unrelated files or broaden scope silently
 - Mark checklist items complete without evidence
-- Claim validation was run if it was not
+- Claim validation ran if it did not
 
-When changing content or data:
+When changing travel content/data:
 
-- Preserve meaning
-- Change only what the task requires
-- Prefer omission over invention
-- Keep source and target responsibilities clear
+- Preserve original meaning
+- Edit only fields required by the task
+- Prefer omission over fabrication
+- Keep data source responsibilities clear (`src/data` owns content, pages own presentation)
 
-## Travel site structure
+## Implementation Conventions
 
-This is an Astro travel site for presenting trips, places, hotels, restaurants, activities, and travel planning notes.
+- Prefer existing TypeScript/Astro patterns over new abstractions.
+- Keep edits localized to the affected trip/place/page/component.
+- Maintain type compatibility with `src/data/places/types.ts`.
+- Preserve graceful fallbacks in detail rendering (legacy vs strict details) unless explicitly in scope.
+- Avoid incidental refactors while doing content or schema migrations.
 
-The site separates structured data from rendered pages:
+## Validation and Completion
 
-- TypeScript files under `src/data/` hold structured travel data used for lists, cards, maps, metadata, and page rendering.
-- Astro and Markdown files under `src/pages/` define routes and rendered content.
-- Specs under `spec/` describe planned changes and migration phases.
-- Skills under `skills/` describe reusable agent workflows.
+Validation order:
 
-Common paths:
-
-```text
-src/data/places/{trip}/{place}.ts
-src/pages/trips/{trip}/places/{place}.md
-spec/*.md
-skills/*/SKILL.md
-```
-
-### Design intent
-
-- Keep travel data source-controlled and reviewable.
-- Prefer typed, structured data where it improves consistency.
-- Preserve existing URLs and visual behavior unless a spec says otherwise.
-- Avoid inventing or enriching travel facts without explicit instruction.
-
-### Validation
-
-Use the validation steps from the active spec.
-
-If no spec-specific validation exists, run:
-
-`npm run build`
+1. Run spec-defined checks first (if present).
+2. Otherwise run `npm run build`.
 
 Before finishing, inspect the diff for:
 
-- unrelated file changes
-- unintended content changes
-- unintended route or layout changes
-- temporary or generated files
+- unrelated file churn
+- unintended route/layout/URL changes
+- accidental content rewrites
+- temporary/generated artifacts
 
-If validation cannot be run, say so clearly.
+If validation cannot be run, state that explicitly and explain why.
 
-### Final response
+## Final Response Contract
 
-End with a concise summary:
+End every task with a concise report covering:
 
 - what changed
 - what did not change
-- what was validated
-- skipped work or remaining risk
+- what validation ran
+- skipped work and residual risks

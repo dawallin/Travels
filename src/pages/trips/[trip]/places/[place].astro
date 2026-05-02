@@ -1,7 +1,13 @@
 ---
 import PlaceLayout from "../../../../layouts/PlaceLayout.astro";
 import { getAllPlaces } from "../../../../data/places";
-import type { Place, PlaceDetails, PlaceLinks } from "../../../../data/places/types";
+import type { Place, PlaceLinks } from "../../../../data/places/types";
+import {
+  placeStatusColors,
+  placeStatusLabels,
+  placeTypeIcons,
+  placeTypeLabels,
+} from "../../../../components/placePresentation";
 
 interface RenderableLink {
   label: string;
@@ -13,23 +19,16 @@ interface DynamicPlaceParams {
   place: string;
 }
 
-const isStrictDetails = (details: unknown): details is PlaceDetails =>
-  Boolean(details && typeof details === "object" && !Array.isArray(details) && "what" in details);
-
-const linksFromStrictObject = (links: PlaceLinks | undefined, place: Place): { knownLinks: RenderableLink[]; otherLinks: RenderableLink[] } => {
+const linksFromPlace = (links: PlaceLinks | undefined): { knownLinks: RenderableLink[]; otherLinks: RenderableLink[] } => {
   const knownLinks: RenderableLink[] = [];
   const otherLinks: RenderableLink[] = [];
 
   if (links?.googleMaps) {
     knownLinks.push({ label: "Google Maps", url: links.googleMaps });
-  } else if (place.googleMapsUrl) {
-    knownLinks.push({ label: "Google Maps", url: place.googleMapsUrl });
   }
 
   if (links?.tripAdvisor) {
     knownLinks.push({ label: "TripAdvisor", url: links.tripAdvisor });
-  } else if (place.tripadvisorUrl) {
-    knownLinks.push({ label: "TripAdvisor", url: place.tripadvisorUrl });
   }
 
   if (links?.official) {
@@ -51,104 +50,540 @@ const linksFromStrictObject = (links: PlaceLinks | undefined, place: Place): { k
 };
 
 const { place, trip } = Astro.props;
-const details = isStrictDetails(place.details) ? place.details : undefined;
-const fallbackHighlights = !details && Array.isArray(place.details?.highlights) ? place.details.highlights : place.highlights;
-const { knownLinks, otherLinks } = linksFromStrictObject(place.links, place);
+const details = place.details;
+const { knownLinks, otherLinks } = linksFromPlace(place.links);
 const hasAnyLinks = knownLinks.length > 0 || otherLinks.length > 0;
+const heroImage = place.heroImage ?? place.image;
+const tripLabel = `${trip.charAt(0).toUpperCase()}${trip.slice(1)}`;
+const typeLabel = placeTypeLabels[place.type] ?? "Place";
+const typeIcon = placeTypeIcons[place.type] ?? placeTypeIcons.destination;
+const statusLabel = placeStatusLabels[place.status] ?? "Included";
+const statusColor = placeStatusColors[place.status] ?? placeStatusColors.included;
+const hasQuickFacts = Boolean(details?.bestTime || place.address || hasAnyLinks);
+const hasSidebar = hasQuickFacts;
 
 export async function getStaticPaths() {
   return getAllPlaces().map(({ trip, place }) => ({
-      params: {
-        trip,
-        place: place.id,
-      } satisfies DynamicPlaceParams,
-      props: {
-        trip,
-        place,
-      },
-    }));
+    params: {
+      trip,
+      place: place.id,
+    } satisfies DynamicPlaceParams,
+    props: {
+      trip,
+      place,
+    },
+  }));
 }
 
-const backLabel = `← Back to ${trip.charAt(0).toUpperCase()}${trip.slice(1)} overview`;
+const backLabel = `← Back to ${tripLabel} overview`;
 ---
-<PlaceLayout title={place.title} backHref={`../../`} backLabel={backLabel}>
-  {details?.what ? <p>{details.what}</p> : <p>{place.description}</p>}
+<PlaceLayout title={place.title}>
+  <div class="place-detail-shell">
+    <section class:list={["hero-card", heroImage ? "hero-card--image" : "hero-card--tinted"]}>
+      {heroImage ? (
+        <div class="hero-media" style={`background-image: linear-gradient(180deg, rgba(17, 36, 43, 0.08), rgba(17, 36, 43, 0.55)), url("${heroImage}")`}></div>
+      ) : (
+        <div class="hero-media hero-media--fallback"></div>
+      )}
+      <div class="hero-content">
+        <a class="back-link" href="../../">{backLabel}</a>
+        <div class="hero-eyebrow">
+          <span class="hero-badge hero-badge--type">
+            <span class="hero-badge__icon" set:html={typeIcon} />
+            <span>{typeLabel}</span>
+          </span>
+          <span class="hero-badge hero-badge--status" style={`--status-color: ${statusColor}`}>
+            {statusLabel}
+          </span>
+        </div>
+        <div class="hero-copy">
+          <p class="hero-kicker">{tripLabel}</p>
+          <h1>{place.title}</h1>
+          <p class="hero-lead">{details?.what ?? place.description}</p>
+          {details?.summary ? <p class="hero-summary">{details.summary}</p> : null}
+        </div>
+      </div>
+    </section>
 
-  {details?.summary ? <p>{details.summary}</p> : null}
+    <div class:list={["detail-grid", hasSidebar ? "detail-grid--with-sidebar" : "detail-grid--single"]}>
+      <div class="detail-main">
+        <section class="detail-card detail-card--overview">
+          <div class="section-heading">
+            <p class="section-kicker">Overview</p>
+            <h2>Why this place matters</h2>
+          </div>
+          <div class="prose-stack">
+            <p>{details?.what ?? place.description}</p>
+            {details?.summary ? <p>{details.summary}</p> : null}
+          </div>
+        </section>
 
-  {details?.highlights?.length ? (
-    <>
-      <h2>Highlights</h2>
-      <ul>
-        {details.highlights.map((highlight) => (
-          <li>{highlight}</li>
-        ))}
-      </ul>
-    </>
-  ) : fallbackHighlights?.length ? (
-    <>
-      <h2>Highlights</h2>
-      <ul>
-        {fallbackHighlights.map((highlight) => (
-          <li>{highlight}</li>
-        ))}
-      </ul>
-    </>
-  ) : null}
+        {details?.highlights?.length ? (
+          <section class="detail-card">
+            <div class="section-heading">
+              <p class="section-kicker">Highlights</p>
+              <h2>What stands out</h2>
+            </div>
+            <ul class="detail-list">
+              {details.highlights.map((highlight) => (
+                <li>{highlight}</li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
-  {details?.tips?.length ? (
-    <>
-      <h2>Tips</h2>
-      <ul>
-        {details.tips.map((tip) => (
-          <li>{tip}</li>
-        ))}
-      </ul>
-    </>
-  ) : null}
+        {details?.tips?.length ? (
+          <section class="detail-card">
+            <div class="section-heading">
+              <p class="section-kicker">Tips</p>
+              <h2>How to approach it</h2>
+            </div>
+            <ul class="detail-list">
+              {details.tips.map((tip) => (
+                <li>{tip}</li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
-  {details?.goodToKnow?.length ? (
-    <>
-      <h2>Good to know</h2>
-      <ul>
-        {details.goodToKnow.map((note) => (
-          <li>{note}</li>
-        ))}
-      </ul>
-    </>
-  ) : null}
+        {details?.goodToKnow?.length ? (
+          <section class="detail-card">
+            <div class="section-heading">
+              <p class="section-kicker">Good to know</p>
+              <h2>Before you go</h2>
+            </div>
+            <ul class="detail-list">
+              {details.goodToKnow.map((note) => (
+                <li>{note}</li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+      </div>
 
-  {details?.bestTime ? (
-    <>
-      <h2>Best time</h2>
-      <p>{details.bestTime}</p>
-    </>
-  ) : null}
+      {hasSidebar ? (
+        <aside class="detail-sidebar">
+          <section class="detail-card detail-card--sidebar">
+            <div class="section-heading">
+              <p class="section-kicker">Plan</p>
+              <h2>At a glance</h2>
+            </div>
+            <div class="fact-grid">
+              {details?.bestTime ? (
+                <div class="fact-card">
+                  <span class="fact-label">Best time</span>
+                  <span class="fact-value">{details.bestTime}</span>
+                </div>
+              ) : null}
+              {place.address ? (
+                <div class="fact-card">
+                  <span class="fact-label">Address</span>
+                  <span class="fact-value">{place.address}</span>
+                </div>
+              ) : null}
+              <div class="fact-card">
+                <span class="fact-label">Trip</span>
+                <span class="fact-value">{tripLabel}</span>
+              </div>
+            </div>
+          </section>
 
-  {hasAnyLinks ? (
-    <>
-      <h2>Links</h2>
-      {knownLinks.length ? (
-        <ul>
-          {knownLinks.map((link) => (
-            <li>
-              <a href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
-            </li>
-          ))}
-        </ul>
+          {hasAnyLinks ? (
+            <section class="detail-card detail-card--sidebar">
+              <div class="section-heading">
+                <p class="section-kicker">Resources</p>
+                <h2>Useful links</h2>
+              </div>
+              {knownLinks.length ? (
+                <div class="action-list">
+                  {knownLinks.map((link) => (
+                    <a class="action-link" href={link.url} target="_blank" rel="noreferrer">
+                      <span>{link.label}</span>
+                      <span aria-hidden="true">↗</span>
+                    </a>
+                  ))}
+                </div>
+              ) : null}
+              {otherLinks.length ? (
+                <>
+                  <p class="other-links-label">More sources</p>
+                  <div class="action-list action-list--secondary">
+                    {otherLinks.map((link) => (
+                        <a class="action-link action-link--secondary" href={link.url} target="_blank" rel="noreferrer">
+                          <span class="action-link__text">{link.label}</span>
+                          <span class="other-link-arrow" aria-hidden="true">↗</span>
+                        </a>
+                    ))}
+                  </div>
+                </>
+              ) : null}
+            </section>
+          ) : null}
+        </aside>
       ) : null}
-      {otherLinks.length ? (
-        <>
-          <h3>Other</h3>
-          <ul>
-            {otherLinks.map((link) => (
-              <li>
-                <a href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
-              </li>
-            ))}
-          </ul>
-        </>
-      ) : null}
-    </>
-  ) : null}
+    </div>
+  </div>
 </PlaceLayout>
+
+<style>
+  .place-detail-shell {
+    display: grid;
+    gap: 18px;
+  }
+
+  .hero-card {
+    position: relative;
+    overflow: hidden;
+    min-height: 320px;
+    border-radius: 28px;
+    border: 1px solid var(--border-strong);
+    box-shadow: var(--shadow-soft);
+    background: linear-gradient(180deg, rgba(255, 251, 245, 0.9), rgba(255, 251, 245, 0.98));
+  }
+
+  .hero-card--tinted {
+    background:
+      radial-gradient(circle at top right, rgba(102, 165, 183, 0.28), transparent 38%),
+      linear-gradient(180deg, rgba(255, 249, 239, 0.96), rgba(253, 248, 241, 0.98));
+  }
+
+  .hero-media {
+    position: absolute;
+    inset: 0;
+    background-position: center;
+    background-size: cover;
+  }
+
+  .hero-media--fallback {
+    background:
+      radial-gradient(circle at 15% 20%, rgba(67, 133, 153, 0.3), transparent 0 24%),
+      radial-gradient(circle at 85% 15%, rgba(219, 188, 122, 0.34), transparent 0 20%),
+      linear-gradient(180deg, rgba(244, 236, 221, 0.95), rgba(244, 242, 236, 0.98));
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 28px;
+    padding: 18px 18px 22px;
+  }
+
+  .back-link {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: rgba(255, 252, 247, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    color: var(--accent-strong);
+    text-decoration: none;
+    font-size: 0.94rem;
+    backdrop-filter: blur(12px);
+  }
+
+  .back-link:hover {
+    background: rgba(255, 252, 247, 0.95);
+  }
+
+  .hero-eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    padding: 0 12px;
+    border-radius: 999px;
+    backdrop-filter: blur(12px);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .hero-badge--type {
+    color: #f5fbff;
+    background: rgba(29, 63, 74, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .hero-badge--status {
+    color: var(--status-color);
+    background: rgba(255, 251, 245, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .hero-badge__icon {
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+  }
+
+  .hero-badge__icon :global(svg) {
+    width: 16px;
+    height: 16px;
+    display: block;
+  }
+
+  .hero-copy {
+    display: grid;
+    gap: 12px;
+    max-width: 44rem;
+  }
+
+  .hero-kicker,
+  .section-kicker {
+    margin: 0;
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  h1,
+  h2 {
+    margin: 0;
+    font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+    letter-spacing: -0.03em;
+  }
+
+  h1 {
+    font-size: clamp(2.35rem, 8vw, 4.8rem);
+    line-height: 0.95;
+    color: #ffffff;
+    text-wrap: balance;
+  }
+
+  .hero-card--tinted h1 {
+    color: #21323c;
+  }
+
+  .hero-lead,
+  .hero-summary {
+    font-size: 1rem;
+    line-height: 1.65;
+    text-wrap: pretty;
+  }
+
+  .hero-lead {
+    color: rgba(255, 253, 248, 0.96);
+    max-width: 36rem;
+  }
+
+  .hero-summary {
+    color: rgba(255, 250, 242, 0.82);
+    max-width: 34rem;
+  }
+
+  .hero-card--tinted .hero-lead,
+  .hero-card--tinted .hero-summary {
+    color: #334650;
+  }
+
+  .detail-grid {
+    display: grid;
+    gap: 18px;
+  }
+
+  .detail-main,
+  .detail-sidebar {
+    display: grid;
+    gap: 18px;
+  }
+
+  .detail-card {
+    padding: 22px 18px;
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .detail-card--overview {
+    background: linear-gradient(180deg, rgba(255, 253, 248, 0.98), rgba(255, 250, 242, 0.94));
+  }
+
+  .detail-card--sidebar {
+    background: linear-gradient(180deg, rgba(255, 252, 247, 0.96), rgba(252, 248, 241, 0.92));
+  }
+
+  .section-heading {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: clamp(1.45rem, 4vw, 2rem);
+    line-height: 1.05;
+    color: #23343f;
+  }
+
+  .prose-stack {
+    display: grid;
+    gap: 14px;
+  }
+
+  .prose-stack p {
+    font-size: 1rem;
+    color: #31434e;
+  }
+
+  .detail-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 12px;
+  }
+
+  .detail-list li {
+    position: relative;
+    padding-left: 18px;
+    line-height: 1.65;
+    color: #31434e;
+  }
+
+  .detail-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #3d7584, #85a8a0);
+    transform: translateY(-50%);
+  }
+
+  .fact-grid {
+    display: grid;
+    gap: 12px;
+  }
+
+  .fact-card {
+    display: grid;
+    gap: 6px;
+    padding: 14px;
+    border-radius: 18px;
+    background: rgba(247, 242, 233, 0.78);
+    border: 1px solid rgba(86, 108, 120, 0.12);
+  }
+
+  .fact-label {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .fact-value {
+    color: #23343f;
+    line-height: 1.5;
+  }
+
+  .action-list {
+    display: grid;
+    gap: 10px;
+  }
+
+  .action-list--secondary {
+    margin-top: 0;
+  }
+
+  .action-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 50px;
+    padding: 0 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(47, 101, 121, 0.15);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(240, 247, 249, 0.92));
+    color: var(--accent-strong);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .action-link__text {
+    min-width: 0;
+    word-break: break-word;
+  }
+
+  .action-link:hover {
+    border-color: rgba(47, 101, 121, 0.3);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(232, 243, 246, 0.98));
+  }
+
+  .other-links-label {
+    margin: 16px 0 0;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .action-link--secondary {
+    min-height: 56px;
+    border: 1px solid rgba(86, 108, 120, 0.14);
+    background: linear-gradient(180deg, rgba(249, 245, 238, 0.98), rgba(244, 238, 229, 0.92));
+    color: #314852;
+  }
+
+  .action-link--secondary:hover {
+    border-color: rgba(47, 101, 121, 0.24);
+    background: linear-gradient(180deg, rgba(252, 248, 241, 1), rgba(238, 245, 247, 0.94));
+  }
+
+  .other-link-arrow {
+    flex: 0 0 auto;
+    color: var(--accent-strong);
+  }
+
+  @media (min-width: 720px) {
+    .place-detail-shell {
+      gap: 22px;
+    }
+
+    .hero-content {
+      min-height: 420px;
+      padding: 24px 24px 28px;
+    }
+
+    .detail-card {
+      padding: 28px 24px;
+    }
+
+    .fact-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 960px) {
+    .detail-grid--with-sidebar {
+      grid-template-columns: minmax(0, 1.65fr) minmax(280px, 0.75fr);
+      align-items: start;
+    }
+
+    .detail-sidebar {
+      position: sticky;
+      top: 24px;
+    }
+
+    .fact-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

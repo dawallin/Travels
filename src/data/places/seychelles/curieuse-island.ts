@@ -8,7 +8,6 @@ export default {
   details: {
     what: "Dagstur från Praslin – natur, vandring och kända jättesköldpaddor.",
   },
-  googleMapsUrl: "https://maps.app.goo.gl/wjQkPPNTWq6fkUVS9?g_st=ic",
   links: {
     googleMaps: "https://maps.app.goo.gl/wjQkPPNTWq6fkUVS9?g_st=ic",
   },

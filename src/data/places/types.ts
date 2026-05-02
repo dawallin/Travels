@@ -22,10 +22,6 @@ export interface PlaceDetails {
   bestTime?: string;
 }
 
-export interface LegacyPlaceDetails {
-  highlights?: string[];
-}
-
 export interface Place {
   id: string;
   title: string;
@@ -38,12 +34,9 @@ export interface Place {
 
   image?: string;
   address?: string;
-  googleMapsUrl?: string;
-  tripadvisorUrl?: string;
-  highlights?: string[];
 
   heroImage?: string;
   visitOrder?: number;
   links?: PlaceLinks;
-  details?: PlaceDetails | LegacyPlaceDetails;
+  details?: PlaceDetails;
 }

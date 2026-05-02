@@ -11,9 +11,6 @@ export default {
   },
   address:
     "Jalan Arjuna, Br. Biyahan, Desa Wanagiri, Dalang, Kec. Selemadeg Timur, Kabupaten Tabanan, Bali 82152, Indonesia",
-  tripadvisorUrl:
-    "https://www.tripadvisor.se/Hotel_Review-g608496-d919319-Reviews-Sarinbuana_Eco_Lodge-Tabanan_Bali.html",
-  googleMapsUrl: "https://maps.app.goo.gl/N9pS4M181Ek3JWVHA?g_st=i",
   links: {
     googleMaps: "https://maps.app.goo.gl/N9pS4M181Ek3JWVHA?g_st=i",
     tripAdvisor: "https://www.tripadvisor.se/Hotel_Review-g608496-d919319-Reviews-Sarinbuana_Eco_Lodge-Tabanan_Bali.html"

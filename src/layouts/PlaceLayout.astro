@@ -1,8 +1,7 @@
 ---
-import PageHeader from "../components/PageHeader.astro";
 import DebugDock from "../components/DebugDock.astro";
 
-const { title, backHref = "../../", backLabel = "← Back to Bali overview" } = Astro.props;
+const { title } = Astro.props;
 ---
 <!doctype html>
 <html lang="en">
@@ -13,77 +12,63 @@ const { title, backHref = "../../", backLabel = "← Back to Bali overview" } = 
     <style>
       :root {
         color-scheme: light;
-        --text: #1f2933;
-        --muted: #5b6570;
-        --border: #d7dce1;
-        --surface: #ffffff;
-        --background: #f6f7f9;
-        --accent: #2f5d7c;
+        --text: #22313d;
+        --muted: #64717d;
+        --border: rgba(77, 101, 120, 0.18);
+        --border-strong: rgba(77, 101, 120, 0.3);
+        --surface: rgba(255, 252, 247, 0.94);
+        --surface-strong: #fffdf9;
+        --background: #f4efe7;
+        --accent: #2f6579;
+        --accent-strong: #214a59;
+        --shadow-soft: 0 18px 40px rgba(26, 44, 56, 0.08);
+        --shadow-card: 0 10px 24px rgba(26, 44, 56, 0.06);
       }
 
       * {
         box-sizing: border-box;
       }
 
+      html {
+        background:
+          radial-gradient(circle at top, rgba(150, 198, 210, 0.18), transparent 34%),
+          linear-gradient(180deg, #f6f1e8 0%, #f2ede5 100%);
+      }
+
       body {
         margin: 0;
-        font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+        font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
         color: var(--text);
-        background: var(--background);
+        background: transparent;
       }
 
       main {
-        max-width: 960px;
+        max-width: 1180px;
         margin: 0 auto;
-        padding: 64px 24px 104px;
-        display: grid;
-        gap: 24px;
+        padding: 24px 16px 88px;
       }
 
       a {
         color: var(--accent);
       }
 
-      h1 {
-        margin: 0 0 12px;
-        font-size: 2.4rem;
-        letter-spacing: -0.02em;
-      }
-
       p {
-        margin: 0 0 16px;
+        margin: 0;
         line-height: 1.6;
         color: var(--text);
       }
 
-      .back-link {
-        display: inline-block;
-        margin-bottom: 12px;
-        color: var(--muted);
-        text-decoration: none;
-        font-size: 0.95rem;
-      }
-
-      .back-link:hover {
-        color: var(--text);
-        text-decoration: underline;
-      }
-
-      .section {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 28px 32px;
+      @media (min-width: 720px) {
+        main {
+          padding: 40px 24px 96px;
+        }
       }
     </style>
   </head>
   <body>
     <DebugDock />
     <main>
-      <PageHeader title={title} backHref={backHref} backLabel={backLabel} />
-      <section class="section">
-        <slot />
-      </section>
+      <slot />
     </main>
   </body>
 </html>

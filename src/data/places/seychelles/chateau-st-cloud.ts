@@ -8,7 +8,6 @@ export default {
   details: {
     what: "Klassiskt hotell i grön omgivning, bra utgångspunkt för att cykla till stränder.",
   },
-  googleMapsUrl: "https://maps.app.goo.gl/XPn9dTs4eEsMqvJD9?g_st=ic",
   links: {
     googleMaps: "https://maps.app.goo.gl/XPn9dTs4eEsMqvJD9?g_st=ic",
   },

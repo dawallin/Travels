@@ -8,7 +8,6 @@ export default {
   details: {
     what: "Bra bas på Mahé med strand, restauranger och utflykter (t.ex. Anse Major).",
   },
-  googleMapsUrl: "https://maps.app.goo.gl/hUjzkEQszCKPhRe57?g_st=ic",
   links: {
     googleMaps: "https://maps.app.goo.gl/hUjzkEQszCKPhRe57?g_st=ic",
   },

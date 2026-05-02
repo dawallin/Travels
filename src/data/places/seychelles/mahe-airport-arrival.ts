@@ -8,7 +8,6 @@ export default {
   details: {
     what: "Startpunkt på Mahé för vidare resa.",
   },
-  googleMapsUrl: "https://maps.app.goo.gl/Z4WN6TE15qxpHsMw6?g_st=ic",
   links: {
     googleMaps: "https://maps.app.goo.gl/Z4WN6TE15qxpHsMw6?g_st=ic",
   },

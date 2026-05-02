@@ -8,7 +8,6 @@ export default {
   details: {
     what: "Avskild strand (ofta via resort/gångled) – spektakulär men kräver mer planering.",
   },
-  googleMapsUrl: "https://maps.app.goo.gl/252geuiRGiSQa6Ur8?g_st=ic",
   links: {
     googleMaps: "https://maps.app.goo.gl/252geuiRGiSQa6Ur8?g_st=ic",
   },
