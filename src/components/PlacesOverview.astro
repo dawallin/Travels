@@ -19,16 +19,19 @@ const getChildTypeRank = (place) => {
   if (place.type === "hotel") {
     return 0;
   }
-  if (place.type === "attraction") {
+  if (place.type === "activity") {
     return 1;
   }
-  if (place.type === "restaurant") {
+  if (place.type === "attraction") {
     return 2;
   }
-  if (place.type === "shopping") {
+  if (place.type === "restaurant") {
     return 3;
   }
-  return 4;
+  if (place.type === "shopping") {
+    return 4;
+  }
+  return 5;
 };
 const compareByStatusThenTitle = (a, b) => {
   const statusDelta = getStatusRank(a) - getStatusRank(b);
