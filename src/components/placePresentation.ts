@@ -1,6 +1,7 @@
 export const placeTypeLabels = {
   destination: "Destination",
   hotel: "Hotel",
+  activity: "Activity",
   attraction: "Attraction",
   restaurant: "Restaurant",
   shopping: "Shopping",
@@ -12,6 +13,9 @@ export const placeTypeIcons = {
   </svg>`,
   hotel: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M4 7h10a4 4 0 0 1 4 4v6h-2v-2H6v2H4V7zm2 6h10v-2a2 2 0 0 0-2-2H6v4zm1-3h3v2H7v-2zm12 5h-1V7h1a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1z"/>
+  </svg>`,
+  activity: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M13 3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-2.4 4.1 2.5 1.2 2.2 2.2-1.4 1.4-1.8-1.8-1.3-.6-.7 2.6 2.4 2.2V21h-2v-5.8l-2.3-2.1-.8 3.1-2.9-.8.5-1.9 1 .3 1.5-5.5a2 2 0 0 1 2.6-1.2zM17 12h2v9h-2v-9z"/>
   </svg>`,
   attraction: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M4 20h16v-2H4v2zm2-4h2V8H6v8zm4 0h2V8h-2v8zm4 0h2V8h-2v8zm4 0h2V8h-2v8zM3 6l9-4 9 4v2H3V6z"/>

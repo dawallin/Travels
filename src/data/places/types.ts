@@ -1,5 +1,11 @@
 export type PlaceStatus = "included" | "possible" | "avoid";
-export type PlaceType = "destination" | "hotel" | "attraction" | "restaurant" | "shopping";
+export type PlaceType =
+  | "destination"
+  | "hotel"
+  | "activity"
+  | "attraction"
+  | "restaurant"
+  | "shopping";
 
 export interface PlaceOtherLink {
   label: string;
