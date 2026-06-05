@@ -9,8 +9,9 @@ export default {
     what: "Possible area in Ho Chi Minh City.",
   },
   links: {
+    googleMaps: "https://www.google.com/maps?q=10.780963,106.7000734",
     tripAdvisor: "https://www.tripadvisor.com/Attraction_Review-g293925-d10836601-Reviews-Ho_Chi_Minh_City_s_Book_Street-Ho_Chi_Minh_City.html",
   },
-  latitude: 10.7802,
-  longitude: 106.6998,
+  latitude: 10.780963,
+  longitude: 106.7000734,
 };

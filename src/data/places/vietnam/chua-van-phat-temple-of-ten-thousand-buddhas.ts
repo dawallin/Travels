@@ -11,6 +11,6 @@ export default {
   links: {
     tripAdvisor: "https://www.tripadvisor.com/Attraction_Review-g293925-d7907864-Reviews-Chua_Van_Phat_Temple_of_Ten_Thousand_Buddhas-Ho_Chi_Minh_City.html",
   },
-  latitude: 10.7549,
-  longitude: 106.6688,
+  latitude: 10.7533702,
+  longitude: 106.6752996,
 };
