@@ -11,6 +11,6 @@ export default {
   links: {
     tripAdvisor: "https://www.tripadvisor.com/Attraction_Review-g293925-d2414430-Reviews-Tao_Dan_Park-Ho_Chi_Minh_City.html",
   },
-  latitude: 10.775016,
-  longitude: 106.693204,
+  latitude: 10.7755796,
+  longitude: 106.6920797,
 };

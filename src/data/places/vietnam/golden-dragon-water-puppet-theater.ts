@@ -12,5 +12,5 @@ export default {
     tripAdvisor: "https://www.tripadvisor.com/Attraction_Review-g293925-d1489190-Reviews-Golden_Dragon_Water_Puppet_Theater-Ho_Chi_Minh_City.html",
   },
   latitude: 10.7762597,
-  longitude: 106.6903487,
+  longitude: 106.6925374,
 };
